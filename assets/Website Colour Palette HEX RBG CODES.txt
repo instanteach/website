@@ -1,0 +1,11 @@
+Tech Blue:
+
+Hex:#2648ba RBG: 38, 72, 186
+
+Clever Yellow:
+
+Hex: #f9e316 RBG:249, 227, 22
+
+White White:
+
+Hex:#ffffff RBG: 250, 250, 250
