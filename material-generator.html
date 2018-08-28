@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
+  var loc = window.location.href+'';
+if (loc.indexOf('http://')==0){
+    window.location.href = loc.replace('http://','https://');
+}
   <link rel="shortcut icon" type="image/png" href="favicon.png"">
   <meta name="msapplication-TileColor" content="#da532c">
   <meta name="theme-color" content="#ffffff">
