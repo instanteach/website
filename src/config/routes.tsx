@@ -8,6 +8,7 @@ import About from '../components/About'
 import Contact from '../components/Contact'
 import Home from '../components/Home'
 import MaterialGenerator from '../components/MaterialGenerator'
+import Policy from '../components/Policy'
 
 const Routes = (props: any) => (
   <React.Fragment>
@@ -18,6 +19,7 @@ const Routes = (props: any) => (
       <DefaultLayout exact={true} path="/material-generator" component={<MaterialGenerator />} />
       <DefaultLayout exact={true} path="/contact" component={<Contact />} />
       <DefaultLayout exact={true} path="/about-us" component={<About />} />
+      <DefaultLayout exact={true} path="/privacy-policy" component={<Policy />} />
     </Switch>
   </Router>
   </React.Fragment>

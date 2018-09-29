@@ -1,6 +1,7 @@
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Wrapper = styled('div')`
@@ -49,7 +50,10 @@ class Home extends React.PureComponent {
           </Typography>
         </li>
       </ol>
-      <Button color="primary" variant="contained">Go</Button>
+      <Link to="/material-generator">
+        <Button color="primary" variant="contained">Go</Button>
+      </Link>
+      
     </Wrapper>
   }
 }

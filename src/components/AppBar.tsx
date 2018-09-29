@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
 import AppBar from '@material-ui/core/AppBar'
 import Divider from '@material-ui/core/Divider'
@@ -24,6 +26,12 @@ interface IResponsiveDrawerProps {
 interface IResponsiveDrawerState {
   mobileOpen: boolean
 }
+
+const PolicyText = styled('small')`
+  position: relative;
+  bottom: 0;
+  text-align: center;
+`
 
 const drawerWidth = 240;
 
@@ -146,6 +154,10 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         <main className={classes.content}>
           <div className={classes.toolbar} />
           {children}
+          <PolicyText>
+            Just so you know, your use of this site, 
+            in any and all forms, constitutes an acceptance of Instanteach’s <Link to="/privacy-policy">Privacy Policy.</Link>
+          </PolicyText>
         </main>
       </div>
     );
