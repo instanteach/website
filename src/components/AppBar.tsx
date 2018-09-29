@@ -1,4 +1,6 @@
+// tslint:disable:no-console
 import * as React from 'react'
+import { RouteProps, } from 'react-router'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -18,7 +20,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import NavItems from './NavItems'
 
-interface IResponsiveDrawerProps {
+interface IResponsiveDrawerProps extends RouteProps {
   classes: any
   theme: any
 }
@@ -93,7 +95,27 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
   };
 
+  public handleAppBarTitle = () => {
+    const { location } = this.props
+    if (location) {
+      switch(location.pathname) {
+        case '/':
+          return 'Home'
+        case '/material-generator':
+          return 'Material Generator'
+        case '/contact':
+          return 'Contact Us'
+        case '/about-us':
+          return 'About Us'
+        case '/privacy-policy':
+          return 'Privacy Policy'
+      }
+    }
+    return ''
+  }
+
   public render() {
+    console.log(this.props)
     const { classes, theme, children } = this.props;
 
     const drawer = (
@@ -119,7 +141,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" noWrap={true}>
-              Responsive drawer
+              {this.handleAppBarTitle()}
             </Typography>
           </Toolbar>
         </AppBar>

@@ -15,7 +15,7 @@ interface IDefaultLayout extends RouteProps, IContentProps {
 
 const DefaultLayout: React.SFC<IDefaultLayout>  = ({ component, ...rest }) =>
   <Route {...rest} render={({ staticContext, ...matchProps }) => (
-    <AppBar>
+    <AppBar {...matchProps}>
       {React.cloneElement(component, {...matchProps})}
     </AppBar>
   )}
