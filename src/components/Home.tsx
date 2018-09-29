@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Wrapper = styled('div')`
+  padding-bottom: 50px;
   h1, h2, h3 {
     padding-bottom: 15px;
   }
