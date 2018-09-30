@@ -11,7 +11,7 @@ import Home from '../components/Home'
 import MaterialGenerator from '../components/MaterialGenerator'
 import Policy from '../components/Policy'
 
-ReactGA.initialize('UA-XXXXXXXX');
+ReactGA.initialize('UA-122507387-1');
 
 const fireTracking = () => ReactGA.pageview(window.location.hash)
 
