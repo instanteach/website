@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import AppBar from '@material-ui/core/AppBar'
+import Avatar from '@material-ui/core/Avatar'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
@@ -121,7 +122,10 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
     const drawer = (
       <div>
         <div className={classes.toolbar}>
-          Instanteach
+          <Avatar
+            alt='Instanteach Logo'
+            src={`${process.env.PUBLIC_URL}/images/logo.png`}
+          />
         </div>
         <Divider />
         <List>{NavItems}</List>
