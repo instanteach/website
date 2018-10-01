@@ -20,11 +20,11 @@ const Routes = (props: any) => (
     <CssBaseline />
     <Router onUpdate={fireTracking} {...props}>
     <Switch>
-      <DefaultLayout path="/" component={<Home />} />
-      <DefaultLayout path="/material-generator" component={<MaterialGenerator />} />
-      <DefaultLayout path="/contact" component={<Contact />} />
-      <DefaultLayout path="/about-us" component={<About />} />
-      <DefaultLayout path="/privacy-policy" component={<Policy />} />
+      <DefaultLayout exact={true} path="/" component={<Home />} />
+      <DefaultLayout exact={true} path="/material-generator" component={<MaterialGenerator />} />
+      <DefaultLayout exact={true} path="/contact" component={<Contact />} />
+      <DefaultLayout exact={true} path="/about-us" component={<About />} />
+      <DefaultLayout exact={true} path="/privacy-policy" component={<Policy />} />
     </Switch>
   </Router>
   </React.Fragment>
