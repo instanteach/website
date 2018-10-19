@@ -116,7 +116,6 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
   }
 
   public render() {
-    console.log(this.props)
     const { classes, theme, children } = this.props;
 
     const drawer = (
