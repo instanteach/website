@@ -36,8 +36,28 @@ const FolderUI = styled('div')`
         border: 1px solid #DDD;
         transform: skewx(-10deg);
     }
-    &:hover:before {
-        background-color: #F0F0F0;
+    &:after {
+        content: '';
+        position: absolute;
+        top: -15px;
+        right: -18px;
+        width: 40px;
+        height: 8px;
+        border-radius: 4px 4px 0 0;
+        border: 1px solid #DDD;
+        border-bottom-color: #EAEAEA;
+        background-color: #EAEAEA;
+        transform: skew(-10deg);
+    }
+    &:hover {
+        background-color: #BBBBBB;
+        &:before,
+        &:after {
+            background-color: #F0F0F0;
+        }
+        &:after {
+            border-bottom-color: transparent;
+        }
     }
 `
 
