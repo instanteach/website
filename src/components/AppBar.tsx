@@ -110,6 +110,8 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           return 'About Us'
         case '/privacy-policy':
           return 'Privacy Policy'
+        case '/documents':
+          return 'Documents'
       }
     }
     return ''

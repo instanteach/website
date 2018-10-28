@@ -6,6 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
 import InfoIcon from '@material-ui/icons/Info';
@@ -31,6 +32,14 @@ const NavItems = (
           <ImportantDevicesIcon />
         </ListItemIcon>
         <ListItemText primary="Material Generator" />
+      </ListItem>
+    </CustomLink>
+    <CustomLink to="/documents">
+      <ListItem button={true}>
+        <ListItemIcon>
+          <DescriptionIcon />
+        </ListItemIcon>
+        <ListItemText primary="Documents" />
       </ListItem>
     </CustomLink>
     <CustomLink to="/contact"> 

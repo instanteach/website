@@ -7,6 +7,7 @@ import DefaultLayout from '../components/DefaultLayout'
 
 import About from '../components/About'
 import Contact from '../components/Contact'
+import Documents from '../components/Documents'
 import Home from '../components/Home'
 import MaterialGenerator from '../components/MaterialGenerator'
 import Policy from '../components/Policy'
@@ -22,6 +23,7 @@ const Routes = (props: any) => (
     <Switch>
       <DefaultLayout exact={true} path="/" component={<Home />} />
       <DefaultLayout path="/material-generator" component={<MaterialGenerator />} />
+      <DefaultLayout path="/documents" component={<Documents />} />
       <DefaultLayout path="/contact" component={<Contact />} />
       <DefaultLayout path="/about-us" component={<About />} />
       <DefaultLayout path="/privacy-policy" component={<Policy />} />
