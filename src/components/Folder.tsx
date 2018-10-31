@@ -1,18 +1,20 @@
 import * as React from 'react'
-import ICollection from '../interfaces/ICollection';
-
 import styled from 'styled-components'
 
+import Grid from '@material-ui/core/Grid'
+import Grow from '@material-ui/core/Grow'
+
 interface IProps {
-    collection: ICollection,
-    key: number
+    clicked: boolean
+    name: string
+    onClick: any
 }
 
 const FolderUI = styled('div')`
     position: relative;
     display: flex;
     flex: 1;
-    margin: 0 2rem;
+    margin: 1rem 2rem;
     padding: 1rem;
     max-width: 150px;
     height: 80px;
@@ -73,9 +75,13 @@ const FolderTitle = styled('p')`
 `
 
 const Folder = (props: IProps) => (
-    <FolderUI>
-        <FolderTitle>{props.collection.group.replace(/\b\w/g, letter => letter.toUpperCase())}</FolderTitle>
-    </FolderUI>
+    <Grow in={props.clicked}>
+        <Grid item={true} xs={3}>
+            <FolderUI onClick={props.onClick.bind(props, props.name)}>
+                <FolderTitle>{props.name.replace(/\b\w/g, letter => letter.toUpperCase())}</FolderTitle>
+            </FolderUI>
+        </Grid>
+    </Grow>
 )
 
 export default Folder
