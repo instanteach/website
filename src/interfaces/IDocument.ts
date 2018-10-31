@@ -3,6 +3,7 @@ export default interface IDocument {
     name: string
     level: string
     category: string
-    folder?: string
+    folder: string
+    type: string
     url: string
 }
