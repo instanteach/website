@@ -37,6 +37,13 @@ class DocumentsService {
         return Array.from(grouped)
     }
 
+    public static async download(url: string) {
+        const storage = await firebase.storage()
+        const reference = await storage.ref(url)
+
+        return reference.getDownloadURL()
+    }
+
     private static async getDocuments() {
         const database = await firebase.database()
         const reference = await database.ref()
