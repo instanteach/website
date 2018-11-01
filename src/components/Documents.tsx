@@ -23,6 +23,11 @@ interface IState {
     path: IPath
 }
 
+const gridStyles = {
+    alignContent: 'flex-start',
+    height: '90%'
+}
+
 class Documents extends React.Component<{}, IState> {
     public state = {
         categories: [],
@@ -114,7 +119,7 @@ class Documents extends React.Component<{}, IState> {
 
     public render(): JSX.Element {
         return (
-            <Grid container={true} spacing={16}>
+            <Grid container={true} spacing={16} style={gridStyles}>
                 { this.renderFolders() }
             </Grid>
         )
