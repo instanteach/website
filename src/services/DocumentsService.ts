@@ -11,7 +11,7 @@ class DocumentsService {
     public static async getDocumentById(uid: string) {
         const documents: IDocument[] = await this.getDocuments()
 
-        return this.formatted(documents.filter((document: IDocument) => document.id === uid))
+        return this.formatted(documents).filter((document: IDocument) => document.id === uid)[0]
     }
 
     public static async getDocumentsByGroup(key: string) {
