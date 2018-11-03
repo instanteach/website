@@ -25,7 +25,7 @@ interface IState {
 
 const gridStyles = {
     alignContent: 'flex-start',
-    height: '90%'
+    minHeight: '90%'
 }
 
 class Documents extends React.Component<{}, IState> {
@@ -98,6 +98,7 @@ class Documents extends React.Component<{}, IState> {
                 return (
                     <DocumentCard
                         key={index}
+                        id={document.id}
                         name={document.name}
                         type={document.type}
                         url={document.url}
