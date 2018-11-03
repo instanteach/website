@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Button from '@material-ui/core/Button'
@@ -13,6 +14,7 @@ interface IState {
 
 interface IProps {
     clicked: boolean
+    id: string
     name: string
     type: string
     url: string
@@ -54,6 +56,10 @@ const CardActions = styled('div')`
     margin-top: 1rem;
 `
 
+const LinkButton = styled(Link)`
+    text-decoration: none
+`
+
 class DocumentCard extends React.Component<IProps, IState> {
     public state = {
        url: ""
@@ -70,7 +76,7 @@ class DocumentCard extends React.Component<IProps, IState> {
     }
 
     public render(): JSX.Element {
-        const {clicked, type, name} = this.props
+        const {clicked, type, name, id} = this.props
         const {url} = this.state
         return (
             <Grow in={clicked} style={{ marginBottom: '2rem' }}>
@@ -88,7 +94,11 @@ class DocumentCard extends React.Component<IProps, IState> {
                         <CardContent>
                             <Typography variant="subheading" component="h3">{name}</Typography>
                             <CardActions>
-                                <Button component="a" href={url} size="small" color="primary">View</Button>
+                                {
+                                    (type === 'pdf')
+                                    ? <LinkButton to={`/document/${id}`}><Button size="small" color="primary">View</Button></LinkButton>
+                                    : <Button component="a" href={url} size="small" color="primary">Download</Button>
+                                }
                             </CardActions>
                         </CardContent>
                     </Card>
