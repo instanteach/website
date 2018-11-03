@@ -2,6 +2,9 @@ import * as React from 'react'
 import {Document as PDF, Page} from 'react-pdf'
 import DocumentsService from '../services/DocumentsService'
 
+import Button from '@material-ui/core/Button'
+import Grid from '@material-ui/core/Grid'
+
 import IDocument from '../interfaces/IDocument'
 
 interface IProps {
@@ -9,13 +12,15 @@ interface IProps {
 }
 
 interface IState {
+    page: number
     pages: number
     url: string
 }
 
 class Document extends React.Component<IProps, IState> {
     public state = {
-        pages: 0,
+        page: 1,
+        pages: 1,
         url: "#"
     }
 
@@ -31,18 +36,39 @@ class Document extends React.Component<IProps, IState> {
         })
     }
 
-    public onDocumentLoadSuccess(pages) {
-        this.setState({ pages })
+    public onDocumentLoadSuccess = ({ numPages }) => {
+        console.log(numPages)
+        this.setState({ pages: numPages })
     }
     
     public render(): JSX.Element {
-        const {url, pages} = this.state
+        const {url, pages, page} = this.state
+        let arr: number[] = []
+
+        for(let i=page; i <= pages; i++) {
+            arr = arr.concat(i)
+        }
+        
         return (
-                (url === '#' && pages === 0)
+                (url === '#')
                 ? <p>{url}</p>
-                : ( <PDF file={url} onLoadSuccess={this.onDocumentLoadSuccess}>
-                        <Page pageNumber={pages} />
-                    </PDF> )
+                : ( 
+                <>
+                <Grid container={true} spacing={16}>
+                    <Grid item={true} xs={12}>
+                        <PDF file={`https://cors-anywhere.herokuapp.com/${url}`} onLoadSuccess={this.onDocumentLoadSuccess}>
+                            { arr.map(item => <Page key={item} pageNumber={item} />) }
+                        </PDF>
+                    </Grid>
+                    <Grid item={true} xs={12}>
+                        <Button size="small" color="primary" variant="contained">Download PDF</Button>
+                        <br />
+                        <br />
+                        <br />
+                    </Grid>
+                </Grid>
+                </>
+                )
         )
     }
 }
