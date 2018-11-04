@@ -1,5 +1,7 @@
 import * as React from 'react'
-import {Document as PDF, Page} from 'react-pdf'
+import {Page} from 'react-pdf'
+import {Document as PDF} from 'react-pdf/dist/entry.webpack'
+import styled from 'styled-components'
 import DocumentsService from '../services/DocumentsService'
 
 import Button from '@material-ui/core/Button'
@@ -12,15 +14,22 @@ interface IProps {
 }
 
 interface IState {
+    numPages: number
     page: number
-    pages: number
     url: string
 }
 
+const PDFcontainer = styled(Grid)`
+    .react-pdf__Page {
+        display: flex;
+        justify-content: center;
+    }
+`
+
 class Document extends React.Component<IProps, IState> {
     public state = {
+        numPages: 1,
         page: 1,
-        pages: 1,
         url: "#"
     }
 
@@ -37,37 +46,34 @@ class Document extends React.Component<IProps, IState> {
     }
 
     public onDocumentLoadSuccess = ({ numPages }) => {
-        console.log(numPages)
-        this.setState({ pages: numPages })
+        this.setState({ numPages })
     }
     
     public render(): JSX.Element {
-        const {url, pages, page} = this.state
-        let arr: number[] = []
+        const {url, numPages, page} = this.state
+        let pages: number[] = []
 
-        for(let i=page; i <= pages; i++) {
-            arr = arr.concat(i)
+        for(let i=page; i <= numPages; i++) {
+            pages = pages.concat(i)
         }
         
         return (
                 (url === '#')
-                ? <p>{url}</p>
-                : ( 
-                <>
+                ? <p>Loading PDF...</p>
+                : (
                 <Grid container={true} spacing={16}>
-                    <Grid item={true} xs={12}>
+                    <PDFcontainer item={true} xs={12}>
                         <PDF file={`https://cors-anywhere.herokuapp.com/${url}`} onLoadSuccess={this.onDocumentLoadSuccess}>
-                            { arr.map(item => <Page key={item} pageNumber={item} />) }
+                            { pages.map(item => <Page key={item} pageNumber={item} />) }
                         </PDF>
-                    </Grid>
-                    <Grid item={true} xs={12}>
-                        <Button size="small" color="primary" variant="contained">Download PDF</Button>
+                    </PDFcontainer>
+                    <Grid item={true} xs={12} justify="center">
+                        <Button component="a" href={url} download="Instanteach PDF Document" size="medium" color="primary" variant="contained">Download PDF</Button>
                         <br />
                         <br />
                         <br />
                     </Grid>
                 </Grid>
-                </>
                 )
         )
     }
