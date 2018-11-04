@@ -1,12 +1,20 @@
 import * as React from 'react'
+import styled from 'styled-components'
 
 import ICollection from '../interfaces/ICollection'
-import IDocument from '../interfaces/IDocument';
+import IDocument from '../interfaces/IDocument'
 import DocumentsService from '../services/DocumentsService'
 import DocumentCard from './DocumentCard'
 import Folder from './Folder'
 
+import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
+// import Paper from '@material-ui/core/Paper'
+
+interface IChip {
+    key: number
+    label: string
+}
 
 interface IPath {
     category: string | null
@@ -16,6 +24,7 @@ interface IPath {
 
 interface IState {
     categories: string[]
+    chips: IChip[]
     clicked: boolean
     collections: ICollection[]
     documents: IDocument[]
@@ -23,14 +32,25 @@ interface IState {
     path: IPath
 }
 
+const Chips = styled('div')`
+    margin-bottom: 1rem;
+    padding: .5rem 1rem;
+    [class^=MuiChip] {
+        margin-right: 1rem;
+    }
+`
+
 const gridStyles = {
     alignContent: 'flex-start',
-    minHeight: '90%'
+    minHeight: '85%'
 }
 
 class Documents extends React.Component<{}, IState> {
     public state = {
         categories: [],
+        chips: [
+            {key: 0, label: 'Material'}
+        ],
         clicked: true,
         collections: [],
         documents: [],
@@ -57,7 +77,7 @@ class Documents extends React.Component<{}, IState> {
 
     public handleLevel = (level: string) => {
 
-        const {collections, path} = this.state
+        const {chips, collections, path} = this.state
         const selected: ICollection = collections.filter((collection: ICollection) => collection.group === level)[0]
         let categories: string[] = []
 
@@ -67,6 +87,7 @@ class Documents extends React.Component<{}, IState> {
 
         this.setState({
             categories,
+            chips: chips.concat({ key: 1, label: level }),
             clicked: false,
             documents: selected.documents,
             path: {
@@ -77,10 +98,11 @@ class Documents extends React.Component<{}, IState> {
     }
 
     public handleCategory = (category: string) => {
-        const {documents, path} = this.state
+        const {chips, documents, path} = this.state
         const selected: IDocument[] = documents.filter((doc: IDocument) => doc.level === path.level && doc.category === category)
 
         this.setState({
+            chips: chips.concat({ key: 2, label: category }),
             clicked: false,
             documents: selected,
             path: {
@@ -118,11 +140,71 @@ class Documents extends React.Component<{}, IState> {
         }
     }
 
+    public async removeElement(data) {
+        const {key, label} = data
+        const {categories, chips, path} = this.state
+
+        if(categories.filter(category => category === label).length > 0) {
+            const collections: ICollection[] = await DocumentsService.getDocumentsByGroup('level')
+            
+            const selected: ICollection = collections.filter((collection: ICollection) => collection.group === path.level)[0]
+            let newCategories: string[] = []
+
+            selected.documents.map((item: IDocument) => (
+                newCategories = newCategories.filter((c: string) => c !== item.category).concat(item.category)
+            ))
+            
+            this.setState({
+                categories: newCategories,
+                chips: chips.filter(chip => chip.key !== key),
+                clicked: false,
+                documents: selected.documents,
+                path: {
+                    ...path,
+                    category: null,
+                    folder: null
+                }
+            })
+        }
+        else {
+            this.setState({
+                categories: [],
+                chips: [{ key: 0, label: 'Material' }],
+                clicked: false,
+                documents: [],
+                path: {
+                    category: null,
+                    folder: null,
+                    level: null
+                }
+            })
+        }
+    }
+
+    public handleDelete = (data) => () => {
+        this.removeElement(data)
+    }
+
     public render(): JSX.Element {
+        const {chips} = this.state
         return (
+            <>
+            <Grid container={true} spacing={16}>
+                <Chips>
+                {
+                    chips.map((chip: IChip): JSX.Element => (
+                        <Chip
+                        key={chip.key}
+                        label={chip.label.toUpperCase()}
+                        onDelete={this.handleDelete(chip)}/>
+                    ))
+                }
+                </Chips>
+            </Grid>
             <Grid container={true} spacing={16} style={gridStyles}>
                 { this.renderFolders() }
             </Grid>
+            </>
         )
     }
 }
