@@ -6,6 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
@@ -56,6 +57,14 @@ const NavItems = (
           <InfoIcon />
         </ListItemIcon>
         <ListItemText primary="About Us" />
+      </ListItem>
+    </CustomLink>
+    <CustomLink to="/upload">
+      <ListItem button={true}>
+        <ListItemIcon>
+          <CloudUploadIcon />
+        </ListItemIcon>
+        <ListItemText primary="Upload" />
       </ListItem>
     </CustomLink>
   </div>
