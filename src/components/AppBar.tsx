@@ -3,11 +3,13 @@ import * as React from 'react'
 import { RouteProps, } from 'react-router'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import AuthenticationService from '../services/AuthenticationService'
 
 import AppBar from '@material-ui/core/AppBar'
 import Avatar from '@material-ui/core/Avatar'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
+import Grid from '@material-ui/core/Grid'
 import Hidden from '@material-ui/core/Hidden'
 import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List'
@@ -18,6 +20,7 @@ import Typography from '@material-ui/core/Typography'
 import { Theme } from '@material-ui/core'
 
 import MenuIcon from '@material-ui/icons/Menu';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 
 import NavItems from './NavItems'
 
@@ -27,6 +30,7 @@ interface IResponsiveDrawerProps extends RouteProps {
 }
 
 interface IResponsiveDrawerState {
+  logout: boolean
   mobileOpen: boolean
 }
 
@@ -89,8 +93,22 @@ const styles = (theme: Theme) => createStyles({
 
 class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResponsiveDrawerState> {
   public state = {
-    mobileOpen: false,
+    logout: false,
+    mobileOpen: false
   };
+
+  public componentWillMount() {
+    // Verify if exists an user session
+    AuthenticationService.listener()
+  }
+
+  public logout = () => {
+    // Close session
+    AuthenticationService.logout()
+    this.setState({
+      logout: true
+    })
+  }
 
   public handleDrawerToggle = () => {
     this.setState(state => ({ mobileOpen: !state.mobileOpen }));
@@ -112,6 +130,10 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           return 'Privacy Policy'
         case '/documents':
           return 'Documents'
+        case '/upload':
+          return 'Upload'
+        case '/login':
+          return 'Login'
       }
     }
     return ''
@@ -119,6 +141,8 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 
   public render() {
     const { classes, theme, children } = this.props;
+    const { logout } = this.state
+    const { session } = AuthenticationService
 
     const drawer = (
       <div>
@@ -137,17 +161,32 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
       <div className={classes.root}>
         <AppBar className={classes.appBar}>
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerToggle}
-              className={classes.navIconHide}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="title" color="inherit" noWrap={true}>
-              {this.handleAppBarTitle()}
-            </Typography>
+            <Grid container={true}>
+              <Grid item={true} container={true} xs={11} alignItems="center">
+                <IconButton
+                  color="inherit"
+                  aria-label="Open drawer"
+                  onClick={this.handleDrawerToggle}
+                  className={classes.navIconHide}
+                >
+                  <MenuIcon />
+                </IconButton>
+                <Typography variant="title" color="inherit" noWrap={true}>
+                  {this.handleAppBarTitle()}
+                </Typography>
+              </Grid>
+              <Grid item={true} container={true} xs={1} justify="flex-end">
+              {
+                (session && !logout)
+                ? <IconButton
+                color="inherit"
+                aria-label="Open drawer"
+                onClick={this.logout}
+                ><PowerSettingsNewIcon /></IconButton>
+                : null
+              }
+              </Grid>
+            </Grid>
           </Toolbar>
         </AppBar>
         <Hidden mdUp={true}>
