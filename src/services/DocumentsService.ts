@@ -1,6 +1,10 @@
 import * as firebase from 'firebase'
+import uid from 'uid'
+
 import ICollection from '../interfaces/ICollection'
 import IDocument from '../interfaces/IDocument'
+
+const capitalize = str => str.replace(/\b\w/g, letter => letter.toUpperCase())
 
 class DocumentsService {
     public static async getlAllDocuments() {
@@ -8,10 +12,10 @@ class DocumentsService {
         return this.formatted(documents)
     }
 
-    public static async getDocumentById(uid: string) {
+    public static async getDocumentById(id: string) {
         const documents: IDocument[] = await this.getDocuments()
 
-        return this.formatted(documents).filter((document: IDocument) => document.id === uid)[0]
+        return this.formatted(documents).filter((document: IDocument) => document.id === id)[0]
     }
 
     public static async getDocumentsByGroup(key: string) {
@@ -42,6 +46,42 @@ class DocumentsService {
         const reference = await storage.ref(url)
 
         return reference.getDownloadURL()
+    }
+
+    public static store(level: string, category: string, folder:string, file: any) {
+        const type: string = file.type.split('/')[1]
+        const name: string = file.name.split('.')[0]
+        const uuid = uid(10)
+        let url: string = ""
+
+        switch(capitalize(level)) {
+            case 'Worksheets':
+                url = `Material/${capitalize(level)}/${capitalize(category)}/${file.name}`
+                break;
+            default:
+                if(folder !== "") {
+                    url = `Material/${capitalize(level)}/${capitalize(category)}-${capitalize(level)}/${capitalize(folder)}/${file.name}`
+                }
+                else {
+                    url = `Material/${capitalize(level)}/${capitalize(category)}-${capitalize(level)}/${file.name}`
+                }
+        }
+
+        console.log(uuid)
+        const reference = firebase.storage().ref(url)
+        const task = reference.put(file)
+
+        task.on('state_changed', snapshop => {
+            const database = firebase.database()
+            database.ref(`documents/${uuid}`).set({
+                category,
+                folder,
+                level,
+                name,
+                type,
+                url
+            })
+        })
     }
 
     private static async getDocuments() {
