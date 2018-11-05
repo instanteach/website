@@ -28,7 +28,7 @@ const Routes = (props: any) => (
       <DefaultLayout exact={true} path="/" component={<Home />} />
       <DefaultLayout path="/material-generator" component={<MaterialGenerator />} />
       <DefaultLayout path="/document/:id" component={<Document match={{}} />} />
-      <DefaultLayout path="/documents" component={<Documents />} />
+      <DefaultLayout path="/lesson-plans" component={<Documents />} />
       <DefaultLayout path="/contact" component={<Contact />} />
       <DefaultLayout path="/about-us" component={<About />} />
       <DefaultLayout path="/privacy-policy" component={<Policy />} />

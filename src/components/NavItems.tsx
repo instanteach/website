@@ -35,12 +35,12 @@ const NavItems = (
         <ListItemText primary="Material Generator" />
       </ListItem>
     </CustomLink>
-    <CustomLink to="/documents">
+    <CustomLink to="/lesson-plans">
       <ListItem button={true}>
         <ListItemIcon>
           <DescriptionIcon />
         </ListItemIcon>
-        <ListItemText primary="Documents" />
+        <ListItemText primary="Lesson Plans" />
       </ListItem>
     </CustomLink>
     <CustomLink to="/contact"> 
