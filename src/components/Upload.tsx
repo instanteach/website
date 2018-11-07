@@ -10,9 +10,9 @@ import CloseIcon from '@material-ui/icons/Close'
 import DocumentsService from 'src/services/DocumentsService';
 
 interface IState {
-  category: string
-  folder: string
-  level: string
+  category: string | null
+  folder: string | null
+  level: string | null
   message: boolean
 }
 
@@ -49,11 +49,18 @@ class Upload extends React.PureComponent<{}, IState> {
     e.preventDefault()
     const {level, category, folder} = this.state
     const file = e.target.file.files[0]
-    if(level.length>0 && category.length>0 && file) {
+    if(level && category && file && level.length>0 && category.length>0) {
+      // Save document
       DocumentsService.store(level, category, folder, file)
+      // Update state
       this.setState({
-        message: true
+        category: "",
+        folder: "",
+        level: "",
+        message: true,
       })
+      // Clear File Input
+      e.target.file.value = null
     }
   }
 
@@ -72,7 +79,7 @@ class Upload extends React.PureComponent<{}, IState> {
             <Grid item={true} xs={12}>
               <TextField
                 label="Level"
-                defaultValue={level}
+                value={level}
                 name="level"
                 type="text"
                 onChange={this.handleChange('level')}
@@ -83,7 +90,7 @@ class Upload extends React.PureComponent<{}, IState> {
             <Grid item={true} xs={12}>
               <TextField
                 label="Category"
-                defaultValue={category}
+                value={category}
                 name="category"
                 type="text"
                 onChange={this.handleChange('category')}
@@ -94,7 +101,7 @@ class Upload extends React.PureComponent<{}, IState> {
             <Grid item={true} xs={12}>
               <TextField
                 label="Folder (Optional)"
-                defaultValue={folder}
+                value={folder}
                 name="folder"
                 type="text"
                 onChange={this.handleChange('folder')}
