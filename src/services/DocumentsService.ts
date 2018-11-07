@@ -66,8 +66,7 @@ class DocumentsService {
                     url = `Material/${capitalize(level)}/${capitalize(category)}-${capitalize(level)}/${file.name}`
                 }
         }
-
-        console.log(uuid)
+        
         const reference = firebase.storage().ref(url)
         const task = reference.put(file)
 
