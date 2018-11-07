@@ -6,6 +6,8 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
 import InfoIcon from '@material-ui/icons/Info';
@@ -33,6 +35,14 @@ const NavItems = (
         <ListItemText primary="Material Generator" />
       </ListItem>
     </CustomLink>
+    <CustomLink to="/lesson-plans">
+      <ListItem button={true}>
+        <ListItemIcon>
+          <DescriptionIcon />
+        </ListItemIcon>
+        <ListItemText primary="Lesson Plans" />
+      </ListItem>
+    </CustomLink>
     <CustomLink to="/contact"> 
       <ListItem button={true}>
         <ListItemIcon>
@@ -47,6 +57,14 @@ const NavItems = (
           <InfoIcon />
         </ListItemIcon>
         <ListItemText primary="About Us" />
+      </ListItem>
+    </CustomLink>
+    <CustomLink to="/upload">
+      <ListItem button={true}>
+        <ListItemIcon>
+          <CloudUploadIcon />
+        </ListItemIcon>
+        <ListItemText primary="Upload" />
       </ListItem>
     </CustomLink>
   </div>
