@@ -2,7 +2,6 @@ import * as React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Grow from '@material-ui/core/Grow'
 import Typography from '@material-ui/core/Typography';
@@ -49,14 +48,11 @@ const CardContent = styled('div')`
     width: 75%;
 `
 
-const CardActions = styled('div')`
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin-top: 1rem;
+const LinkButton = styled(Link)`
+    text-decoration: none
 `
 
-const LinkButton = styled(Link)`
+const DownloadButton = styled('a')`
     text-decoration: none
 `
 
@@ -81,27 +77,37 @@ class DocumentCard extends React.Component<IProps, IState> {
         return (
             <Grow in={clicked} style={{ marginBottom: '2rem' }}>
                 <Grid item={true} xs={6}>
-                    <Card>
-                        <CardTypeFile style={
-                            (type === 'doc' || type === 'docx')
-                            ? { backgroundColor: '#1565C0' }
-                            : (type === 'jpg' || type === 'jpeg' || type === 'png' )
-                                ? { backgroundColor: '#E0E0E0', color: '#888' }
-                                : (type === 'pptx')
-                                    ? { backgroundColor: '#FFC107' }
-                                    : {}
-                        }>{type.toUpperCase()}</CardTypeFile>
-                        <CardContent>
-                            <Typography variant="subheading" component="h3">{name}</Typography>
-                            <CardActions>
-                                {
-                                    (type === 'pdf')
-                                    ? <LinkButton to={`/document/${id}`}><Button size="small" color="primary">View</Button></LinkButton>
-                                    : <Button component="a" href={url} size="small" color="primary">Download</Button>
-                                }
-                            </CardActions>
-                        </CardContent>
-                    </Card>
+                {
+                    (type === 'pdf')
+                    ? (
+                    <LinkButton to={`/document/${id}`}>
+                        <Card>
+                            <CardTypeFile>{type.toUpperCase()}</CardTypeFile>
+                            <CardContent>
+                                <Typography variant="subheading" component="h3">{name}</Typography>
+                            </CardContent>
+                        </Card>   
+                    </LinkButton>
+                    )
+                    : (
+                    <DownloadButton href={url} download={name}>
+                        <Card>
+                            <CardTypeFile style={
+                                (type === 'doc' || type === 'docx')
+                                ? { backgroundColor: '#1565C0' }
+                                : (type === 'jpg' || type === 'jpeg' || type === 'png' )
+                                    ? { backgroundColor: '#E0E0E0', color: '#888' }
+                                    : (type === 'pptx')
+                                        ? { backgroundColor: '#FFC107' }
+                                        : {}
+                            }>{type.toUpperCase()}</CardTypeFile>
+                            <CardContent>
+                                <Typography variant="subheading" component="h3">{name}</Typography>
+                            </CardContent>
+                        </Card>
+                    </DownloadButton>
+                    )
+                }
                 </Grid>
             </Grow>
         )
