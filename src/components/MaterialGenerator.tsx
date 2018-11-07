@@ -1,20 +1,23 @@
-import * as React from 'react'
-import styled from 'styled-components'
+import * as React from "react";
+import styled from "styled-components";
 
-const GoogleForm = styled('iframe')`
+const Form = styled("iframe")`
   border: none;
-  padding-bottom: 100px;
-`
+  padding-bottom: 20px;
+`;
 
 class MaterialGenerator extends React.PureComponent {
   public render() {
-    return <GoogleForm
-    src="https://docs.google.com/forms/d/e/1FAIpQLScBhRXAHDeXw8BupK1LwOGwPeK3PhZ4HJmypVaOJWaXv__0gA/viewform?embedded=true"
-    width="100%"
-    height="100%">
-    Loading...
-  </GoogleForm>
+    return (
+      <Form
+        src="https://zdenka.tellform.com/#!/forms/5bdfd56c0ec65c75274d3218"
+        width="100%"
+        height="90%"
+      >
+        Loading...
+      </Form>
+    );
   }
 }
 
-export default MaterialGenerator
+export default MaterialGenerator;
