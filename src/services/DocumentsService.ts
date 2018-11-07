@@ -73,11 +73,11 @@ class DocumentsService {
         task.on('state_changed', snapshop => {
             const database = firebase.database()
             database.ref(`documents/${uuid}`).set({
-                category,
-                folder,
-                level,
+                category: category.toLowerCase(),
+                folder: folder.toLowerCase(),
+                level: level.toLowerCase(),
                 name,
-                type,
+                type: type.toLowerCase(),
                 url
             })
         })
