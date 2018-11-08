@@ -1,5 +1,5 @@
-import * as React from 'react'
-import styled from 'styled-components'
+import * as React from "react";
+import styled from "styled-components";
 
 const TellForm = styled('iframe')`
   border: none;
@@ -18,4 +18,4 @@ class MaterialGenerator extends React.PureComponent {
   }
 }
 
-export default MaterialGenerator
+export default MaterialGenerator;
