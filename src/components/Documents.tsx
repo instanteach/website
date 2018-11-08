@@ -90,6 +90,7 @@ class Documents extends React.Component<{}, IState> {
             chips: chips.concat({ key: 1, label: level }),
             clicked: false,
             documents: selected.documents,
+            folders: [],
             path: {
                 ...path,
                 level
@@ -100,11 +101,17 @@ class Documents extends React.Component<{}, IState> {
     public handleCategory = (category: string) => {
         const {chips, documents, path} = this.state
         const selected: IDocument[] = documents.filter((doc: IDocument) => doc.level === path.level && doc.category === category)
+        let folders: string[] = []
+
+        documents.filter((item: IDocument) => item.folder !== "" && item.category === category).map((item: IDocument) => (
+            folders = folders.filter((f: string) => f !== item.folder).concat(item.folder)
+        ))
 
         this.setState({
             chips: chips.concat({ key: 2, label: category }),
             clicked: false,
             documents: selected,
+            folders,
             path: {
                 ...path,
                 category
@@ -126,7 +133,8 @@ class Documents extends React.Component<{}, IState> {
     }
 
     public renderFolders(): JSX.Element[] {
-        const {collections, categories, clicked, documents, path} = this.state
+        const {collections, categories, clicked, documents, path, folders} = this.state
+
         if(path.folder !== null) {
             return documents.filter((document: IDocument) => document.folder === path.folder).map((document: IDocument, index: number): JSX.Element => {
                 return (
@@ -141,11 +149,11 @@ class Documents extends React.Component<{}, IState> {
             })
         }
         else if (path.category !== null) {
-            return documents.map((document: IDocument, index: number): JSX.Element => {
-                if(document.folder !== "") {
-                    return <Folder key={index} name={document.folder} clicked={clicked} onClick={this.handleFolder} />
-                }
-                else {
+            if(folders.length>0) {
+                return folders.map((folder: string, index: number): JSX.Element => <Folder key={index} name={folder} clicked={clicked} onClick={this.handleFolder} />)
+            }
+            else {
+                return documents.map((document: IDocument, index: number): JSX.Element => {
                     return (
                         <DocumentCard
                             key={index}
@@ -155,8 +163,8 @@ class Documents extends React.Component<{}, IState> {
                             url={document.url}
                             clicked={clicked} />
                     )
-                }
-            })
+                })
+            }
         }
         else if (path.level !== null) {
             return categories.map((name: string, index: number) => (
@@ -176,7 +184,7 @@ class Documents extends React.Component<{}, IState> {
 
         if(path.folder === label) {
             this.setState({
-                chips: chips.filter(chip => chip.key !== key),
+                chips: chips.filter(chip => chip.key < key),
                 clicked: false,
                 path: {
                     ...path,
@@ -196,9 +204,10 @@ class Documents extends React.Component<{}, IState> {
             
             this.setState({
                 categories: newCategories,
-                chips: chips.filter(chip => chip.key !== key),
+                chips: chips.filter(chip => chip.key < key),
                 clicked: false,
                 documents: selected.documents,
+                folders: [],
                 path: {
                     ...path,
                     category: null,
@@ -212,6 +221,7 @@ class Documents extends React.Component<{}, IState> {
                 chips: [{ key: 0, label: 'Material' }],
                 clicked: false,
                 documents: [],
+                folders: [],
                 path: {
                     category: null,
                     folder: null,

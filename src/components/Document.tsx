@@ -68,7 +68,7 @@ class Document extends React.Component<IProps, IState> {
                         </PDF>
                     </PDFcontainer>
                     <Grid item={true} xs={12} justify="center">
-                        <Button component="a" href={url} download="Instanteach PDF Document" size="medium" color="primary" variant="contained">Download PDF</Button>
+                        <Button component="a" target="_blank" href={url} download="Instanteach PDF Document" size="medium" color="primary" variant="contained">Download PDF</Button>
                         <br />
                         <br />
                         <br />
