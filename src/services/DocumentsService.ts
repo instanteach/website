@@ -75,6 +75,7 @@ class DocumentsService {
             database.ref(`documents/${uuid}`).set({
                 category: category.toLowerCase(),
                 folder: folder.toLowerCase(),
+                id: uuid,
                 level: level.toLowerCase(),
                 name,
                 type: type.toLowerCase(),
