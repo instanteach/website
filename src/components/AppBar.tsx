@@ -1,28 +1,24 @@
 // tslint:disable:no-console
-import * as React from 'react'
-import { RouteProps, } from 'react-router'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components'
-import AuthenticationService from '../services/AuthenticationService'
-
-import AppBar from '@material-ui/core/AppBar'
-import Avatar from '@material-ui/core/Avatar'
-import Divider from '@material-ui/core/Divider'
-import Drawer from '@material-ui/core/Drawer'
-import Grid from '@material-ui/core/Grid'
-import Hidden from '@material-ui/core/Hidden'
+import { Theme } from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Grid from '@material-ui/core/Grid';
+import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List'
-import { createStyles, withStyles } from '@material-ui/core/styles'
-import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
-
-import { Theme } from '@material-ui/core'
-
+import List from '@material-ui/core/List';
+import { createStyles, withStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-
-import NavItems from './NavItems'
+import * as React from 'react';
+import { RouteProps } from 'react-router';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import AuthenticationService from '../services/AuthenticationService';
+import NavItems from './NavItems';
 
 interface IResponsiveDrawerProps extends RouteProps {
   classes: any
@@ -117,7 +113,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
   public handleAppBarTitle = () => {
     const { location } = this.props
     if (location) {
-      switch(location.pathname) {
+      switch (location.pathname) {
         case '/':
           return 'Home'
         case '/material-generator':
@@ -154,6 +150,15 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         </div>
         <Divider />
         <List>{NavItems}</List>
+        <Divider />
+        {/*
+          <AdSense.Google
+          client='ca-pub-2740710281751996'
+          style={{ display: 'block' }}
+          format='auto'
+          responsive='true'
+        />
+        */}
       </div>
     );
 
@@ -176,15 +181,15 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
                 </Typography>
               </Grid>
               <Grid item={true} container={true} xs={1} justify="flex-end">
-              {
-                (session && !logout)
-                ? <IconButton
-                color="inherit"
-                aria-label="Open drawer"
-                onClick={this.logout}
-                ><PowerSettingsNewIcon /></IconButton>
-                : null
-              }
+                {
+                  (session && !logout)
+                    ? <IconButton
+                      color="inherit"
+                      aria-label="Open drawer"
+                      onClick={this.logout}
+                    ><PowerSettingsNewIcon /></IconButton>
+                    : null
+                }
               </Grid>
             </Grid>
           </Toolbar>
@@ -221,7 +226,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           <div className={classes.toolbar} />
           {children}
           <PolicyText>
-            Just so you know, your use of this site, 
+            Just so you know, your use of this site,
             in any and all forms, constitutes an acceptance of Instanteach’s <Link to="/privacy-policy">Privacy Policy.</Link>
           </PolicyText>
         </main>
