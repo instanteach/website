@@ -156,7 +156,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         <AdSense.Google
           client='ca-pub-2740710281751996'
           slot='1941182538'
-          style={{ display: 'block' }}
+          style={{ display: 'block', height: 300 }}
           format='auto'
           responsive='true'
         />
