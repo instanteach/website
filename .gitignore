@@ -3,7 +3,7 @@
 # Builds
 builds/
 build/
-.firebase
+.firebase/
 
 # Logs
 logs

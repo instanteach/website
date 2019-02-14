@@ -14,11 +14,13 @@ import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import * as React from 'react';
+import AdSense from 'react-adsense';
 import { RouteProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import AuthenticationService from '../services/AuthenticationService';
 import NavItems from './NavItems';
+
 
 interface IResponsiveDrawerProps extends RouteProps {
   classes: any
@@ -151,14 +153,13 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         <Divider />
         <List>{NavItems}</List>
         <Divider />
-        {/*
-          <AdSense.Google
+        <AdSense.Google
           client='ca-pub-2740710281751996'
+          slot='1941182538'
           style={{ display: 'block' }}
           format='auto'
           responsive='true'
         />
-        */}
       </div>
     );
 
