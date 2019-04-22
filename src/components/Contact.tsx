@@ -1,6 +1,37 @@
 import Card from '@material-ui/core/Card'
 import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
+import { FaEnvelope, FaWhatsapp } from 'react-icons/fa'
+import styled from 'styled-components'
+import FacebookMessengerIcon from '../assets/images/icons/messenger.png'
+
+const LinkWrapper = styled('div')`
+  padding: 50px 0 50px 0;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  a {
+    text-decoration: none;
+    color: black;
+    svg {
+      height: 50px;
+      width: 50px;
+      transition: transform 0.5s;
+      :hover {
+        transform: scale(1.2);
+      }
+    }
+  }
+`
+
+const FacebookMessenger = styled('img')`
+  width: 45px;
+  color: black;
+  transition-duration: .5s;
+  &:hover {
+    transform: scale(1.2);
+  }
+`
 
 class Contact extends React.PureComponent {
   public render() {
@@ -14,15 +45,17 @@ class Contact extends React.PureComponent {
       <Typography variant="title" component="p" paragraph={true}>
         Contact Us Through: 
       </Typography>
-      <Typography variant="subheading" component="p" paragraph={true}>
-        Email: <a href='mailto:instanteach.io@gmail.com'>instanteach.io@gmail.com</a>
-      </Typography>
-      <Typography variant="subheading" component="p" paragraph={true}>
-        Whatsapp: <a target="_blank" href='https://wa.me/+5215539504779'>https://wa.me/+5215539504779</a>
-      </Typography>
-      <Typography variant="subheading" component="p" paragraph={true}>
-        Facebook Messenger: <a target="_blank" href='https://m.me/instanteach'>https://m.me/instanteach</a>
-      </Typography>
+      <LinkWrapper>
+        <a target="_blank" href="mailto:instanteach.io@gmail.com">
+          <FaEnvelope />
+        </a>
+        <a target="_blank" href="https://wa.me/+5215539504779">
+          <FaWhatsapp />
+        </a>
+        <a target="_blank" href="https://m.me/instanteach">
+          <FacebookMessenger src={FacebookMessengerIcon} />
+        </a>
+      </LinkWrapper>
     </Card>
   }
 }
