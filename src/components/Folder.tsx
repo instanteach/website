@@ -74,13 +74,18 @@ const FolderTitle = styled('p')`
     transform: skewx(-10deg);
 `
 
+const GridFlex = styled(Grid)`
+    display: flex;
+    justify-content: center;
+`
+
 const Folder = (props: IProps) => (
     <Grow in={props.clicked}>
-        <Grid item={true} xs={3}>
+        <GridFlex item={true} xs={12} sm={6} md={4} lg={3}>
             <FolderUI onClick={props.onClick.bind(props, props.name)}>
                 <FolderTitle>{props.name.replace(/\b\w/g, letter => letter.toUpperCase())}</FolderTitle>
             </FolderUI>
-        </Grid>
+        </GridFlex>
     </Grow>
 )
 

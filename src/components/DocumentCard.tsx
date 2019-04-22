@@ -76,7 +76,7 @@ class DocumentCard extends React.Component<IProps, IState> {
         const {url} = this.state
         return (
             <Grow in={clicked} style={{ marginBottom: '2rem' }}>
-                <Grid item={true} xs={6}>
+                <Grid item={true} xs={12} md={6}>
                 {
                     (type === 'pdf')
                     ? (
