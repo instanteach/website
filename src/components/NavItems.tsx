@@ -7,10 +7,12 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import DescriptionIcon from '@material-ui/icons/Description';
+import GroupIcon from '@material-ui/icons/Group';
 import HomeIcon from '@material-ui/icons/Home';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
 import InfoIcon from '@material-ui/icons/Info';
 import MailIcon from '@material-ui/icons/Mail';
+import SchoolIcon from '@material-ui/icons/School';
 
 const CustomLink = styled(Link)`
   text-decoration: none;
@@ -56,6 +58,22 @@ const NavItems = (
           <InfoIcon />
         </ListItemIcon>
         <ListItemText primary="About Us" />
+      </ListItem>
+    </CustomLink>
+    <CustomLink to="/users">
+      <ListItem button={true}>
+        <ListItemIcon>
+          <GroupIcon />
+        </ListItemIcon>
+        <ListItemText primary="Users" />
+      </ListItem>
+    </CustomLink>
+    <CustomLink to="/classrooms">
+      <ListItem button={true}>
+        <ListItemIcon>
+          <SchoolIcon />
+        </ListItemIcon>
+        <ListItemText primary="Classrooms" />
       </ListItem>
     </CustomLink>
   </div>

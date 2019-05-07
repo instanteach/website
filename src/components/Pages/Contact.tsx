@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
 import { FaEnvelope, FaWhatsapp } from 'react-icons/fa'
 import styled from 'styled-components'
-import FacebookMessengerIcon from '../assets/images/icons/messenger.png'
+import FacebookMessengerIcon from '../../assets/images/icons/messenger.png'
 
 const LinkWrapper = styled('div')`
   padding: 50px 0 50px 0;

@@ -2,12 +2,12 @@ import * as React from 'react'
 import {Page} from 'react-pdf'
 import {Document as PDF} from 'react-pdf/dist/entry.webpack'
 import styled from 'styled-components'
-import DocumentsService from '../services/DocumentsService'
+import DocumentsService from '../../services/DocumentsService'
 
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 
-import IDocument from '../interfaces/IDocument'
+import IDocument from '../../interfaces/IDocument'
 
 interface IProps {
     match: any

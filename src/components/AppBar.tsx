@@ -2,6 +2,7 @@
 import { Theme } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
@@ -12,7 +13,6 @@ import { createStyles, withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
-import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import * as React from 'react';
 import AdSense from 'react-adsense';
 import { RouteProps } from 'react-router';
@@ -24,11 +24,11 @@ import NavItems from './NavItems';
 
 interface IResponsiveDrawerProps extends RouteProps {
   classes: any
-  theme: any
+	theme: any
+	history: any
 }
 
 interface IResponsiveDrawerState {
-  logout: boolean
   mobileOpen: boolean
 }
 
@@ -36,6 +36,39 @@ const PolicyText = styled('small')`
   position: relative;
   bottom: 0;
   text-align: center;
+`
+
+const Username = styled('span')`
+	display: none;
+	margin-right: .5rem;
+	color: white;
+	font-weight: 500;
+	opacity: .8;
+	@media screen and (min-width:900px) {
+		display: inline-block;
+	}
+`
+
+const ToolbarButton = styled(Button)`
+	a {
+		color: white !important;
+		text-decoration: none;
+	}
+	opacity: .7;
+	transition-duration: .3s;
+	&:hover {
+		opacity: 1;
+	}
+`
+
+const AdSenseLab = styled('div')`
+	position: fixed;
+	bottom: .5rem;
+	left: 1rem;
+	right: 1rem;
+	width: 90%;
+	height: 50px;
+	background-color: tomato;
 `
 
 const drawerWidth = 240;
@@ -91,7 +124,6 @@ const styles = (theme: Theme) => createStyles({
 
 class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResponsiveDrawerState> {
   public state = {
-    logout: false,
     mobileOpen: false
   };
 
@@ -102,10 +134,9 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 
   public logout = () => {
     // Close session
-    AuthenticationService.logout()
-    this.setState({
-      logout: true
-    })
+    if(!AuthenticationService.logout()) {
+			this.props.history.push('/')
+		}
   }
 
   public handleDrawerToggle = () => {
@@ -132,6 +163,14 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           return 'Upload'
         case '/login':
           return 'Login'
+        case '/signup':
+					return 'Sign up'
+				case '/users':
+					return 'Users'
+				case '/classrooms':
+					return 'Classrooms'
+				case '/classroom':
+					return 'Classroom'
       }
     }
     return ''
@@ -139,27 +178,32 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 
   public render() {
     const { classes, theme, children } = this.props;
-    const { logout } = this.state
     const { session } = AuthenticationService
-
+		const mediaQuery = window.matchMedia("(min-width:700px)")
     const drawer = (
       <div>
         <div className={classes.toolbar}>
-          <Avatar
-            alt='Instanteach Logo'
-            src={`${process.env.PUBLIC_URL}/images/logo.png`}
-          />
+          <a href="/">
+            <Avatar
+              alt='Instanteach Logo'
+              src={`${process.env.PUBLIC_URL}/images/logo.png`}
+            />
+          </a>
         </div>
         <Divider />
         <List>{NavItems}</List>
         <Divider />
-        <AdSense.Google
-          client='ca-pub-2740710281751996'
-          slot='1941182538'
-          style={{ display: 'block' }}
-          format='auto'
-          responsive='true'
-        />
+				{
+					mediaQuery.matches
+					? <AdSense.Google
+							client='ca-pub-2740710281751996'
+							slot='1941182538'
+							style={{ display: 'block' }}
+							format='auto'
+							responsive='true'
+						/>
+					: null
+				}
       </div>
     );
 
@@ -168,7 +212,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         <AppBar className={classes.appBar}>
           <Toolbar>
             <Grid container={true}>
-              <Grid item={true} container={true} xs={11} alignItems="center">
+              <Grid item={true} container={true} xs={6} alignItems="center">
                 <IconButton
                   color="inherit"
                   aria-label="Open drawer"
@@ -181,15 +225,21 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
                   {this.handleAppBarTitle()}
                 </Typography>
               </Grid>
-              <Grid item={true} container={true} xs={1} justify="flex-end">
+              <Grid item={true} container={true} xs={6} justify="flex-end" alignItems="center">
                 {
-                  (session && !logout)
-                    ? <IconButton
-                      color="inherit"
-                      aria-label="Open drawer"
-                      onClick={this.logout}
-                    ><PowerSettingsNewIcon /></IconButton>
-                    : null
+                  (session)
+                    ? (
+										<>
+										<Username>{session.name}</Username>
+										<Avatar src={session.avatar} alt={session.name} onClick={this.logout}/>
+										</>
+										)
+                    : (
+											<>
+											<ToolbarButton variant="text" color="primary"><Link to="/login">Log in</Link></ToolbarButton>
+											<ToolbarButton variant="text" color="primary"><Link to="/signup">Sign up</Link></ToolbarButton>
+											</>
+										)
                 }
               </Grid>
             </Grid>
@@ -230,6 +280,11 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
             Just so you know, your use of this site,
             in any and all forms, constitutes an acceptance of Instanteach’s <Link to="/privacy-policy">Privacy Policy.</Link>
           </PolicyText>
+					{
+					!mediaQuery.matches
+					? <AdSenseLab />
+					: null
+					}
         </main>
       </div>
     );

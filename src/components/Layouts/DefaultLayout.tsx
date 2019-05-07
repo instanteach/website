@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { Route, RouteProps, } from 'react-router'
 
-import AppBar from './AppBar'
+import AppBar from '../AppBar'
 
 interface IContentProps {
   normal?: boolean

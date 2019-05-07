@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {Redirect,} from 'react-router'
 
-import AuthenticationService from '../services/AuthenticationService'
+import AuthenticationService from '../../services/AuthenticationService'
 
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -73,7 +73,7 @@ class Login extends React.PureComponent<{}, IState> {
     const {session} = AuthenticationService
     return (
       (session || auth)
-      ? <Redirect to="/upload" />
+      ? <Redirect to="/" />
       : (
         <>
         <Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">

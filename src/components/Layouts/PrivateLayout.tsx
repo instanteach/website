@@ -2,8 +2,8 @@
 import * as React from 'react'
 import { Redirect, Route, RouteProps,} from 'react-router'
 
-import AuthenticationService from '../services/AuthenticationService';
-import AppBar from './AppBar'
+import AuthenticationService from '../../services/AuthenticationService';
+import AppBar from '../AppBar'
 
 interface IContentProps {
     normal?: boolean
@@ -21,7 +21,7 @@ const PrivateLayout: React.SFC<IPrivateLayout>  = ({ component, ...rest }) => {
         (AuthenticationService.session)
         ? <Route {...rest} render={({ staticContext, ...matchProps }) => (
             <AppBar {...matchProps}>
-            {React.cloneElement(component, {...matchProps})}
+            {React.cloneElement(component, {...matchProps, session: AuthenticationService.session})}
             </AppBar>
         )} />
         : <Redirect to="/login" />
