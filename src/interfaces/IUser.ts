@@ -1,7 +1,12 @@
 export default interface IUser {
-	avatar?:string
+	createdAt?:string
+	createdWith?:string
+	displayName:string
 	email:string
+	emailVerified:boolean
 	isAdmin:boolean
-	name?:string
-	password?:string
+	photoURL:string
+	provider?:string
+	uid:string
+	updatedAt?:string
 }
