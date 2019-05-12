@@ -1,3 +1,4 @@
+import axios from 'axios'
 import * as firebase from 'firebase'
 
 class ClassroomService {
@@ -34,6 +35,8 @@ class ClassroomService {
 	{
 		const response = {classroomId:"", error:""}
 		try {
+			const unsplash = await axios.get('https://api.unsplash.com/photos/random?client_id=7f06954a12ef973f0d64c9c3f1fa1bf39d8cebfbdb97dfa436c9bbf83badb903&orientation=landscape')
+			const thumbnail = unsplash.data.urls.thumb
 			const database = firebase.firestore()
 			const classroom = await database.collection('classrooms').add({
 				age: data.age,
@@ -41,6 +44,7 @@ class ClassroomService {
 				name: data.name,
 				readingSkill: 0,
 				students: data.students,
+				thumbnail,
 				userId: data.userId,
 				vocabularySkill: 0,
 				writingSkill: 0,			

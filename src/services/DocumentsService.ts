@@ -3,6 +3,7 @@ import uid from 'uid'
 
 import ICollection from '../interfaces/ICollection'
 import IDocument from '../interfaces/IDocument'
+import AuthenticationService from './AuthenticationService';
 
 const capitalize = str => str.replace(/\b\w/g, letter => letter.toUpperCase())
 
@@ -82,7 +83,18 @@ class DocumentsService {
                 url
             })
         })
-    }
+		}
+		
+		public static remove(documentId: string)
+		{
+			if(AuthenticationService.session.isAdmin) {
+				console.log('Eliminado')
+				// firebase.database().ref(`documents/${documentId}`).remove()
+				return true
+			}
+			console.log("Unauthorized")
+			return false
+		}
 
     private static async getDocuments() {
         const database = await firebase.database()
