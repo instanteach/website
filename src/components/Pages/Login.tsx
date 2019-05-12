@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Redirect,} from 'react-router'
+import {Redirect} from 'react-router-dom'
 
 import AuthenticationService from '../../services/AuthenticationService'
 
@@ -55,7 +55,29 @@ class Login extends React.PureComponent<{}, IState> {
       auth,
       error: !auth
     })
-  }
+	}
+	
+	public loginWithFacebook = () => {
+		(async () => {
+			const auth = await AuthenticationService.loginWithFacebook()
+		
+			this.setState({
+				auth,
+				error: !auth
+			})
+		})()
+	}
+
+	public loginWithGoogle = () => {
+		(async () => {
+			const auth = await AuthenticationService.loginWithGoogle()
+		
+			this.setState({
+				auth,
+				error: !auth
+			})
+		})()
+	}
 
   public submit = e => {
     e.preventDefault()
@@ -73,11 +95,11 @@ class Login extends React.PureComponent<{}, IState> {
     const {session} = AuthenticationService
     return (
       (session || auth)
-      ? <Redirect to="/" />
+      ? <Redirect to="/classrooms" />
       : (
         <>
         <Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">
-          <Grid item={true} xs={4}>
+          <Grid item={true} xs={12} md={4}>
             <form onSubmit={this.submit}>
               <Grid item={true} xs={12}>
                 <TextField
@@ -99,8 +121,34 @@ class Login extends React.PureComponent<{}, IState> {
                   variant="outlined"
                   style={inputStyles} />
                 </Grid>
-                <Grid item={true} container={true} xs={12} justify="flex-end">
-                  <Button size="medium" variant="contained" color="primary" type="submit">Log In</Button>
+                <Grid item={true} container={true} xs={12}>
+                  <Button
+										fullWidth={true}
+										size="large"
+										variant="contained"
+										color="primary"
+										type="submit"
+										style={{ marginBottom: '1rem' }}>Log In</Button>
+                </Grid>
+                <Grid item={true} container={true} xs={12}>
+                  <Button
+										fullWidth={true}
+										size="large"
+										variant="outlined"
+										color="primary"
+										type="button"
+										onClick={this.loginWithFacebook}
+										style={{ marginBottom: '1rem' }}>Login with Facebook</Button>
+                </Grid>
+                <Grid item={true} container={true} xs={12}>
+                  <Button
+										fullWidth={true}
+										size="large"
+										variant="outlined"
+										color="primary"
+										type="button"
+										onClick={this.loginWithGoogle}
+										style={{ marginBottom: '1rem' }}>Login with Google</Button>
                 </Grid>
             </form>
           </Grid>

@@ -6,6 +6,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import AddBoxIcon from '@material-ui/icons/AddBox';
 import DescriptionIcon from '@material-ui/icons/Description';
 import GroupIcon from '@material-ui/icons/Group';
 import HomeIcon from '@material-ui/icons/Home';
@@ -18,7 +19,7 @@ const CustomLink = styled(Link)`
   text-decoration: none;
 `
 
-const NavItems = (
+const NavItems = ({session}, user) => (
   <div>
     <CustomLink to="/">
       <ListItem button={true}>
@@ -60,23 +61,45 @@ const NavItems = (
         <ListItemText primary="About Us" />
       </ListItem>
     </CustomLink>
-    <CustomLink to="/users">
-      <ListItem button={true}>
-        <ListItemIcon>
-          <GroupIcon />
-        </ListItemIcon>
-        <ListItemText primary="Users" />
-      </ListItem>
-    </CustomLink>
-    <CustomLink to="/classrooms">
-      <ListItem button={true}>
-        <ListItemIcon>
-          <SchoolIcon />
-        </ListItemIcon>
-        <ListItemText primary="Classrooms" />
-      </ListItem>
-    </CustomLink>
+		{
+			session
+			? (
+				<>
+				<CustomLink to="/classrooms">
+					<ListItem button={true}>
+						<ListItemIcon>
+							<SchoolIcon />
+						</ListItemIcon>
+						<ListItemText primary="Classrooms" />
+					</ListItem>
+				</CustomLink>
+				{
+					session.isAdmin
+					? (
+						<>
+						<CustomLink to="/users">
+							<ListItem button={true}>
+								<ListItemIcon>
+									<GroupIcon />
+								</ListItemIcon>
+								<ListItemText primary="Users" />
+							</ListItem>
+						</CustomLink>
+						<CustomLink to="/upload">
+							<ListItem button={true}>
+								<ListItemIcon>
+									<AddBoxIcon />
+								</ListItemIcon>
+								<ListItemText primary="Upload" />
+							</ListItem>
+						</CustomLink>
+						</>
+					) : null
+				}
+				</>
+			) : null
+		}
   </div>
 );
 
-export default NavItems;
+export default (NavItems);

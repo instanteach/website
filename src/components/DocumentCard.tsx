@@ -4,21 +4,33 @@ import { Document as PDF } from 'react-pdf/dist/entry.webpack'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+import Button from '@material-ui/core/Button'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import Grid from '@material-ui/core/Grid'
 import Grow from '@material-ui/core/Grow'
+import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
+import DeleteIcon from '@material-ui/icons/Delete'
 import DocumentsService from '../services/DocumentsService'
 
 import IDocument from '../interfaces/IDocument'
+import store from '../state/store';
 
 interface IState {
 	url: string
+	isRemoved: boolean
+	isOpen: boolean
 }
 
 interface IProps {
 	clicked: boolean
 	id: string
 	linked?:boolean
+	menu?:boolean
 	name: string
 	type: string
 	url: string
@@ -86,8 +98,18 @@ const PDFcontainer = styled(Grid)`
 	}
 `
 
+const MenuButton = styled(IconButton)`
+	position: absolute !important;
+	top: auto !important;
+	left: auto !important;
+	right: 5px !important;
+	bottom: 5px !important;
+`
+
 class DocumentCard extends React.Component<IProps, IState> {
 	public state = {
+		isOpen: false,
+		isRemoved: false,
 		url: ""
 	}
 
@@ -106,9 +128,21 @@ class DocumentCard extends React.Component<IProps, IState> {
 		this.props.onClick(this.props.document)
 	}
 
+	public removeDocumentFromDatabase = (e:any) => {
+		e.preventDefault()
+		const {id} = this.props
+		this.setState({ isOpen: false, isRemoved: DocumentsService.remove(id) })
+	}
+
+	public toggleConfirmationModal = (e:any) => {
+		e.preventDefault()
+		this.setState({ isOpen: !this.state.isOpen })
+	}
+
 	public render(): JSX.Element {
-		const { clicked, type, name, id, size=6, linked=true } = this.props
-		const { url } = this.state
+		const { clicked, type, name, id, size=6, linked=true, menu=false } = this.props
+		const { url, isOpen, isRemoved } = this.state
+		const user = store.getState().user
 		return (
 			<Grow in={clicked} style={{ marginBottom: '2rem' }}>
 				<Grid item={true} xs={12} md={size} onClick={this.props.onClick ? this.onClick : (() => false)}>
@@ -116,7 +150,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 						(type === 'pdf')
 						? linked 
 							? (
-								<LinkButton to={`/document/${id}`}>
+								<LinkButton to={`/document/${id}`} style={{display: isRemoved ? 'none' : 'auto'}}>
 									<Card>
 										<CardTypeFile style={{color: 'white', fontSize: 0}}>
 											<PDFcontainer item={true} xs={12}>
@@ -126,8 +160,16 @@ class DocumentCard extends React.Component<IProps, IState> {
 											</PDFcontainer>
 										</CardTypeFile>
 										<CardContent>
-											<Typography variant="subheading" component="h3">{name}</Typography>
+											<Typography variant="subheading" component="h3">{name} {menu ? 1 : 0}</Typography>
 										</CardContent>
+										{
+											user.isAdmin
+											? (
+												<MenuButton onClick={this.toggleConfirmationModal}>
+														<DeleteIcon />
+													</MenuButton>
+											) : null
+										}
 									</Card>
 								</LinkButton>
 							)
@@ -147,7 +189,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 							)
 						: linked
 							? (
-								<DownloadButton href={url} download={name}>
+								<DownloadButton href={url} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
 									<Card>
 										{
 										<CardTypeFile style={
@@ -163,6 +205,14 @@ class DocumentCard extends React.Component<IProps, IState> {
 										<CardContent>
 											<Typography variant="subheading" component="h3">{name}</Typography>
 										</CardContent>
+										{
+											user.isAdmin
+											? (
+												<MenuButton onClick={this.toggleConfirmationModal}>
+														<DeleteIcon />
+													</MenuButton>
+											) : null
+										}
 									</Card>
 								</DownloadButton>
 							)
@@ -185,6 +235,18 @@ class DocumentCard extends React.Component<IProps, IState> {
 								</Card>
 							)
 					}
+					<Dialog open={isOpen} onClose={this.toggleConfirmationModal} arial-labelledby="form-dialog-title">
+						<DialogTitle id="form-dialog-title">Delete Document</DialogTitle>
+						<DialogContent>
+							<DialogContentText>
+								Are you sure about you want to remove this document?
+							</DialogContentText>
+						</DialogContent>
+						<DialogActions>
+							<Button type="button" onClick={this.toggleConfirmationModal} color="default">No, cancel</Button>
+							<Button type="button" color="primary" onClick={this.removeDocumentFromDatabase}>Yes, I'm sure</Button>
+						</DialogActions>
+					</Dialog>
 				</Grid>
 			</Grow>
 		)

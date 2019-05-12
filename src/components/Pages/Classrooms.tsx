@@ -134,7 +134,7 @@ class Classrooms extends React.Component<IProps, IState> {
 									<CardMedia
 									style={{height: '140px'}}
 									title="Image"
-									image="https://images.unsplash.com/photo-1536337005238-94b997371b40?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60"/>
+									image={classroom.thumbnail}/>
 										<CardContent>
 											<Typography variant="title">{classroom.name}</Typography>
 											<Typography variant="caption">{classroom.students} students</Typography>
@@ -162,9 +162,17 @@ class Classrooms extends React.Component<IProps, IState> {
 					<DialogContentText>
 						The classrooms are groups by students to make a study plan with our digital materials. Set them a name and how many students it has.
 					</DialogContentText>
-					<TextField autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
-					<TextField margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
-					<TextField margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+					<Grid container={true} spacing={16}>
+						<Grid item={true} xs={12}>
+							<TextField autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
+						</Grid>
+						<Grid item={true} md={6}>
+							<TextField margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+						</Grid>
+						<Grid item={true} md={6}>
+							<TextField margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+						</Grid>
+					</Grid>
 				</DialogContent>
 				<DialogActions>
 					<Button type="button" onClick={this.handleClose} color="default">Cancel</Button>

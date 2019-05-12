@@ -14,12 +14,15 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
 import * as React from 'react';
-import AdSense from 'react-adsense';
+// import AdSense from 'react-adsense';
 import { RouteProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import IUser from '../interfaces/IUser'
 import AuthenticationService from '../services/AuthenticationService';
 import NavItems from './NavItems';
+
+import store from '../state/store'
 
 
 interface IResponsiveDrawerProps extends RouteProps {
@@ -29,7 +32,7 @@ interface IResponsiveDrawerProps extends RouteProps {
 }
 
 interface IResponsiveDrawerState {
-  mobileOpen: boolean
+	mobileOpen: boolean
 }
 
 const PolicyText = styled('small')`
@@ -61,14 +64,17 @@ const ToolbarButton = styled(Button)`
 	}
 `
 
-const AdSenseLab = styled('div')`
-	position: fixed;
-	bottom: .5rem;
-	left: 1rem;
-	right: 1rem;
-	width: 90%;
-	height: 50px;
-	background-color: tomato;
+const AdSenseLab = styled('img')`
+	width: 100%;
+	&.horizontal {
+		position: fixed;
+		bottom: .5rem;
+		left: .5rem;
+		right: .5rem;
+		width: 95%;
+		height: 60px;
+		overflow: hidden;
+	}
 `
 
 const drawerWidth = 240;
@@ -124,18 +130,18 @@ const styles = (theme: Theme) => createStyles({
 
 class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResponsiveDrawerState> {
   public state = {
-    mobileOpen: false
+		mobileOpen: false
   };
 
-  public componentWillMount() {
+  public componentDidMount() {
     // Verify if exists an user session
-    AuthenticationService.listener()
-  }
+		AuthenticationService.listener()
+	}
 
   public logout = () => {
     // Close session
-    if(!AuthenticationService.logout()) {
-			this.props.history.push('/')
+    if(AuthenticationService.logout()) {
+			window.location.href='/'
 		}
   }
 
@@ -177,9 +183,11 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
   }
 
   public render() {
-    const { classes, theme, children } = this.props;
-    const { session } = AuthenticationService
+		const { classes, theme, children } = this.props;
+		const {session} = AuthenticationService
 		const mediaQuery = window.matchMedia("(min-width:700px)")
+		const user:IUser = store.getState().user
+
     const drawer = (
       <div>
         <div className={classes.toolbar}>
@@ -191,17 +199,21 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           </a>
         </div>
         <Divider />
-        <List>{NavItems}</List>
+        <List>{<NavItems session={session} />}</List>
         <Divider />
 				{
 					mediaQuery.matches
-					? <AdSense.Google
+					? <>
+						<AdSenseLab src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Or1h2Tt0Dt9eCf5q4Vq6Ei5bQL9mg-sTcym2BuDywMIZpMSq2w" />
+						{
+						/*<AdSense.Google
 							client='ca-pub-2740710281751996'
 							slot='1941182538'
 							style={{ display: 'block' }}
 							format='auto'
-							responsive='true'
-						/>
+							responsive='true' />
+						*/}
+					</>
 					: null
 				}
       </div>
@@ -212,7 +224,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         <AppBar className={classes.appBar}>
           <Toolbar>
             <Grid container={true}>
-              <Grid item={true} container={true} xs={6} alignItems="center">
+              <Grid item={true} container={true} xs={session ? 7 : 5} alignItems="center">
                 <IconButton
                   color="inherit"
                   aria-label="Open drawer"
@@ -225,13 +237,13 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
                   {this.handleAppBarTitle()}
                 </Typography>
               </Grid>
-              <Grid item={true} container={true} xs={6} justify="flex-end" alignItems="center">
+              <Grid item={true} container={true} xs={session ? 5 : 7} justify="flex-end" alignItems="center">
                 {
                   (session)
                     ? (
 										<>
-										<Username>{session.name}</Username>
-										<Avatar src={session.avatar} alt={session.name} onClick={this.logout}/>
+										<Username>{user.displayName}</Username>
+										<Avatar src={user.photoURL} alt={user.displayName} onClick={this.logout} style={{cursor: 'pointer'}} />
 										</>
 										)
                     : (
@@ -282,7 +294,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           </PolicyText>
 					{
 					!mediaQuery.matches
-					? <AdSenseLab />
+					? <AdSenseLab className="horizontal" src="https://previews.123rf.com/images/messer16/messer161705/messer16170500026/78201541-potato-chips-ads-vector-realistic-illustration-of-potato-chips-with-garlic-horizontal-banner-with-pr.jpg" />
 					: null
 					}
         </main>
@@ -291,4 +303,4 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
   }
 }
 
-export default withStyles(styles, { withTheme: true })(ResponsiveDrawer);
+export default withStyles(styles, { withTheme: true })(ResponsiveDrawer)

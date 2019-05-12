@@ -74,7 +74,7 @@ class Upload extends React.PureComponent<{}, IState> {
     const {level, category, folder, message} = this.state
     return (
       <Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">
-        <Grid item={true} container={true} xs={6}>
+        <Grid item={true} container={true} xs={12} md={6}>
           <Form onSubmit={this.submit}>
             <Grid item={true} xs={12}>
               <TextField

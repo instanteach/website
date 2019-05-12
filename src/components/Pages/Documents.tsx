@@ -4,11 +4,13 @@ import styled from 'styled-components'
 import ICollection from '../../interfaces/ICollection'
 import IDocument from '../../interfaces/IDocument'
 import DocumentsService from '../../services/DocumentsService'
+import store from '../../state/store';
 import DocumentCard from '../DocumentCard'
 import Folder from '../Folder'
 
 import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
+import TextField from '@material-ui/core/TextField';
 
 interface IChip {
 	key: number
@@ -27,8 +29,10 @@ interface IState {
 	clicked: boolean
 	collections: ICollection[]
 	documents: IDocument[]
+	filter: string
 	folders: string[]
 	path: IPath
+	user: any
 }
 
 const Chips = styled('div')`
@@ -57,11 +61,15 @@ class Documents extends React.Component<{}, IState> {
 		clicked: true,
 		collections: [],
 		documents: [],
+		filter: "",
 		folders: [],
 		path: {
 			category: null,
 			folder: null,
 			level: null
+		},
+		user: {
+			isAdmin: false
 		}
 	}
 
@@ -69,6 +77,10 @@ class Documents extends React.Component<{}, IState> {
 		const collections: ICollection[] = await DocumentsService.getDocumentsByGroup('level')
 
 		this.setState({ collections })
+	}
+
+	public async componentDidMount() {
+		this.setState({ user: store.getState().user })
 	}
 
 	public componentDidUpdate() {
@@ -137,7 +149,7 @@ class Documents extends React.Component<{}, IState> {
 	}
 
 	public renderFolders(): JSX.Element[] {
-		const { collections, categories, clicked, documents, path, folders } = this.state
+		const { collections, categories, clicked, documents, path, folders, user } = this.state
 
 		if (path.folder !== null) {
 			return documents.filter((document: IDocument) => document.folder === path.folder).map((document: IDocument, index: number): JSX.Element => {
@@ -148,6 +160,7 @@ class Documents extends React.Component<{}, IState> {
 						name={document.name}
 						type={document.type}
 						url={document.url}
+						menu={user.isAdmin}
 						clicked={clicked} />
 				)
 			})
@@ -165,7 +178,8 @@ class Documents extends React.Component<{}, IState> {
 							name={document.name}
 							type={document.type}
 							url={document.url}
-							clicked={clicked} />
+							clicked={clicked}
+							menu={user.isAdmin}/>
 					)
 				})
 			}
@@ -239,21 +253,37 @@ class Documents extends React.Component<{}, IState> {
 		this.removeElement(data)
 	}
 
+	public search = e => {
+		e.preventDefault()
+		this.setState({ filter: e.target.value })
+	}
+
 	public render(): JSX.Element {
-		const { chips } = this.state
+		const { chips, filter } = this.state
 		return (
 			<>
 				<Grid container={true} spacing={16}>
+				<Grid item={true} xs={12}>
+					<TextField
+						variant="outlined"
+						color="primary"
+						label="Search for a Lesson Plan"
+						value={filter}
+						fullWidth={true}
+						onChange={this.search} />
+				</Grid>
+				<Grid item={true} xs={12}>
 					<Chips>
-						{
-							chips.map((chip: IChip): JSX.Element => (
-								<Chip
-									key={chip.key}
-									label={chip.label.toUpperCase()}
-									onDelete={this.handleDelete(chip)} />
-							))
-						}
-					</Chips>
+							{
+								chips.map((chip: IChip): JSX.Element => (
+									<Chip
+										key={chip.key}
+										label={chip.label.toUpperCase()}
+										onDelete={this.handleDelete(chip)} />
+								))
+							}
+						</Chips>
+				</Grid>
 				</Grid>
 				<Grid container={true} spacing={16} style={gridStyles}>
 					{this.renderFolders()}

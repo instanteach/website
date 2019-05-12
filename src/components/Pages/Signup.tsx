@@ -10,9 +10,9 @@ import Typography from '@material-ui/core/Typography'
 import UserService from 'src/services/UserService'
 
 interface IState {
+	displayName:string
 	email:string
 	error:string
-	name:string
 	password:string
 	signed:boolean
 }
@@ -30,9 +30,9 @@ const gridStyles = {
 
 class Signup extends React.PureComponent<{}, IState> {
 	public state = {
+		displayName: "",
 		email: "",
 		error: " ",
-		name: "",
 		password: "",
 		signed: false
 	}
@@ -49,8 +49,8 @@ class Signup extends React.PureComponent<{}, IState> {
 		event.preventDefault()
 		const form = event.target
 		const data = {
+			displayName: form.displayName.value,
 			email: form.email.value,
-			name: form.name.value,
 			password: form.password.value
 		}
 		
@@ -60,7 +60,7 @@ class Signup extends React.PureComponent<{}, IState> {
 		}
 		
 		(async () =>{
-			const response = await UserService.createAccount(data)
+			const response = await UserService.register(data)
 			if(response.error) {
 				this.setState({ error: response.error })
 			}
@@ -71,7 +71,7 @@ class Signup extends React.PureComponent<{}, IState> {
 	}
 
 	public render() {
-		const {email, name, password, error, signed} = this.state
+		const {email, displayName, password, error, signed} = this.state
 		return (
 			<>
 			{
@@ -86,12 +86,12 @@ class Signup extends React.PureComponent<{}, IState> {
 						<Grid item={true} xs={12}>
 							<TextField
 								label="Full Name"
-								value={name}
-								name="name"
+								value={displayName}
+								name="displayName"
 								type="text"
 								variant="outlined"
 								required={true}
-								onChange={this.handleChange('name')}
+								onChange={this.handleChange('displayName')}
 								style={inputStyles} />
 						</Grid>
 						<Grid item={true} xs={12}>
@@ -113,7 +113,6 @@ class Signup extends React.PureComponent<{}, IState> {
 								type="password"
 								variant="outlined"
 								required={true}
-								minLength={6}
 								onChange={this.handleChange('password')}
 								style={inputStyles} />
 						</Grid>
