@@ -11,6 +11,8 @@ import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField'
 import CloseIcon from '@material-ui/icons/Close'
 
+import SocialButton from '../SocialButton'
+
 interface IState {
   auth: boolean
   email: string
@@ -150,24 +152,15 @@ class Login extends React.PureComponent<{}, IState> {
 										style={{ marginBottom: '1rem' }}>Log In</Button>
                 </Grid>
                 <Grid item={true} container={true} xs={12}>
-                  <Button
-										fullWidth={true}
-										size="large"
-										variant="outlined"
-										color="primary"
-										type="button"
+                  <SocialButton
+										as="facebook"
 										onClick={this.loginWithFacebook}
-										style={{ marginBottom: '1rem' }}>Login with Facebook</Button>
+										style={{ marginBottom: '1rem' }}>Login with Facebook</SocialButton>
                 </Grid>
                 <Grid item={true} container={true} xs={12}>
-                  <Button
-										fullWidth={true}
-										size="large"
-										variant="outlined"
-										color="primary"
-										type="button"
+                  <SocialButton
 										onClick={this.loginWithGoogle}
-										style={{ marginBottom: '1rem' }}>Login with Google</Button>
+										style={{ marginBottom: '1rem' }}>Login with Google</SocialButton>
                 </Grid>
             </form>
           </Grid>

@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
+import SocialButton from '../SocialButton'
 
 import AuthenticationService from '../../services/AuthenticationService'
 import UserService from '../../services/UserService'
@@ -95,6 +96,26 @@ class Signup extends React.PureComponent<{}, IState> {
 		this.unsubscribe()
 	}
 
+	public loginWithFacebook = () => {
+		(async () => {
+			const auth = await AuthenticationService.loginWithFacebook()
+		
+			this.setState({
+				signed: auth
+			})
+		})()
+	}
+
+	public loginWithGoogle = () => {
+		(async () => {
+			const auth = await AuthenticationService.loginWithGoogle()
+		
+			this.setState({
+				signed: auth
+			})
+		})()
+	}
+
 	public render() {
 		const {email, displayName, password, error, signed, session} = this.state
 
@@ -106,7 +127,7 @@ class Signup extends React.PureComponent<{}, IState> {
 				: null
 			}
 			<Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">
-				<Grid item={true} container={true} xs={12} md={6}>
+				<Grid item={true} container={true} xs={12} md={4}>
 				<Typography paragraph={true} color="error">{error}</Typography>
 					<Form onSubmit={this.signup}>
 						<Grid item={true} xs={12}>
@@ -142,8 +163,19 @@ class Signup extends React.PureComponent<{}, IState> {
 								onChange={this.handleChange('password')}
 								style={inputStyles} />
 						</Grid>
-						<Grid item={true} container={true} xs={12} justify="flex-end">
-							<Button size="medium" variant="contained" color="primary" type="submit">Create Account</Button>
+						<Grid item={true} container={true} xs={12}>
+							<Button size="large" variant="contained" color="primary" type="submit" fullWidth={true} style={{ marginBottom: '1rem' }}>Create Account</Button>
+						</Grid>
+						<Grid item={true} container={true} xs={12}>
+							<SocialButton
+								as="facebook"
+								onClick={this.loginWithFacebook}
+								style={{ marginBottom: '1rem' }}>Sign up with Facebook</SocialButton>
+						</Grid>
+						<Grid item={true} container={true} xs={12}>
+							<SocialButton
+								onClick={this.loginWithGoogle}
+								style={{ marginBottom: '1rem' }}>Sign up with Google</SocialButton>
 						</Grid>
 					</Form>
 				</Grid>
