@@ -41,7 +41,7 @@ const Routes = (props: any) => (
       <DefaultLayout path="/signup" component={<Signup />} />
       
 			<PrivateLayout path="/classroom/:id" component={<Classroom match={{}} />} />
-			<PrivateLayout path="/classrooms" component={<Classrooms />} />
+			<PrivateLayout path="/my-students" component={<Classrooms />} />
 			
 			<ProtectedLayout path="/upload" component={<Upload />} />
       <ProtectedLayout path="/users" component={<UserList />} />

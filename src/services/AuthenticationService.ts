@@ -2,7 +2,7 @@ import * as firebase from 'firebase'
 import IUser from '../interfaces/IUser'
 import UserService from './UserService'
 
-import {setUserData} from '../state/creator'
+import {destroySession, setSessionData, setUserData} from '../state/creator'
 import store from '../state/store'
 
 class AuthenticationService {
@@ -17,7 +17,7 @@ class AuthenticationService {
 			if (signIn.user) {
 				const userSynchronized:IUser = await UserService.syncAccountWithProvider(signIn.user)
 				AuthenticationService.session = signIn.user
-				await this.ss(userSynchronized)
+				await this.ss(userSynchronized, signIn.user)
 				return true
 			}
 			return false
@@ -39,11 +39,11 @@ class AuthenticationService {
 				const user:any = await UserService.getByEmail(signIn.user.email)
 				if(user) {
 					const userSynchronized:IUser = await UserService.syncAccountWithProvider(signIn.user, platform)
-					await this.ss(userSynchronized)
+					await this.ss(userSynchronized, signIn.user)
 				}
 				else {
 					const newUser:IUser = await UserService.createAccount(signIn.user, platform)
-					await this.ss(newUser)
+					await this.ss(newUser, signIn.user)
 				}
 				return true
 			}
@@ -66,13 +66,12 @@ class AuthenticationService {
 				AuthenticationService.session = signIn.user
 				const user:any = await UserService.getByEmail(signIn.user.email)
 				if(user) {
-					console.log(user)
 					const userSynchronized:IUser = await UserService.syncAccountWithProvider(signIn.user, platform)
-					await this.ss(userSynchronized)
+					await this.ss(userSynchronized, signIn.user)
 				}
 				else {
 					const newUser:IUser = await UserService.createAccount(signIn.user, platform)
-					await this.ss(newUser)
+					await this.ss(newUser, signIn.user)
 				}
 				return true
 			}
@@ -86,29 +85,37 @@ class AuthenticationService {
 
 	public static listener()
 	{
+		let session
+		console.log('Listening')
 		firebase.auth().onAuthStateChanged(user => {	
 			(async () => {
 				if (user) {
 					const u:IUser = await UserService.get(user.uid)
-					await this.ss(u)
-					AuthenticationService.session = {
-						...user,
-						...u
+					session = {
+						emailVerified: user.emailVerified,
+						photoURL: user.photoURL,
+						refreshToken: user.refreshToken,
+						...u,
+						uid: user.uid
 					}
+					await this.ss(u, session)
+					AuthenticationService.session = session
 				}
 				else {
-					AuthenticationService.session = null
+					session = null
+					AuthenticationService.session = session
 				}
 			})();
 		})
 
-		return AuthenticationService.session
+		return session
 	}
 
 	public static async logout()
 	{
 		const auth = await firebase.auth()
 		await auth.signOut()
+		store.dispatch(destroySession())
 		localStorage.clear()
 		sessionStorage.clear()
 		AuthenticationService.session = null
@@ -116,11 +123,18 @@ class AuthenticationService {
 		return true
 	}
 
-	private static ss(user:IUser): void
+	private static ss(user:IUser, session=null): void
 	{	
+		const sessionState = store.getState().session
 		if(user) {
 			store.dispatch(setUserData(user))
+			store.dispatch(setSessionData(session))
 			localStorage.setItem('user', JSON.stringify(user))
+			localStorage.setItem('session', JSON.stringify(session))
+		}
+		if(session && sessionState === null) {
+			store.dispatch(setSessionData(session))
+			localStorage.setItem('session', JSON.stringify(session))
 		}
 	}
 }

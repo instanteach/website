@@ -33,12 +33,14 @@ interface IResponsiveDrawerProps extends RouteProps {
 
 interface IResponsiveDrawerState {
 	mobileOpen: boolean
+	session: any
 }
 
 const PolicyText = styled('small')`
   position: relative;
   bottom: 0;
-  text-align: center;
+	text-align: center;
+	font-size: .75rem;
 `
 
 const Username = styled('span')`
@@ -130,19 +132,29 @@ const styles = (theme: Theme) => createStyles({
 
 class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResponsiveDrawerState> {
   public state = {
-		mobileOpen: false
-  };
+		mobileOpen: false,
+		session: null
+	};
+	
+	public unsubscribe: any;
+
+	public componentWillMount() {
+		// Verify if exists an user session
+		AuthenticationService.listener()
+	}
 
   public componentDidMount() {
-    // Verify if exists an user session
-		AuthenticationService.listener()
+		const {session} = this.state
+		const s = store.getState().session
+		if(s && s !== session) {
+			this.setState({ session: s })
+		}
 	}
 
   public logout = () => {
     // Close session
-    if(AuthenticationService.logout()) {
-			window.location.href='/'
-		}
+		AuthenticationService.logout()
+		window.location.href = "/"
   }
 
   public handleDrawerToggle = () => {
@@ -173,18 +185,22 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 					return 'Sign up'
 				case '/users':
 					return 'Users'
-				case '/classrooms':
-					return 'Classrooms'
+				case '/my-students':
+					return 'My Students'
 				case '/classroom':
 					return 'Classroom'
       }
     }
     return ''
-  }
+	}
+	
+	public handleCloseDrawer = event => {
+		this.handleDrawerToggle()
+	}
 
   public render() {
 		const { classes, theme, children } = this.props;
-		const {session} = AuthenticationService
+		const {session} = this.state
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 		const user:IUser = store.getState().user
 
@@ -199,7 +215,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           </a>
         </div>
         <Divider />
-        <List>{<NavItems session={session} />}</List>
+        <List>{<NavItems session={session} onClick={this.handleCloseDrawer} />}</List>
         <Divider />
 				{
 					mediaQuery.matches

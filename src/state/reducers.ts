@@ -54,6 +54,14 @@ export default {
 				return state
 		}
 	},
+	session: (state:any =localStorage.getItem('session') ? JSON.parse(localStorage.session) : null, action:IAction) => {
+		switch(action.type) {
+			case ACTIONS.SET_SESSION:
+				return action.payload
+			default:
+				return state
+		}
+	},
 	user: (state:IUser=localStorage.user ? JSON.parse(localStorage.user) : initUser, action:IAction) => {
 		switch(action.type) {
 			case ACTIONS.SET_USER:

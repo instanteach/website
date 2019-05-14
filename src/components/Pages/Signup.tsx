@@ -7,7 +7,9 @@ import Grid from '@material-ui/core/Grid'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 
-import UserService from 'src/services/UserService'
+import AuthenticationService from '../../services/AuthenticationService'
+import UserService from '../../services/UserService'
+import store from '../../state/store'
 
 interface IState {
 	displayName:string
@@ -15,6 +17,7 @@ interface IState {
 	error:string
 	password:string
 	signed:boolean
+	session:any
 }
 
 const Form = styled('form')`
@@ -34,7 +37,25 @@ class Signup extends React.PureComponent<{}, IState> {
 		email: "",
 		error: " ",
 		password: "",
+		session:null,
 		signed: false
+	}
+
+	public unsubscribe: any;
+
+	public componentWillMount() {
+		// Verify if exists an user session
+		AuthenticationService.listener()
+	}
+
+	public componentDidMount() {
+		const {session} = this.state
+		this.unsubscribe = store.subscribe(() => {
+			const s = store.getState().session
+			if(s && s !== session) {
+				this.setState({ session: s })
+			}
+		})
 	}
 
 	public handleChange = name => event => {
@@ -70,17 +91,22 @@ class Signup extends React.PureComponent<{}, IState> {
 		})()
 	}
 
+	public componentWillUnmount() {
+		this.unsubscribe()
+	}
+
 	public render() {
-		const {email, displayName, password, error, signed} = this.state
+		const {email, displayName, password, error, signed, session} = this.state
+
 		return (
 			<>
 			{
-				signed
+				signed || session
 				? <Redirect to="/login" />
 				: null
 			}
 			<Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">
-				<Grid item={true} container={true} xs={6}>
+				<Grid item={true} container={true} xs={12} md={6}>
 				<Typography paragraph={true} color="error">{error}</Typography>
 					<Form onSubmit={this.signup}>
 						<Grid item={true} xs={12}>

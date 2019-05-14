@@ -1,5 +1,6 @@
 import * as React from 'react'
 import {Redirect} from 'react-router-dom'
+import store from '../../state/store'
 
 import AuthenticationService from '../../services/AuthenticationService'
 
@@ -14,7 +15,8 @@ interface IState {
   auth: boolean
   email: string
   error: boolean
-  password: string
+	password: string
+	session: any
 }
 
 const gridStyles = {
@@ -31,13 +33,26 @@ class Login extends React.PureComponent<{}, IState> {
     auth: false,
     email: "",
     error: false,
-    password: ""
-  }
+		password: "",
+		session: null
+	}
+	
+	public unsubscribe: any;
 
-  public componentWillMount() {
-    // Verify if exists an user session
-    AuthenticationService.listener()
-  }
+	public componentWillMount() {
+		// Verify if exists an user session
+		AuthenticationService.listener()
+	}
+
+  public componentDidMount() {
+		const {session} = this.state
+		this.unsubscribe = store.subscribe(() => {
+			const s = store.getState().session
+			if(s && s !== session) {
+				this.setState({ session: s })
+			}
+		})
+	}
 
   public handleChange = name => event => {
     this.setState({
@@ -88,14 +103,18 @@ class Login extends React.PureComponent<{}, IState> {
     this.setState({
       error: false
     })
-  }
+	}
+
+	public componentWillUnmount() {
+		this.unsubscribe()
+	}
 
   public render() {
-    const {auth, email, error, password} = this.state
-    const {session} = AuthenticationService
+		const {email, auth, error, password, session} = this.state
+
     return (
       (session || auth)
-      ? <Redirect to="/classrooms" />
+      ? <Redirect to="/my-students" />
       : (
         <>
         <Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">

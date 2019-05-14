@@ -37,7 +37,7 @@ class UserService {
 		try {
 			const sign = await auth.createUserWithEmailAndPassword(data.email, data.password)
 			if(sign.user) {
-				await UserService.createAccount(sign.user)
+				await UserService.createAccount({...sign.user, displayName: data.displayName})
 				response.userId = sign.user.uid
 			}
 		}
@@ -63,7 +63,7 @@ class UserService {
 			email: data.email,
 			emailVerified: data.emailVerified ? data.emailVerified : false,
 			isAdmin: false,
-			photoURL: data.photoURL ? data.photoURL : 'http://www.redfarmoquimicos.mx/wp-content/uploads/2016/10/USER.png',
+			photoURL: createnWith === "none" ? 'http://www.redfarmoquimicos.mx/wp-content/uploads/2016/10/USER.png' : data.photoURL,
 			uid: data.uid,
 		}
 

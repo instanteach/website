@@ -5,6 +5,15 @@ import ICollection from '../interfaces/ICollection';
 import IMaterial from '../interfaces/IMaterial';
 import IUser from '../interfaces/IUser';
 
+export const setSessionData = (payload:any) => ({
+	payload,
+	type: ACTIONS.SET_SESSION
+})
+
+export const destroySession = () => ({
+	type: ACTIONS.SESSION_DESTROY
+})
+
 export const setUserData = (payload:IUser) => ({
 	payload,
 	type: ACTIONS.SET_USER
