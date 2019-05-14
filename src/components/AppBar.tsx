@@ -12,7 +12,9 @@ import List from '@material-ui/core/List';
 import { createStyles, withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
+import PeopleIcon from '@material-ui/icons/People'
 import * as React from 'react';
 // import AdSense from 'react-adsense';
 import { RouteProps } from 'react-router';
@@ -32,6 +34,7 @@ interface IResponsiveDrawerProps extends RouteProps {
 }
 
 interface IResponsiveDrawerState {
+	menuUserIsOpen: boolean
 	mobileOpen: boolean
 	session: any
 }
@@ -76,6 +79,45 @@ const AdSenseLab = styled('img')`
 		width: 95%;
 		height: 60px;
 		overflow: hidden;
+	}
+`
+
+const MenuUser = styled('ul')`
+	position: absolute;
+	display: none;
+	right: 1rem;
+	top: 3.5rem;
+	width: 50%;
+	max-width: 200px;
+	border-radius: 0 0 4px 4px;
+	background: white;
+	color: black;
+	border: 1px solid #d7d7d7;
+	list-style: none;
+	border-top: 0;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+	box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+	li {
+		display: flex;
+		padding: .75rem;
+		margin: 0;
+		font-size: .9rem;
+		align-items: center;
+		img, svg {
+			width: 15px;
+			margin-right: .5rem;
+		}
+		&:hover {
+			background-color: #eee;
+		}
+	}
+	&.show {
+		display: block;
+	}
+	@media screen and (min-width: 600px) {
+		top: 4rem;
 	}
 `
 
@@ -132,6 +174,7 @@ const styles = (theme: Theme) => createStyles({
 
 class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResponsiveDrawerState> {
   public state = {
+		menuUserIsOpen: false,
 		mobileOpen: false,
 		session: null
 	};
@@ -151,8 +194,13 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 		}
 	}
 
+	public toggleMenuUser = (event) => {
+		event.preventDefault()
+		this.setState({ menuUserIsOpen: !this.state.menuUserIsOpen })
+	}
+
   public logout = () => {
-    // Close session
+		// Close session
 		AuthenticationService.logout()
 		window.location.href = "/"
   }
@@ -200,7 +248,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 
   public render() {
 		const { classes, theme, children } = this.props;
-		const {session} = this.state
+		const {session, menuUserIsOpen} = this.state
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 		const user:IUser = store.getState().user
 
@@ -259,7 +307,12 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
                     ? (
 										<>
 										<Username>{user.displayName}</Username>
-										<Avatar src={user.photoURL} alt={user.displayName} onClick={this.logout} style={{cursor: 'pointer'}} />
+										<Avatar src={user.photoURL} alt={user.displayName} onClick={this.toggleMenuUser} style={{cursor: 'pointer'}} />
+										<MenuUser className={`${menuUserIsOpen ? 'show' : ''}`} onClick={this.toggleMenuUser}>
+											<li><PeopleIcon /> Profile</li>
+											<Divider />
+											<li onClick={this.logout}><CloseIcon /> Sign Out</li>
+										</MenuUser>
 										</>
 										)
                     : (
