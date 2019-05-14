@@ -5,5 +5,5 @@ export default interface IDocument {
     category: string
     folder: string
     type: string
-    url: string
+		url: string
 }

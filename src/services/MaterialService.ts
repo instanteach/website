@@ -51,19 +51,41 @@ class MaterialService {
 		return response
 	}
 
-	public static async assign(classroomId:string, data:IDocument) {
-		const response = {materialId:"", data:{...data, materialId: data.id, classroomId}, error:""}
+	public static async assign(classroomId:string, userId:string, data:IDocument) {
+		const response = {materialId:"", data:{classroomId, document: data, isNew: true, materialId: data.id, userId}, error:""}
 		try {
 			const database = firebase.firestore()
 			const material = await database.collection('materials').add({
 				classroomId,
-				materialId: data.id
+				isNew: true,
+				materialId: data.id,
+				userId
 			})
 
 			response.materialId = material.id
 		}
 		catch(e) {
 			response.error = e.message
+		}
+
+		return response
+	}
+
+	public static async read(materialId)
+	{
+		const response = {materialId:"", error:""}
+		try {
+			const database = firebase.firestore()
+			const material = await database.collection('materials').doc(materialId)
+			if(material) {
+				material.update({
+					isNew: false
+				})
+				response.materialId = materialId
+			}
+		}
+		catch (e) {
+			response.error = e
 		}
 
 		return response

@@ -16,9 +16,10 @@ import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import DeleteIcon from '@material-ui/icons/Delete'
 import DocumentsService from '../services/DocumentsService'
+import MaterialService from '../services/MaterialService'
 
 import IDocument from '../interfaces/IDocument'
-import store from '../state/store';
+import store from '../state/store'
 
 interface IState {
 	url: string
@@ -35,17 +36,38 @@ interface IProps {
 	type: string
 	url: string
 	size?: any
+	isNew?: boolean
 	onClick?: any
 	document?:IDocument
+	materialId?: string
+	userId?: string
 }
 
 const Card = styled('div')`
+	position:relative;
 	display: flex;
 	flex-flow: row nowrap;
 	box-shadow: 1px 2px 1px rgba(0,0,0,.2);
 	border-radius: 4px;
 	overflow: hidden;
 	cursor: pointer;
+	&.is_new {
+		&::before {
+			content: "NEW";
+			position: absolute;
+			top: 0;
+			right: -2rem;
+			padding: .7rem;
+			width: 100px;
+			color: white;
+			text-align: center;
+			background-color: #4CAF50;
+			z-index: 10;
+			transform: rotate(45deg);
+			font-size: .8rem;
+			box-shadow: 0 0 20px 0px #8BC34A;
+		}
+	}
 `
 
 const CardTypeFile = styled('div')`
@@ -114,7 +136,16 @@ class DocumentCard extends React.Component<IProps, IState> {
 	}
 
 	public async componentDidMount() {
-		const { url } = this.props
+		const { url, materialId, isNew, userId } = this.props
+
+		if(isNew) {
+			if(userId === store.getState().user.id) {
+				await MaterialService.read(materialId)
+			}
+			else {
+				console.log("Unauthorized")
+			}
+		}
 
 		DocumentsService.download(url).then(response => {
 			this.setState({
@@ -140,7 +171,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 	}
 
 	public render(): JSX.Element {
-		const { clicked, type, name, id, size=6, linked=true, menu=false } = this.props
+		const { clicked, type, name, id, size=6, linked=true, menu=false, isNew=false } = this.props
 		const { url, isOpen, isRemoved } = this.state
 		const user = store.getState().user
 		return (
@@ -151,7 +182,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 						? linked 
 							? (
 								<LinkButton to={`/document/${id}`} style={{display: isRemoved ? 'none' : 'auto'}}>
-									<Card>
+									<Card className={`${isNew ? 'is_new' : ''}`}>
 										<CardTypeFile style={{color: 'white', fontSize: 0}}>
 											<PDFcontainer item={true} xs={12}>
 												<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
@@ -160,10 +191,10 @@ class DocumentCard extends React.Component<IProps, IState> {
 											</PDFcontainer>
 										</CardTypeFile>
 										<CardContent>
-											<Typography variant="subheading" component="h3">{name} {menu ? 1 : 0}</Typography>
+											<Typography variant="subheading" component="h3">{name}</Typography>
 										</CardContent>
 										{
-											user.isAdmin
+											menu && user.isAdmin
 											? (
 												<MenuButton onClick={this.toggleConfirmationModal}>
 														<DeleteIcon />
@@ -174,7 +205,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 								</LinkButton>
 							)
 							: (
-								<Card>
+								<Card className={`${isNew ? 'is_new' : ''}`}>
 									<CardTypeFile style={{color: 'white', fontSize: 0}}>
 										<PDFcontainer item={true} xs={12}>
 											<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
@@ -190,7 +221,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 						: linked
 							? (
 								<DownloadButton href={url} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
-									<Card>
+									<Card className={`${isNew ? 'is_new' : ''}`}>
 										{
 										<CardTypeFile style={
 										(type === 'doc' || type === 'docx')
@@ -206,7 +237,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 											<Typography variant="subheading" component="h3">{name}</Typography>
 										</CardContent>
 										{
-											user.isAdmin
+											menu && user.isAdmin
 											? (
 												<MenuButton onClick={this.toggleConfirmationModal}>
 														<DeleteIcon />
@@ -217,7 +248,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 								</DownloadButton>
 							)
 							: (
-								<Card>
+								<Card className={`${isNew ? 'is_new' : ''}`}>
 									{
 									<CardTypeFile style={
 									(type === 'doc' || type === 'docx')
