@@ -10,7 +10,7 @@ import Folder from '../Folder'
 
 import Chip from '@material-ui/core/Chip'
 import Grid from '@material-ui/core/Grid'
-import TextField from '@material-ui/core/TextField';
+import Search from '../Search'
 
 interface IChip {
 	key: number
@@ -29,6 +29,7 @@ interface IState {
 	clicked: boolean
 	collections: ICollection[]
 	documents: IDocument[]
+	documentsFromDB: IDocument[]
 	filter: string
 	folders: string[]
 	path: IPath
@@ -61,6 +62,7 @@ class Documents extends React.Component<{}, IState> {
 		clicked: true,
 		collections: [],
 		documents: [],
+		documentsFromDB: [],
 		filter: "",
 		folders: [],
 		path: {
@@ -75,8 +77,9 @@ class Documents extends React.Component<{}, IState> {
 
 	public async componentWillMount() {
 		const collections: ICollection[] = await DocumentsService.getDocumentsByGroup('level')
+		const documentsFromDB: IDocument[] = await DocumentsService.getlAllDocuments()
 
-		this.setState({ collections })
+		this.setState({ collections, documentsFromDB })
 	}
 
 	public async componentDidMount() {
@@ -148,29 +151,11 @@ class Documents extends React.Component<{}, IState> {
 		})
 	}
 
-	public renderFolders(): JSX.Element[] {
-		const { collections, categories, clicked, documents, path, folders, user } = this.state
-
-		if (path.folder !== null) {
-			return documents.filter((document: IDocument) => document.folder === path.folder).map((document: IDocument, index: number): JSX.Element => {
-				return (
-					<DocumentCard
-						key={index}
-						id={document.id}
-						name={document.name}
-						type={document.type}
-						url={document.url}
-						menu={user.isAdmin}
-						clicked={clicked} />
-				)
-			})
-		}
-		else if (path.category !== null) {
-			if (folders.length > 0) {
-				return folders.map((folder: string, index: number): JSX.Element => <Folder key={index} name={folder} clicked={clicked} onClick={this.handleFolder} />)
-			}
-			else {
-				return documents.map((document: IDocument, index: number): JSX.Element => {
+	public renderFolders(): JSX.Element[] | any {
+		const { collections, categories, clicked, documents, documentsFromDB, path, folders, user, filter } = this.state
+		if(filter.length > 2) {
+			return documentsFromDB.map((document: IDocument, index:number) => {
+				if(document.name.toLowerCase().search(filter.toLowerCase()) !== -1) {
 					return (
 						<DocumentCard
 							key={index}
@@ -178,21 +163,58 @@ class Documents extends React.Component<{}, IState> {
 							name={document.name}
 							type={document.type}
 							url={document.url}
-							clicked={clicked}
-							menu={user.isAdmin}/>
+							menu={user.isAdmin}
+							clicked={clicked} />	
+					)
+				}
+				else {
+					return null
+				}
+			})
+		} else {
+			if (path.folder !== null) {
+				return documents.filter((document: IDocument) => document.folder === path.folder).map((document: IDocument, index: number): JSX.Element => {
+					return (
+						<DocumentCard
+							key={index}
+							id={document.id}
+							name={document.name}
+							type={document.type}
+							url={document.url}
+							menu={user.isAdmin}
+							clicked={clicked} />
 					)
 				})
 			}
-		}
-		else if (path.level !== null) {
-			return categories.map((name: string, index: number) => (
-				<Folder key={index} name={name} clicked={clicked} onClick={this.handleCategory} />
-			))
-		}
-		else {
-			return collections.map((collection: ICollection, index: number) => (
-				<Folder key={index} name={collection.group} clicked={clicked} onClick={this.handleLevel} />
-			))
+			else if (path.category !== null) {
+				if (folders.length > 0) {
+					return folders.map((folder: string, index: number): JSX.Element => <Folder key={index} name={folder} clicked={clicked} onClick={this.handleFolder} />)
+				}
+				else {
+					return documents.map((document: IDocument, index: number): JSX.Element => {
+						return (
+							<DocumentCard
+								key={index}
+								id={document.id}
+								name={document.name}
+								type={document.type}
+								url={document.url}
+								clicked={clicked}
+								menu={user.isAdmin}/>
+						)
+					})
+				}
+			}
+			else if (path.level !== null) {
+				return categories.map((name: string, index: number) => (
+					<Folder key={index} name={name} clicked={clicked} onClick={this.handleCategory} />
+				))
+			}
+			else {
+				return collections.map((collection: ICollection, index: number) => (
+					<Folder key={index} name={collection.group} clicked={clicked} onClick={this.handleLevel} />
+				))
+			}
 		}
 	}
 
@@ -264,16 +286,13 @@ class Documents extends React.Component<{}, IState> {
 			<>
 				<Grid container={true} spacing={16}>
 				<Grid item={true} xs={12}>
-					<TextField
-						variant="outlined"
-						color="primary"
-						label="Search for a Lesson Plan"
-						value={filter}
-						fullWidth={true}
-						onChange={this.search} />
+					<Search value={filter} placeholder="Search something" onChange={this.search} />
 				</Grid>
 				<Grid item={true} xs={12}>
-					<Chips>
+					{
+						filter.length <= 2
+						? (
+						<Chips>
 							{
 								chips.map((chip: IChip): JSX.Element => (
 									<Chip
@@ -283,6 +302,8 @@ class Documents extends React.Component<{}, IState> {
 								))
 							}
 						</Chips>
+						) : <br />
+					}
 				</Grid>
 				</Grid>
 				<Grid container={true} spacing={16} style={gridStyles}>
