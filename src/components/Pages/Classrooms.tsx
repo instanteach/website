@@ -5,11 +5,12 @@ import styled from 'styled-components'
 import {Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent,
 	DialogContentText, DialogTitle, Grid, TextField, Typography} from '@material-ui/core'
 
+import IClassroom from '../../interfaces/IClassroom'
 import ClassroomService from '../../services/ClassroomService'
 import UserService from '../../services/UserService'
 
 interface IState {
-	classrooms:Promise<object[]> | object[],
+	classrooms:IClassroom[],
 	forbidden:boolean
 	open:boolean
 	user:{}
@@ -34,15 +35,15 @@ class Classrooms extends React.Component<IProps, IState> {
 		open: false,
 		user:{
 			avatar: "",
+			displayName: "",
 			email: "",
-			isAdmin: false,
-			name: ""
+			isAdmin: false
 		}
 	}
 
 	public componentDidMount() {
 		const {history, session} = this.props
-		if(history.location.pathname.includes('/classrooms/user/')) {
+		if(history.location.pathname.includes('/my-students/user/')) {
 			if(!session.isAdmin) {
 				this.setState({ forbidden: true })
 				return
@@ -51,7 +52,7 @@ class Classrooms extends React.Component<IProps, IState> {
 				(async () => {
 					const pathname = history.location.pathname.split('/')
 					const userId = pathname[3]
-					const classrooms = await ClassroomService.getByUserId(userId)
+					const classrooms: IClassroom[] = await ClassroomService.getByUserId(userId)
 					const user = await UserService.get(userId)
 					this.setState({ classrooms, user: user ? user : {} })
 				})()
@@ -73,6 +74,8 @@ class Classrooms extends React.Component<IProps, IState> {
 	public createClassroom = event => {
 		(async () => {
 			event.preventDefault()
+			const {classrooms} = this.state
+			let classroom: any
 			const {session} = this.props
 			const form = event.target
 			const data = {
@@ -81,7 +84,16 @@ class Classrooms extends React.Component<IProps, IState> {
 				students: form.students.value,
 				userId:session.uid
 			}
-			await ClassroomService.create(data)
+			const response = await ClassroomService.create(data)
+
+			console.log(response)
+
+			if(response.error === "") {
+				classroom = response.data
+				const arr:IClassroom[] = [classroom, ...classrooms]
+
+				this.setState({ open: false, classrooms: arr })
+			}
 			this.setState({ open: false })
 		})()
 	}
@@ -89,28 +101,35 @@ class Classrooms extends React.Component<IProps, IState> {
 	public render() {
 		const {classrooms, forbidden, open, user} = this.state
 		const {history, session} = this.props
+		const mediaQuery = window.matchMedia("(min-width:700px)")
 
 		return (
 			<>
-			<Grid container={true}>
+			<Grid container={true} style={{minHeight: '75vh', flexDirection: 'column', alignItems: 'flex-start'}}>
 			{
 				forbidden
 				? <Grid item={true}><Typography>You don't have permissions to be here.</Typography></Grid>
 				: (
 					<>
 					<Grid container={true} item={true} alignItems="center">
-						<Grid container={true} item={true} xs={6}>
+						<Grid container={true} item={true} xs={8} md={10}>
 						{
-							session.isAdmin && history.location.pathname.includes('/classrooms/user/')
-							? <Typography variant="title">Classroom's {user.name}</Typography>
+							session.isAdmin && history.location.pathname.includes('/my-students/user/')
+							? <Typography variant="title">Classroom's {user.displayName}</Typography>
 							: <Typography variant="title">Your classrooms</Typography>
 						}
 						</Grid>
 						{
-							!history.location.pathname.includes('/classrooms/user/')
+							!history.location.pathname.includes('/my-students/user/')
 							? (
-								<Grid container={true} item={true} xs={6} justify="flex-end">
-									<Button variant="raised" color="primary" onClick={this.handleClose}>New Classroom</Button>
+								<Grid container={true} item={true} xs={4} md={2} justify="flex-end">
+									<Button variant="raised" color="primary" fullWidth={true} onClick={this.handleClose}>
+									{
+										mediaQuery.matches
+										? 'New Classroom'
+										: 'Add'
+									}
+									</Button>
 								</Grid>
 							) : null
 						}
@@ -120,7 +139,8 @@ class Classrooms extends React.Component<IProps, IState> {
 						classrooms.length === 0
 						? (
 							<>
-							<Grid item={true} xs={true}>
+							<Grid item={true}>
+								<br />
 								<Typography>There aren't classrooms yet</Typography>
 								<br />
 								<br />

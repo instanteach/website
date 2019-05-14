@@ -7,6 +7,7 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import DocumentCard from '../DocumentCard'
 
 import IDocument from '../../interfaces/IDocument'
+import IMaterial from '../../interfaces/IMaterial'
 
 import ClassroomService from '../../services/ClassroomService'
 import DocumentsService from '../../services/DocumentsService'
@@ -82,7 +83,7 @@ class Classroom extends React.Component<IProps, IState> {
 			const classroomId = match.params.id
 			const classroom = await ClassroomService.get(classroomId)
 			const user = await UserService.get(classroom.userId)
-			const materialsDB = await MaterialService.getByClassroomId(classroomId)
+			const materialsOfTheClassroom = await MaterialService.getByClassroomId(classroomId)
 			const repository:IDocument[] = await DocumentsService.getlAllDocuments()
 
 			if(classroom.userId !== session.uid && !session.isAdmin) {
@@ -90,10 +91,10 @@ class Classroom extends React.Component<IProps, IState> {
 				return
 			}
 
-			materialsDB.map((materialDB:any) => {
+			materialsOfTheClassroom.map((material:IMaterial) => {
 				repository.map((mR:IDocument) => {
-					if(materialDB.materialId === mR.id) {
-						materials.push(mR)
+					if(material.materialId === mR.id) {
+						materials.push({...material, document: mR})
 						classroomDocuments.push(mR.id)
 					}
 				})
@@ -124,15 +125,16 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public assignMaterialToClassroom = () => {
 		(async () => {
-			const {classroomDocuments, documentSelected, materials} = this.state
+			const {classroom, classroomDocuments, documentSelected, materials} = this.state
 			const {match} = this.props
-			const material = await MaterialService.assign(match.params.id, documentSelected)
+			const material = await MaterialService.assign(match.params.id, classroom.userId, documentSelected)
 			if(material.error === "") {
 				this.setState({
 					classroomDocuments: classroomDocuments.concat(material.data.materialId),
 					materials: materials.concat(material.data),
 					openAssignMaterial: false,
-					select: false })
+					select: false
+				})
 			}
 		})()
 	}
@@ -177,14 +179,19 @@ class Classroom extends React.Component<IProps, IState> {
 				</Grid>
 				<Grid container={true} item={true} xs={12} spacing={16} style={gridStyles}>
 				{
-					materials.map((material: IDocument,index:number): JSX.Element => (
-						<DocumentCard
-							key={index}
-							id={material.id}
-							name={material.name}
-							type={material.type}
-							url={material.url}
-							clicked={true} />
+					materials.map((material: IMaterial,index:number) => (
+						material.document
+						? <DocumentCard
+								key={index}
+								id={material.document.id}
+								name={material.document.name}
+								type={material.document.type}
+								url={material.document.url}
+								isNew={material.isNew}
+								materialId={material.id}
+								userId={material.userId}
+								clicked={true} />
+						: null
 					))
 				}
 				</Grid>
