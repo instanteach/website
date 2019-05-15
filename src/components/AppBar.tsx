@@ -39,6 +39,18 @@ interface IResponsiveDrawerState {
 	session: any
 }
 
+const Content = styled('div')`
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	min-height: 80vh;
+	@media screen and (min-width: 600px) {
+		min-height: 550px;
+	}
+`
+
 const PolicyText = styled('small')`
   position: relative;
   bottom: 0;
@@ -356,11 +368,13 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
         </Hidden>
         <main className={classes.content}>
           <div className={classes.toolbar} />
+					<Content>
           {children}
           <PolicyText>
             Just so you know, your use of this site,
             in any and all forms, constitutes an acceptance of Instanteach’s <Link to="/privacy-policy">Privacy Policy.</Link>
           </PolicyText>
+					</Content>
 					{
 					!mediaQuery.matches
 					? <AdSenseLab className="horizontal" src="https://previews.123rf.com/images/messer16/messer161705/messer16170500026/78201541-potato-chips-ads-vector-realistic-illustration-of-potato-chips-with-garlic-horizontal-banner-with-pr.jpg" />

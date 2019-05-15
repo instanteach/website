@@ -48,11 +48,6 @@ const Chips = styled('div')`
 	}
 `
 
-const gridStyles = {
-	alignContent: 'flex-start',
-	minHeight: '85%'
-}
-
 class Documents extends React.Component<{}, IState> {
 	public state = {
 		categories: [],
@@ -283,8 +278,7 @@ class Documents extends React.Component<{}, IState> {
 	public render(): JSX.Element {
 		const { chips, filter } = this.state
 		return (
-			<>
-				<Grid container={true} spacing={16}>
+			<Grid container={true} spacing={16}>
 				<Grid item={true} xs={12}>
 					<Search value={filter} placeholder="Search something" onChange={this.search} />
 				</Grid>
@@ -305,11 +299,8 @@ class Documents extends React.Component<{}, IState> {
 						) : <br />
 					}
 				</Grid>
-				</Grid>
-				<Grid container={true} spacing={16} style={gridStyles}>
-					{this.renderFolders()}
-				</Grid>
-			</>
+				{this.renderFolders()}
+			</Grid>
 		)
 	}
 }
