@@ -53,19 +53,20 @@ const Card = styled('div')`
 	cursor: pointer;
 	&.is_new {
 		&::before {
-			content: "NEW";
+			content: "LATEST";
 			position: absolute;
 			top: 0;
 			right: -2rem;
 			padding: .7rem;
 			width: 100px;
-			color: white;
+			color: #f9e316;
 			text-align: center;
-			background-color: #4CAF50;
+			background-color: #2648ba;
 			z-index: 10;
 			transform: rotate(45deg);
-			font-size: .8rem;
-			box-shadow: 0 0 20px 0px #8BC34A;
+			font-size: .7rem;
+			font-weight: bold;
+			box-shadow: 0 0 20px 0px rgba(38, 72, 186, .5);
 		}
 	}
 `
@@ -139,7 +140,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 		const { url, materialId, isNew, userId } = this.props
 
 		if(isNew) {
-			if(userId === store.getState().user.id) {
+			if(userId === store.getState().user.uid) {
 				await MaterialService.read(materialId)
 			}
 			else {
