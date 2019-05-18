@@ -14,9 +14,11 @@ import Contact from '../components/Pages/Contact'
 import Document from '../components/Pages/Document'
 import Documents from '../components/Pages/Documents'
 import Home from '../components/Pages/Home'
+import Landing from '../components/Pages/Landing'
 import Login from '../components/Pages/Login'
 import MaterialGenerator from '../components/Pages/MaterialGenerator'
 import Policy from '../components/Pages/Policy'
+import Profile from '../components/Pages/Profile'
 import Signup from '../components/Pages/Signup'
 import Upload from '../components/Pages/Upload'
 import UserList from '../components/Pages/UserList'
@@ -30,7 +32,8 @@ const Routes = (props: any) => (
     <CssBaseline />
     <Router onUpdate={fireTracking} {...props}>
     <Switch>
-      <DefaultLayout exact={true} path="/" component={<Home />} />
+      <DefaultLayout exact={true} path="/" component={<Landing />} />
+      <DefaultLayout path="/home" component={<Home />} />
       <DefaultLayout path="/material-generator" component={<MaterialGenerator />} />
       <DefaultLayout path="/document/:id" component={<Document match={{}} />} />
       <DefaultLayout path="/lesson-plans" component={<Documents />} />
@@ -42,6 +45,7 @@ const Routes = (props: any) => (
       
 			<PrivateLayout path="/classroom/:id" component={<Classroom match={{}} />} />
 			<PrivateLayout path="/my-students" component={<Classrooms />} />
+			<PrivateLayout path="/my-profile" component={<Profile />} />
 			
 			<ProtectedLayout path="/upload" component={<Upload />} />
       <ProtectedLayout path="/users" component={<UserList />} />

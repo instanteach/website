@@ -22,7 +22,7 @@ const CustomLink = styled(Link)`
 
 const NavItems = ({session, onClick}) => (
   <div>
-    <CustomLink to="/" onClick={onClick}>
+    <CustomLink to="/home" onClick={onClick}>
       <ListItem button={true}>
         <ListItemIcon>
             <HomeIcon />
@@ -30,29 +30,22 @@ const NavItems = ({session, onClick}) => (
         <ListItemText primary="Home" />
       </ListItem>
     </CustomLink>
-		{
-			session
-			? (
-				<>
-				<CustomLink to="/material-generator" onClick={onClick}>
-					<ListItem button={true}>
-						<ListItemIcon>
-							<ImportantDevicesIcon />
-						</ListItemIcon>
-						<ListItemText primary="Material Generator" />
-					</ListItem>
-				</CustomLink>
-				<CustomLink to="/my-students" onClick={onClick}>
-					<ListItem button={true}>
-						<ListItemIcon>
-							<SchoolIcon />
-						</ListItemIcon>
-						<ListItemText primary="My Students" />
-					</ListItem>
-				</CustomLink>
-				</>
-			) : null
-		}
+		<CustomLink to="/material-generator" onClick={onClick}>
+			<ListItem button={true}>
+				<ListItemIcon>
+					<ImportantDevicesIcon />
+				</ListItemIcon>
+				<ListItemText primary="Material Generator" />
+			</ListItem>
+		</CustomLink>
+		<CustomLink to="/my-students" onClick={onClick}>
+			<ListItem button={true}>
+				<ListItemIcon>
+					<SchoolIcon />
+				</ListItemIcon>
+				<ListItemText primary="My Students" />
+			</ListItem>
+		</CustomLink>
     <CustomLink to="/lesson-plans" onClick={onClick}>
       <ListItem button={true}>
         <ListItemIcon>
@@ -77,11 +70,11 @@ const NavItems = ({session, onClick}) => (
         <ListItemText primary="About Us" />
       </ListItem>
     </CustomLink>
-		<Divider />
 		{
 			session && session.isAdmin
 			? (
 				<>
+				<Divider />
 				<CustomLink to="/users" onClick={onClick}>
 					<ListItem button={true}>
 						<ListItemIcon>
