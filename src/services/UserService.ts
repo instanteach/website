@@ -1,4 +1,12 @@
 import * as firebase from 'firebase'
+import IUser from '../interfaces/IUser';
+import store from '../state/store';
+
+interface IUpdateUser {
+	displayName: string
+	email: string
+	password?: string
+}
 
 class UserService {
 	public static async getAllUsers()
@@ -91,6 +99,50 @@ class UserService {
 		await database.collection('users').doc(user.uid).update({...userUpdated, updatedAt: firebase.firestore.FieldValue.serverTimestamp()})
 
 		return {...user, ...userUpdated}
+	}
+
+	public static async update(data:IUpdateUser)
+	{
+		const storedUser: IUser = store.getState().user
+		const response = {user: storedUser, error: ""}
+		response.user = storedUser
+		
+		try {
+			const user = firebase.auth().currentUser
+
+			if(user) {
+				const userDB = firebase.firestore().collection('users').doc(user.uid)
+
+				if(data.displayName && data.displayName.length > 0) {
+					user.updateProfile({
+						displayName: data.displayName,
+						photoURL: user.photoURL
+					})
+					userDB.update({
+						displayName: data.displayName
+					})
+					response.user.displayName = data.displayName
+				}
+
+				if(data.email && data.email.length > 4) {
+					user.updateEmail(data.email)
+					userDB.update({
+						email: data.email
+					})
+					response.user.email = data.email
+				}
+
+				if(data.password && data.password.length > 0) {
+					user.updatePassword(data.password)
+				}
+			}
+		}
+		catch(e) {
+			response.error = e
+			console.log(e)
+		}
+
+		return response
 	}
 }
 

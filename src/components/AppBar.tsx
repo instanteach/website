@@ -117,6 +117,12 @@ const MenuUser = styled('ul')`
 		margin: 0;
 		font-size: .9rem;
 		align-items: center;
+		a {
+			display: block;
+			width: 100%;
+			text-decoration: none;
+			color: inherit;
+		}
 		img, svg {
 			width: 15px;
 			margin-right: .5rem;
@@ -249,6 +255,8 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 					return 'My Students'
 				case '/classroom':
 					return 'Classroom'
+				case '/my-profile':
+					return 'My Profile'
       }
     }
     return ''
@@ -321,7 +329,11 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 										<Username>{user.displayName}</Username>
 										<Avatar src={user.photoURL} alt={user.displayName} onClick={this.toggleMenuUser} style={{cursor: 'pointer'}} />
 										<MenuUser className={`${menuUserIsOpen ? 'show' : ''}`} onClick={this.toggleMenuUser}>
-											<li><PeopleIcon /> Profile</li>
+											<li>
+												<Link to="/my-profile">
+													<PeopleIcon /> Profile
+												</Link>
+											</li>
 											<Divider />
 											<li onClick={this.logout}><CloseIcon /> Sign Out</li>
 										</MenuUser>
