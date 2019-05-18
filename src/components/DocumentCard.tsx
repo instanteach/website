@@ -59,9 +59,9 @@ const Card = styled('div')`
 			right: -2rem;
 			padding: .7rem;
 			width: 100px;
-			color: #f9e316;
+			color: var(--secondary-color);
 			text-align: center;
-			background-color: #2648ba;
+			background-color: var(--primary-color);
 			z-index: 10;
 			transform: rotate(45deg);
 			font-size: .7rem;

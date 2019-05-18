@@ -146,6 +146,7 @@ class Classroom extends React.Component<IProps, IState> {
 	public render() {
 		const {classroom, documentSelected, filter, forbidden, materials, open, openAssignMaterial, repository, user, select, classroomDocuments} = this.state
 		const {history, session} = this.props
+		const mediaQuery = window.matchMedia("(min-width:700px)")
 
 		return (
 			<>
@@ -216,7 +217,7 @@ class Classroom extends React.Component<IProps, IState> {
 				</DialogActions>
 				</form>
 			</Dialog>
-			<Dialog open={openAssignMaterial} onClose={this.handleAssignMaterial} arial-labelledby="assign-dialog">
+			<Dialog open={openAssignMaterial} onClose={this.handleAssignMaterial} arial-labelledby="assign-dialog" fullScreen={!mediaQuery.matches}>
 				<DialogTitle id="assign-dialog">Assign Material</DialogTitle>
 				<DialogContent>
 					<DialogContentText>

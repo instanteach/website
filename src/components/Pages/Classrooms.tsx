@@ -3,11 +3,12 @@ import {Link} from 'react-router-dom'
 import styled from 'styled-components'
 
 import {Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent,
-	DialogContentText, DialogTitle, Grid, TextField, Typography} from '@material-ui/core'
+	DialogContentText, DialogTitle, Grid, InputLabel, TextField, Typography} from '@material-ui/core'
 
 import IClassroom from '../../interfaces/IClassroom'
 import ClassroomService from '../../services/ClassroomService'
 import UserService from '../../services/UserService'
+import Search from '../Search';
 
 interface IState {
 	classrooms:IClassroom[],
@@ -26,6 +27,15 @@ const CardButton = styled(Button)`
 		color: inherit;
 		text-decoration: none;
 	}
+`
+const UnsplashRepository = styled(Grid)`
+	max-height: 240px;
+	overflow-y: overlay;
+`
+const UnsplashImage = styled('img')`
+	width: 100%;
+	max-height: 100px;
+	cursor: pointer;
 `
 
 class Classrooms extends React.Component<IProps, IState> {
@@ -175,23 +185,61 @@ class Classrooms extends React.Component<IProps, IState> {
 				)
 			}
 			</Grid>
-			<Dialog open={open} onClose={this.handleClose} arial-labelledby="form-dialog-title">
+			<Dialog open={open} onClose={this.handleClose} arial-labelledby="form-dialog-title" fullWidth={true} fullScreen={!mediaQuery.matches}>
 				<form onSubmit={this.createClassroom}>
 				<DialogTitle id="form-dialog-title">Add a new Classroom</DialogTitle>
 				<DialogContent>
-					<DialogContentText>
+					<DialogContentText style={{ marginBottom: '1rem' }}>
 						The classrooms are groups by students to make a study plan with our digital materials. Set them a name and how many students it has.
 					</DialogContentText>
 					<Grid container={true} spacing={16}>
-						<Grid item={true} xs={12}>
-							<TextField autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
+						<Grid item={true} container={true} xs={12} md={5} alignContent="flex-start">
+							<Grid item={true} xs={12}>
+								<TextField autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
+							</Grid>
+							<Grid item={true} xs={12}>
+								<TextField margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+							</Grid>
+							<Grid item={true} xs={12}>
+								<TextField margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+							</Grid>
 						</Grid>
-						<Grid item={true} md={6}>
-							<TextField margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
-						</Grid>
-						<Grid item={true} md={6}>
-							<TextField margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
-						</Grid>
+						<UnsplashRepository item={true} container={true} spacing={8} xs={12} md={7}>
+							<Grid item={true} xs={12}>
+								<InputLabel>Cover</InputLabel>
+								<Search placeholder="Look for an image" value="" onChange="" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1549354324-290af3126793?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=michael-prewett-1346961-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1500021804447-2ca2eaaaabeb?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=timj-310824-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1531538512164-e6c51ea63d20?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=mimi-thian-737634-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1531674842274-9563aa15686f?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=redcharlie-739534-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/flagged/photo-1550946107-8842ae9426db?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=bonneval-sebastien-1389597-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kimberly-farmer-287677-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1529390079861-591de354faf5?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=santi-vedri-707620-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1519406596751-0a3ccc4937fe?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=jeffrey-hamilton-571428-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=tim-gouw-69753-unsplash.jpg" />
+							</Grid>
+							<Grid item={true} md={6}>
+								<UnsplashImage src="https://images.unsplash.com/photo-1484820540004-14229fe36ca4?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=markus-spiske-193031-unsplash.jpg" />
+							</Grid>
+						</UnsplashRepository>
 					</Grid>
 				</DialogContent>
 				<DialogActions>
