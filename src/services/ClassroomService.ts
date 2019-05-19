@@ -1,4 +1,3 @@
-import axios from 'axios'
 import * as firebase from 'firebase'
 import IClassroom from 'src/interfaces/IClassroom';
 
@@ -32,27 +31,31 @@ class ClassroomService {
 		return classrooms
 	}
 
+	public static async getByCurrentUser()
+	{
+		const currentUser = firebase.auth().currentUser
+		return currentUser ? await ClassroomService.getByUserId(currentUser.uid) : []
+	}
+
 	public static async create(data:any)
 	{
-		const response = {classroomId:"", data: {}, error:""}
+		const response = {classroomId:"", data: {}, error:"", ok: false}
 		try {
-			const unsplash = await axios.get('https://api.unsplash.com/photos/random?client_id=7f06954a12ef973f0d64c9c3f1fa1bf39d8cebfbdb97dfa436c9bbf83badb903&orientation=landscape')
-			const thumbnail = unsplash.data.urls.small
 			const database = firebase.firestore()
 			const seed = {
 				age: data.age,
-				grammarSkill: 0,
+				days: data.days,
+				level: data.level,
 				name: data.name,
-				readingSkill: 0,
 				students: data.students,
-				thumbnail,
-				userId: data.userId,
-				vocabularySkill: 0,
-				writingSkill: 0
+				thumbnail: data.thumbnail,
+				time: data.time,
+				userId: data.userId
 			}
 			const classroom = await database.collection('classrooms').add(seed)
 
 			response.classroomId = classroom.id
+			response.ok = true
 			response.data = {
 				...seed,
 				id: classroom.id
@@ -63,6 +66,38 @@ class ClassroomService {
 			response.error = e.message
 		}
 		
+		return response
+	}
+
+	public static async update(uid:string, data:any)
+	{
+		const response = {classroomId:"", data: {}, error:"", ok: false}
+		try {
+			const database = firebase.firestore()
+			const seed = {
+				age: data.age,
+				days: data.days,
+				level: data.level,
+				name: data.name,
+				students: data.students,
+				thumbnail: data.thumbnail,
+				time: data.time
+			}
+
+			const classroom = await database.collection('classrooms').doc(uid)
+			classroom.update(seed)
+
+			response.classroomId = uid
+			response.ok = true
+			response.data = {
+				...seed,
+				id: uid
+			}
+		}
+		catch(e) {
+			response.error = e.message
+		}
+
 		return response
 	}
 }

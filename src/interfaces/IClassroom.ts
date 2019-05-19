@@ -1,10 +1,11 @@
 export default interface IClassroom {
+	age:number
 	name:string
-	grammarSkill:number
-	readingSkill:number
-	students:string[]
+	students:number
 	id:string
 	userId:string
-	vocabularySkill:number
-	writingSkill:number
+	level:string
+	time:string
+	days:number
+	thumbnail:string
 }

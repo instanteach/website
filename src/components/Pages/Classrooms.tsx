@@ -2,19 +2,39 @@ import * as React from 'react'
 import {Link} from 'react-router-dom'
 import styled from 'styled-components'
 
-import {Button, Card, CardActions, CardContent, CardMedia, Dialog, DialogActions, DialogContent,
-	DialogContentText, DialogTitle, Grid, InputLabel, TextField, Typography} from '@material-ui/core'
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import FormControl from '@material-ui/core/FormControl'
+import Grid from '@material-ui/core/Grid'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import OutlinedInput from '@material-ui/core/OutlinedInput'
+import Select from '@material-ui/core/Select'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined'
 
 import IClassroom from '../../interfaces/IClassroom'
 import ClassroomService from '../../services/ClassroomService'
 import UserService from '../../services/UserService'
-import Search from '../Search';
 
 interface IState {
 	classrooms:IClassroom[],
 	forbidden:boolean
 	open:boolean
+	imageError:string
+	images:object[]
 	user:{}
+	form:{}
+	thumbnail:string
 }
 
 interface IProps {
@@ -29,20 +49,89 @@ const CardButton = styled(Button)`
 	}
 `
 const UnsplashRepository = styled(Grid)`
-	max-height: 240px;
+	height: 100%;
+	max-height: 500px;
 	overflow-y: overlay;
+	& > div {
+		position:relative;
+		height: 100px;
+		margin-bottom: .4rem;
+	}
 `
 const UnsplashImage = styled('img')`
-	width: 100%;
+	position: absolute;
+	top: 0:
+	left: 0;
+	width: calc(100% - .4rem);
+	height: 100px;
 	max-height: 100px;
 	cursor: pointer;
+`
+const UnsplashImageChecked = styled('div')`
+	display: flex;
+	position: absolute;
+	top: .2rem;
+	width: calc(100% - .4rem);
+	height: 100%;
+	background-color: rgba(0,0,0,0.5);
+	color: white;
+	justify-content: center;
+	align-items: center;
 `
 
 class Classrooms extends React.Component<IProps, IState> {
 	public state = {
 		classrooms: [],
 		forbidden: false,
+		form: {
+			level: "",
+			time: ""
+		},
+		imageError: "",
+		images: [
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1549354324-290af3126793?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=michael-prewett-1346961-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1500021804447-2ca2eaaaabeb?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=timj-310824-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1531538512164-e6c51ea63d20?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=mimi-thian-737634-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1531674842274-9563aa15686f?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=redcharlie-739534-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/flagged/photo-1550946107-8842ae9426db?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=bonneval-sebastien-1389597-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kimberly-farmer-287677-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1529390079861-591de354faf5?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=santi-vedri-707620-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1519406596751-0a3ccc4937fe?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=jeffrey-hamilton-571428-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=tim-gouw-69753-unsplash.jpg",
+			},
+			{
+				selected: false,
+				url: "https://images.unsplash.com/photo-1484820540004-14229fe36ca4?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=markus-spiske-193031-unsplash.jpg",
+			},
+		],
 		open: false,
+		thumbnail: "",
 		user:{
 			avatar: "",
 			displayName: "",
@@ -53,6 +142,7 @@ class Classrooms extends React.Component<IProps, IState> {
 
 	public componentDidMount() {
 		const {history, session} = this.props
+
 		if(history.location.pathname.includes('/my-students/user/')) {
 			if(!session.isAdmin) {
 				this.setState({ forbidden: true })
@@ -70,49 +160,86 @@ class Classrooms extends React.Component<IProps, IState> {
 		}
 		else {
 			(async () => {
-				const classrooms = await ClassroomService.getByUserId(session.uid)
+				const classrooms: IClassroom[] = await ClassroomService.getByCurrentUser()
 				this.setState({ classrooms })
 			})()
 		}
 		
 	}
 
+	public handleChange = field => event => {
+		event.preventDefault()
+		this.setState({
+			...this.state,
+			form: {
+				...this.state.form,
+				[field]: event.target.value
+			}
+		})
+	}
+
 	public handleClose = () => {
 		this.setState({ open: !this.state.open })
+	}
+
+	public setThumbnail = index => event => {
+		const {images} = this.state
+		const imgs:object[] = Array()
+
+		images.map((image, indx) => imgs.push({
+			selected: index === indx,
+			url: image.url
+		}))
+
+		this.setState({
+			imageError: "",
+			images: imgs
+		})
 	}
 
 	public createClassroom = event => {
 		(async () => {
 			event.preventDefault()
-			const {classrooms} = this.state
-			let classroom: any
+			const {classrooms, images} = this.state
 			const {session} = this.props
-			const form = event.target
-			const data = {
-				age: form.age.value,
-				name: form.name.value,
-				students: form.students.value,
-				userId:session.uid
+			const image = images.filter(img => img.selected)[0]
+
+			if(image) {
+				let classroom: any
+				const form = event.target
+				const data = {
+					age: form.age.value,
+					days: form.days.value,
+					level: form.level.value,
+					name: form.name.value,
+					students: form.students.value,
+					thumbnail: image.url,
+					time: form.time.value,
+					userId:session.uid
+				}
+				const response = await ClassroomService.create(data)
+	
+				if(response.error === "") {
+					classroom = response.data
+					const arr:IClassroom[] = [classroom, ...classrooms]
+	
+					this.setState({ open: false, classrooms: arr, imageError: "" })
+				}
+				this.setState({ open: false, imageError: "Ups, there was an error 😕" })
 			}
-			const response = await ClassroomService.create(data)
-
-			console.log(response)
-
-			if(response.error === "") {
-				classroom = response.data
-				const arr:IClassroom[] = [classroom, ...classrooms]
-
-				this.setState({ open: false, classrooms: arr })
+			else { 
+				this.setState({
+					imageError: "You have to select an image 🖼"
+				})
 			}
-			this.setState({ open: false })
 		})()
 	}
 
 	public render() {
-		const {classrooms, forbidden, open, user} = this.state
+		const {classrooms, forbidden, imageError, images, open, user} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
-
+		
 		return (
 			<>
 			<Grid container={true} style={{minHeight: '75vh', flexDirection: 'column', alignItems: 'flex-start'}}>
@@ -125,8 +252,8 @@ class Classrooms extends React.Component<IProps, IState> {
 						<Grid container={true} item={true} xs={8} md={10}>
 						{
 							session.isAdmin && history.location.pathname.includes('/my-students/user/')
-							? <Typography variant="title">Classroom's {user.displayName}</Typography>
-							: <Typography variant="title">Your classrooms</Typography>
+							? <Typography variant="title">Classroom's {user.displayName} ({classrooms.length}/10)</Typography>
+							: <Typography variant="title">Your classrooms ({classrooms.length}/10)</Typography>
 						}
 						</Grid>
 						{
@@ -146,7 +273,7 @@ class Classrooms extends React.Component<IProps, IState> {
 					</Grid>
 					<Grid container={true} spacing={16}>
 					{
-						classrooms.length === 0
+						user.email.length > 0 && classrooms.length === 0
 						? (
 							<>
 							<Grid item={true}>
@@ -192,53 +319,85 @@ class Classrooms extends React.Component<IProps, IState> {
 					<DialogContentText style={{ marginBottom: '1rem' }}>
 						The classrooms are groups by students to make a study plan with our digital materials. Set them a name and how many students it has.
 					</DialogContentText>
+					{
+						imageError
+						? (
+							<Grid item={true} xs={12}>
+								<Typography color="error">{imageError}</Typography>
+							</Grid>
+						)
+						: null
+					}
 					<Grid container={true} spacing={16}>
-						<Grid item={true} container={true} xs={12} md={5} alignContent="flex-start">
+						<Grid item={true} container={true} xs={12} md={5} alignContent="flex-start" id="fields">
 							<Grid item={true} xs={12}>
-								<TextField autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
+								<TextField variant="outlined" autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
 							</Grid>
 							<Grid item={true} xs={12}>
-								<TextField margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+								<TextField variant="outlined" margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
 							</Grid>
 							<Grid item={true} xs={12}>
-								<TextField margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+								<TextField variant="outlined" margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+							</Grid>
+							<Grid item={true} xs={12} style={{marginTop: '1rem'}}>
+								<FormControl fullWidth={true}>
+									<InputLabel htmlFor="level" style={{marginLeft: '1rem'}}>Classroom Level</InputLabel>
+									<Select
+										required={true}
+										fullWidth={true}
+										value={this.state.form.level}
+										onChange={this.handleChange('level')}
+										input={
+											<OutlinedInput
+												labelWidth={250}
+												id="level"
+												name="level" />
+										}>
+										<MenuItem value="Elementary">Elementary ( learning the alphabet, numbers etc...)</MenuItem>
+										<MenuItem value="Beginner">Beginner</MenuItem>
+										<MenuItem value="Pre-intermediate">Pre-intermediate</MenuItem>
+										<MenuItem value="Intermediate">Intermediate</MenuItem>
+										<MenuItem value="Upper-Intermediate">Upper-Intermediate</MenuItem>
+										<MenuItem value="Advanced">Advanced</MenuItem>
+									</Select>
+								</FormControl>
+							</Grid>
+							<Grid item={true} xs={12} style={{marginTop: '1rem'}}>
+								<FormControl fullWidth={true}>
+									<InputLabel htmlFor="time" style={{marginLeft: '1rem'}}>Average class duration</InputLabel>
+									<Select
+										required={true}
+										fullWidth={true}
+										value={this.state.form.time}
+										onChange={this.handleChange('time')}
+										input={
+											<OutlinedInput
+												labelWidth={250}
+												id="time"
+												name="time" />
+										}>
+										<MenuItem value="1 hour or less">1 hour or less</MenuItem>
+										<MenuItem value="1.5 hours">1.5 hours</MenuItem>
+										<MenuItem value="2 hours">2 hours</MenuItem>
+										<MenuItem value="3 hours">3 hours</MenuItem>
+									</Select>
+								</FormControl>
+							</Grid>
+							<Grid item={true} xs={12}>
+								<TextField variant="outlined" margin="normal" id="days" name="days" label="Times a week" type="number" inputProps={{min:1}} fullWidth={true} required={true} />
 							</Grid>
 						</Grid>
-						<UnsplashRepository item={true} container={true} spacing={8} xs={12} md={7}>
-							<Grid item={true} xs={12}>
-								<InputLabel>Cover</InputLabel>
-								<Search placeholder="Look for an image" value="" onChange="" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1549354324-290af3126793?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=michael-prewett-1346961-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1500021804447-2ca2eaaaabeb?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=timj-310824-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1531538512164-e6c51ea63d20?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=mimi-thian-737634-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1531674842274-9563aa15686f?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=redcharlie-739534-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/flagged/photo-1550946107-8842ae9426db?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=bonneval-sebastien-1389597-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=kimberly-farmer-287677-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1529390079861-591de354faf5?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=santi-vedri-707620-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1519406596751-0a3ccc4937fe?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=jeffrey-hamilton-571428-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=tim-gouw-69753-unsplash.jpg" />
-							</Grid>
-							<Grid item={true} md={6}>
-								<UnsplashImage src="https://images.unsplash.com/photo-1484820540004-14229fe36ca4?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=markus-spiske-193031-unsplash.jpg" />
-							</Grid>
+						<UnsplashRepository item={true} container={true} spacing={8} xs={12} md={7} id="images">
+						{
+							images.map((image, index) => (
+								<Grid key={index} item={true} md={6}>
+									<UnsplashImage src={image.url} onClick={this.setThumbnail(index)} />
+									{
+										image.selected ? <UnsplashImageChecked><CheckOutlinedIcon /></UnsplashImageChecked> : null
+									}
+								</Grid>
+							))
+						}
 						</UnsplashRepository>
 					</Grid>
 				</DialogContent>
