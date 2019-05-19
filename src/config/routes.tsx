@@ -34,7 +34,6 @@ const Routes = (props: any) => (
     <Switch>
       <DefaultLayout exact={true} path="/" component={<Landing />} />
       <DefaultLayout path="/home" component={<Home />} />
-      <DefaultLayout path="/material-generator" component={<MaterialGenerator />} />
       <DefaultLayout path="/document/:id" component={<Document match={{}} />} />
       <DefaultLayout path="/lesson-plans" component={<Documents />} />
       <DefaultLayout path="/contact" component={<Contact />} />
@@ -43,6 +42,7 @@ const Routes = (props: any) => (
       <DefaultLayout path="/login" component={<Login />} />
       <DefaultLayout path="/signup" component={<Signup />} />
       
+			<PrivateLayout path="/material-generator" component={<MaterialGenerator />} />
 			<PrivateLayout path="/classroom/:id" component={<Classroom match={{}} />} />
 			<PrivateLayout path="/my-students" component={<Classrooms />} />
 			<PrivateLayout path="/my-profile" component={<Profile />} />
