@@ -8,6 +8,7 @@
     "@material-ui/icons": "^3.0.1",
     "@types/react-router": "^4.0.31",
     "@types/react-router-dom": "^4.3.1",
+    "animate.css": "^3.7.0",
     "axios": "^0.18.0",
     "chart.js": "^2.8.0",
     "firebase": "^5.5.6",

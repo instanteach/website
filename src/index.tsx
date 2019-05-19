@@ -7,6 +7,7 @@ import Firebase from './config/firebase'
 import RouteMap from './config/routes'
 import { RawTheme } from './config/theme'
 
+import 'animate.css'
 import './index.css';
 import registerServiceWorker from './registerServiceWorker'
 
