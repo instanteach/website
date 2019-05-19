@@ -1,6 +1,7 @@
 import * as firebase from 'firebase'
 
 import IDocument from '../interfaces/IDocument'
+import ClassroomService from './ClassroomService';
 
 class MaterialService {
 	public static async getAll()
@@ -34,21 +35,77 @@ class MaterialService {
 
 	public static async request(data:any)
 	{
-		const response = {materialId:"", error:""}
+		const response = {requestId:"", error:"", ok: false}
 		try {
-			const database = firebase.firestore()
-			const material = await database.collection('materials').add({
-				category: data.category
-				// TODO: Fill fields
-			})
+			const currentUser: any = firebase.auth().currentUser
+			if(currentUser) {
+				const classroom: any = await ClassroomService.get(data.classroom)
+				const database = firebase.firestore()
+				const req = await database.collection('requests').add({
+					age:  classroom.age,
+					classroomId:  classroom.id,
+					grammar:  data.grammar,
+					level:  classroom.level,
+					listening:  data.listening,
+					reading:  data.reading,
+					speaking:  data.speaking,
+					students:  classroom.students,
+					time:  classroom.time,
+					topic:  data.topic,
+					type:  data.type,
+					userId:  currentUser.uid,
+					vocabulary:  data.vocabulary,
+					writing:  data.writing
+				})
 
-			response.materialId = material.id
+				response.requestId = req.id
+				response.ok = true
+			}
+			else {
+				response.error = "Forbidden. You have to sign in."
+			}
 		}
 		catch(e) {
 			response.error = e.message
 		}
 		
 		return response
+	}
+
+	public static async submitOnGoogleSpreadsheet(data:any)
+	{
+		const currentUser: any = firebase.auth().currentUser
+		if(currentUser) {
+			const classroom: any = await ClassroomService.get(data.classroom)
+			const googleSpreadsheetURI = 'https://script.google.com/macros/s/AKfycbykSlpEasveRRzvEzQBUuwmaUT2ScwBqaPW9ktw2RXOwzXY1x0v/exec'
+			const formContent = new FormData()
+			formContent.append('classroom', classroom.name)
+			formContent.append('user', currentUser.displayName)
+			formContent.append('students', classroom.students)
+			formContent.append('age', classroom.age)
+			formContent.append('level', classroom.level)
+			formContent.append('time', classroom.time)
+			formContent.append('days', classroom.days)
+			formContent.append('type', data.type)
+			formContent.append('topic', data.topic)
+			formContent.append('speaking', data.speaking)
+			formContent.append('writing', data.writing)
+			formContent.append('listening', data.listening)
+			formContent.append('reading', data.reading)
+			formContent.append('grammar', data.grammar)
+			formContent.append('vocabulary', data.vocabulary)
+			formContent.append('url', `https://instanteach-dev.web.app/classroom/${classroom.id}`)
+
+			const response = await fetch(googleSpreadsheetURI, {body: formContent, method: 'POST'})
+
+			if(response.ok) {
+				return true
+			}
+
+			return false
+		}
+
+		return false
 	}
 
 	public static async assign(classroomId:string, userId:string, data:IDocument) {
@@ -73,7 +130,7 @@ class MaterialService {
 
 	public static async read(materialId)
 	{
-		const response = {materialId:"", error:""}
+		const response = {materialId:"", error:"", ok: false}
 		try {
 			const database = firebase.firestore()
 			const material = await database.collection('materials').doc(materialId)
@@ -82,6 +139,7 @@ class MaterialService {
 					isNew: false
 				})
 				response.materialId = materialId
+				response.ok = true
 			}
 		}
 		catch (e) {
