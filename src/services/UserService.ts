@@ -40,13 +40,14 @@ class UserService {
 
 	public static async register(data:any)
 	{
-		const response = {userId:"", error:""}
+		const response = {userId:"", error:"", ok: false}
 		const auth = firebase.auth()
 		try {
 			const sign = await auth.createUserWithEmailAndPassword(data.email, data.password)
 			if(sign.user) {
 				await UserService.createAccount({...sign.user, displayName: data.displayName})
 				response.userId = sign.user.uid
+				response.ok = true
 			}
 		}
 		catch(e) {
@@ -104,7 +105,7 @@ class UserService {
 	public static async update(data:IUpdateUser)
 	{
 		const storedUser: IUser = store.getState().user
-		const response = {user: storedUser, error: ""}
+		const response = {user: storedUser, error: "", ok: false}
 		response.user = storedUser
 		
 		try {
@@ -135,6 +136,8 @@ class UserService {
 				if(data.password && data.password.length > 0) {
 					user.updatePassword(data.password)
 				}
+
+				response.ok = true
 			}
 		}
 		catch(e) {

@@ -86,7 +86,6 @@ class AuthenticationService {
 	public static listener()
 	{
 		let session
-		console.log('Listening')
 		firebase.auth().onAuthStateChanged(user => {	
 			(async () => {
 				if (user) {
