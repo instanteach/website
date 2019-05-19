@@ -137,16 +137,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 	}
 
 	public async componentDidMount() {
-		const { url, materialId, isNew, userId } = this.props
-
-		if(isNew) {
-			if(userId === store.getState().user.uid) {
-				await MaterialService.read(materialId)
-			}
-			else {
-				console.log("Unauthorized")
-			}
-		}
+		const {url} = this.props
 
 		DocumentsService.download(url).then(response => {
 			this.setState({
@@ -158,6 +149,20 @@ class DocumentCard extends React.Component<IProps, IState> {
 	public onClick = (e) => {
 		e.preventDefault()
 		this.props.onClick(this.props.document)
+	}
+
+	public read = e => {
+		(async () => {
+			const {materialId, isNew, userId} = this.props
+			if(isNew) {
+				if(userId === store.getState().user.uid) {
+					await MaterialService.read(materialId)
+				}
+				else {
+					console.log("Unauthorized")
+				}
+			}
+		})()
 	}
 
 	public removeDocumentFromDatabase = (e:any) => {
@@ -182,7 +187,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 						(type === 'pdf')
 						? linked 
 							? (
-								<LinkButton to={`/document/${id}`} style={{display: isRemoved ? 'none' : 'auto'}}>
+								<LinkButton to={`/document/${id}`} onClick={this.read} style={{display: isRemoved ? 'none' : 'auto'}}>
 									<Card className={`${isNew ? 'is_new' : ''}`}>
 										<CardTypeFile style={{color: 'white', fontSize: 0}}>
 											<PDFcontainer item={true} xs={12}>
@@ -221,7 +226,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 							)
 						: linked
 							? (
-								<DownloadButton href={url} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
+								<DownloadButton href={url} onClick={this.read} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
 									<Card className={`${isNew ? 'is_new' : ''}`}>
 										{
 										<CardTypeFile style={
