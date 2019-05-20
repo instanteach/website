@@ -19,6 +19,7 @@ import Login from '../components/Pages/Login'
 import MaterialGenerator from '../components/Pages/MaterialGenerator'
 import Policy from '../components/Pages/Policy'
 import Profile from '../components/Pages/Profile'
+import RecoveryPassword from '../components/Pages/RecoveryPassword'
 import Signup from '../components/Pages/Signup'
 import Upload from '../components/Pages/Upload'
 import UserList from '../components/Pages/UserList'
@@ -33,22 +34,23 @@ const Routes = (props: any) => (
     <Router onUpdate={fireTracking} {...props}>
     <Switch>
       <DefaultLayout exact={true} path="/" component={<Landing />} />
-      <DefaultLayout path="/home" component={<Home />} />
+      <DefaultLayout exact={true} path="/home" component={<Home />} />
       <DefaultLayout path="/document/:id" component={<Document match={{}} />} />
-      <DefaultLayout path="/lesson-plans" component={<Documents />} />
-      <DefaultLayout path="/contact" component={<Contact />} />
-      <DefaultLayout path="/about-us" component={<About />} />
-      <DefaultLayout path="/privacy-policy" component={<Policy />} />
-      <DefaultLayout path="/login" component={<Login />} />
-      <DefaultLayout path="/signup" component={<Signup />} />
+      <DefaultLayout exact={true} path="/lesson-plans" component={<Documents />} />
+      <DefaultLayout exact={true} path="/contact" component={<Contact />} />
+      <DefaultLayout exact={true} path="/about-us" component={<About />} />
+      <DefaultLayout exact={true} path="/privacy-policy" component={<Policy />} />
+      <DefaultLayout exact={true} path="/login" component={<Login />} />
+      <DefaultLayout exact={true} path="/signup" component={<Signup />} />
+      <DefaultLayout exact={true} path="/recovery-password" component={<RecoveryPassword />} />
       
-			<PrivateLayout path="/material-generator" component={<MaterialGenerator />} />
+			<PrivateLayout exact={true} path="/material-generator" component={<MaterialGenerator />} />
 			<PrivateLayout path="/classroom/:id" component={<Classroom match={{}} />} />
-			<PrivateLayout path="/my-students" component={<Classrooms />} />
-			<PrivateLayout path="/my-profile" component={<Profile />} />
+			<PrivateLayout exact={true} path="/my-students" component={<Classrooms />} />
+			<PrivateLayout exact={true} path="/my-profile" component={<Profile />} />
 			
-			<ProtectedLayout path="/upload" component={<Upload />} />
-      <ProtectedLayout path="/users" component={<UserList />} />
+			<ProtectedLayout exact={true} path="/upload" component={<Upload />} />
+      <ProtectedLayout exact={true} path="/users" component={<UserList />} />
     </Switch>
   </Router>
   </React.Fragment>

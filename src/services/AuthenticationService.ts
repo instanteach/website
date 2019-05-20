@@ -83,6 +83,21 @@ class AuthenticationService {
 		}
 	}
 
+	public static async recoveryPassword(email:string)
+	{
+		const response = {ok:false, error:""}
+		try {
+			const auth = firebase.auth()
+			await auth.sendPasswordResetEmail(email)
+			response.ok = true
+		}
+		catch(e) {
+			response.error = e.message
+		}
+
+		return response
+	}
+
 	public static listener()
 	{
 		let session

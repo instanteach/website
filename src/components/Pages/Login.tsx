@@ -1,5 +1,6 @@
 import * as React from 'react'
-import {Redirect} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
+import styled from 'styled-components'
 import store from '../../state/store'
 
 import AuthenticationService from '../../services/AuthenticationService'
@@ -20,6 +21,12 @@ interface IState {
 	password: string
 	session: any
 }
+
+const CustomLink = styled(Link)`
+	text-decoration: none;
+	font-size: .9rem;
+	color: #888;
+`
 
 const gridStyles = {
   minHeight: '90%'
@@ -141,27 +148,30 @@ class Login extends React.PureComponent<{}, IState> {
                   onChange={this.handleChange('password')}
                   variant="outlined"
                   style={inputStyles} />
-                </Grid>
-                <Grid item={true} container={true} xs={12}>
-                  <Button
-										fullWidth={true}
-										size="large"
-										variant="contained"
-										color="primary"
-										type="submit"
-										style={{ marginBottom: '1rem' }}>Log In</Button>
-                </Grid>
-                <Grid item={true} container={true} xs={12}>
-                  <SocialButton
-										as="facebook"
-										onClick={this.loginWithFacebook}
-										style={{ marginBottom: '1rem' }}>Login with Facebook</SocialButton>
-                </Grid>
-                <Grid item={true} container={true} xs={12}>
-                  <SocialButton
-										onClick={this.loginWithGoogle}
-										style={{ marginBottom: '1rem' }}>Login with Google</SocialButton>
-                </Grid>
+							</Grid>
+							<Grid item={true} container={true} xs={12} justify="flex-end" className="justify-xs-center" style={{ marginBottom: '1rem' }}>
+								<CustomLink to="/recovery-password">I forgot my password</CustomLink>
+							</Grid>
+							<Grid item={true} container={true} xs={12}>
+								<Button
+									fullWidth={true}
+									size="large"
+									variant="contained"
+									color="primary"
+									type="submit"
+									style={{ marginBottom: '1rem' }}>Log In</Button>
+							</Grid>
+							<Grid item={true} container={true} xs={12}>
+								<SocialButton
+									as="facebook"
+									onClick={this.loginWithFacebook}
+									style={{ marginBottom: '1rem' }}>Login with Facebook</SocialButton>
+							</Grid>
+							<Grid item={true} container={true} xs={12}>
+								<SocialButton
+									onClick={this.loginWithGoogle}
+									style={{ marginBottom: '1rem' }}>Login with Google</SocialButton>
+							</Grid>
             </form>
           </Grid>
           <Snackbar
