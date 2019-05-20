@@ -139,6 +139,7 @@ class MaterialService {
 			const formContent = new FormData()
 			formContent.append('classroom', classroom.name)
 			formContent.append('user', currentUser.displayName)
+			formContent.append('email', currentUser.email)
 			formContent.append('students', classroom.students)
 			formContent.append('age', classroom.age)
 			formContent.append('level', classroom.level)
