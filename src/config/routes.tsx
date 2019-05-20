@@ -46,7 +46,7 @@ const Routes = (props: any) => (
       
 			<PrivateLayout exact={true} path="/material-generator" component={<MaterialGenerator />} />
 			<PrivateLayout path="/classroom/:id" component={<Classroom match={{}} />} />
-			<PrivateLayout exact={true} path="/my-students" component={<Classrooms />} />
+			<PrivateLayout path="/my-students" component={<Classrooms />} />
 			<PrivateLayout exact={true} path="/my-profile" component={<Profile />} />
 			
 			<ProtectedLayout exact={true} path="/upload" component={<Upload />} />
