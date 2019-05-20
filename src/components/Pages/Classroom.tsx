@@ -21,6 +21,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import SettingsIcon from '@material-ui/icons/Settings'
 import TimelineIcon from '@material-ui/icons/Timeline'
 import DocumentCard from '../DocumentCard'
+import Graphics from '../Graphics'
 
 import IClassroom from '../../interfaces/IClassroom'
 import IDocument from '../../interfaces/IDocument'
@@ -49,6 +50,7 @@ interface IState {
 	repository:IDocument[]
 	user:object
 	select:boolean
+	showGraphic:boolean
 }
 
 interface IProps {
@@ -181,6 +183,7 @@ class Classroom extends React.Component<IProps, IState> {
 		openAssignMaterial: false,
 		repository: Array(),
 		select:false,
+		showGraphic: false,
 		user: {
 			name: ""
 		}
@@ -253,6 +256,10 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public handleClose = () => {
 		this.setState({ open: !this.state.open })
+	}
+
+	public toggleShowGraphic = () => {
+		this.setState({ showGraphic: !this.state.showGraphic })
 	}
 
 	public edit = () => {
@@ -373,7 +380,7 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public render() {
 		const {classroom, documentSelected, filter, forbidden, materials, open, openAssignMaterial, repository, user} = this.state
-		const {del, destroyed, edit, error, images, select, classroomDocuments} = this.state
+		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 
@@ -405,7 +412,7 @@ class Classroom extends React.Component<IProps, IState> {
 										<>
 										<SettingsIcon onClick={this.edit} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<DeleteIcon onClick={this.toggleConfirmationModal} style={{ marginRight: '1rem', cursor: 'pointer' }} />
-										<TimelineIcon style={{ marginRight: '1rem', cursor: 'pointer' }} />
+										<TimelineIcon onClick={this.toggleShowGraphic} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<CustomLink to="/material-generator"><Button variant="raised" color="primary">Request Material</Button></CustomLink>
 										</>
 									)
@@ -440,6 +447,11 @@ class Classroom extends React.Component<IProps, IState> {
 					))
 				}
 				</Grid>
+				{
+					classroom.id.length > 0
+					? <Graphics classroomId={classroom.id} isOpen={showGraphic} />
+					: null
+				}
 				</>
 			)
 			}

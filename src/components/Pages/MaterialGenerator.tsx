@@ -15,6 +15,7 @@ import MaterialService from "../../services/MaterialService"
 
 interface IState {
 	classrooms: IClassroom[]
+	error: string
 	ready: boolean
 	request: any
 	step: number
@@ -70,6 +71,7 @@ const CustomLink = styled(Link)`
 class MaterialGenerator extends React.PureComponent<{}, IState> {
 	public state = {
 		classrooms: [],
+		error: "",
 		ready: false,
 		request: {
 			classroom: "",
@@ -99,6 +101,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 		if(event.target.value !== "") {
 			this.setState({
 				...this.state,
+				error: "",
 				request: {
 					...this.state.request,
 					[field]: event.target.value,
@@ -112,6 +115,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 		event.preventDefault()
 		this.setState({
 			...this.state,
+			error: "",
 			request: {
 				...this.state.request,
 				[field]: event.target.value,
@@ -128,6 +132,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 	public next = () => {
 		const {step, steps} = this.state
 		this.setState({
+			error: "",
 			step: step >= steps ? steps : step+1
 		})
 	}
@@ -135,12 +140,14 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 	public prev = () => {
 		const {step} = this.state
 		this.setState({
+			error: "",
 			step: step > 0 ? step-1 : 0
 		})
 	}
 
 	public reset =() => {
 		this.setState({
+			error: "",
 			request: {
 				classroom: "",
 				grammar: "",
@@ -164,18 +171,22 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 			(async () => {
 				const {request} = this.state
 				const response  = await MaterialService.request(request)
+				console.log(response)
 				if(response.ok) {
 					await MaterialService.submitOnGoogleSpreadsheet(request)
 					this.setState({
 						success: true
 					})
+				} else {
+					this.reset()
+					this.setState({ error: response.error })
 				}
 			})()
 		}
 	}
 
   public render() {
-		const {classrooms, ready, request, step, success} = this.state
+		const {classrooms, error, ready, request, step, success} = this.state
     return (
 			success
 			? (
@@ -310,6 +321,15 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 									</FormGroup>
 								</MaterialGeneratorStep>
 							</Grid>
+							{
+								error.length > 0
+								? (
+									<Grid container={true} item={true} xs={12} style={{ marginTop: '1rem' }} justify="center">
+										<Typography>{error}</Typography>
+									</Grid>
+								)
+								: null
+							}
 						</FormUI>
 						{
 						ready && classrooms.length === 0
