@@ -111,6 +111,25 @@ class ClassroomService {
 			
 			if(currentUser && classroom && currentUser.uid === classroom.userId) {
 				const database = firebase.firestore()
+				const requests = await database.collection('requests').where('classroomId', '==', classroomId).get()
+				const materials = await database.collection('materials').where('classroomId', '==', classroomId).get()
+
+				await requests.docs.map(request => {
+					(async () => {
+						const batch = database.batch()
+						batch.delete(request.ref)
+						return batch.commit()
+					})()
+				})
+				
+				await materials.docs.map(material => {
+					(async () => {
+						const batch = database.batch()
+						batch.delete(material.ref)
+						return batch.commit()
+					})()
+				})
+
 				await database.collection('classrooms').doc(classroomId).delete()
 
 				response.ok = true

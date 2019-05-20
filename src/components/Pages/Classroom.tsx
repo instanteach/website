@@ -51,6 +51,7 @@ interface IState {
 	user:object
 	select:boolean
 	showGraphic:boolean
+	deleting: boolean
 }
 
 interface IProps {
@@ -118,6 +119,7 @@ class Classroom extends React.Component<IProps, IState> {
 		},
 		classroomDocuments: [""],
 		del: false,
+		deleting: false,
 		destroyed: false,
 		documentSelected: {
 			category:"",
@@ -340,6 +342,8 @@ class Classroom extends React.Component<IProps, IState> {
 			const {session} = this.props
 			const {classroom} = this.state
 
+			this.setState({ deleting: true })
+
 			if(session.uid === classroom.userId) {
 				const response = await ClassroomService.remove(classroom.id)
 				if(response.ok) {
@@ -380,7 +384,7 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public render() {
 		const {classroom, documentSelected, filter, forbidden, materials, open, openAssignMaterial, repository, user} = this.state
-		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic} = this.state
+		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic, deleting} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 
@@ -683,12 +687,16 @@ class Classroom extends React.Component<IProps, IState> {
 				<DialogTitle id="form-dialog-title">Delete Classroom</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						Are you sure about you want to remove this classroom for ever? ⛔
+						{
+							deleting
+							? 'Deleting classroom...'
+							: 'Are you sure about you want to remove this classroom for ever? ⛔'
+						}
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Button type="button" onClick={this.toggleConfirmationModal} color="default">No, cancel</Button>
-					<Button type="button" color="primary" onClick={this.remove}>Yes, I'm sure</Button>
+					<Button disabled={deleting} type="button" onClick={this.toggleConfirmationModal} color="default">No, cancel</Button>
+					<Button disabled={deleting} type="button" color="primary" onClick={this.remove}>Yes, I'm sure</Button>
 				</DialogActions>
 			</Dialog>
 			</>
