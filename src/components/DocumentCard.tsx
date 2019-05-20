@@ -276,7 +276,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 						<DialogTitle id="form-dialog-title">Delete Document</DialogTitle>
 						<DialogContent>
 							<DialogContentText>
-								Are you sure about you want to remove this document?
+								Are you sure about you want to remove this document? ⛔
 							</DialogContentText>
 						</DialogContent>
 						<DialogActions>

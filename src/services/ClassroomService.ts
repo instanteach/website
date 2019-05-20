@@ -100,6 +100,31 @@ class ClassroomService {
 
 		return response
 	}
+
+	public static async remove(classroomId:string)
+	{
+		const response = {ok: false, error: ""}
+		
+		try {
+			const currentUser = firebase.auth().currentUser
+			const classroom = await ClassroomService.get(classroomId)
+			
+			if(currentUser && classroom && currentUser.uid === classroom.userId) {
+				const database = firebase.firestore()
+				await database.collection('classrooms').doc(classroomId).delete()
+
+				response.ok = true
+			}
+			else {
+				response.error = "Forbidden. You must be the classroom owner"
+			}
+		}
+		catch(e) {
+			response.error = e.message
+		}
+
+		return response
+	}
 }
 
 export default ClassroomService

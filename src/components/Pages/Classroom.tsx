@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Link} from 'react-router-dom'
+import {Link, Redirect} from 'react-router-dom'
 import styled from 'styled-components'
 
 import Button from '@material-ui/core/Button'
@@ -17,6 +17,7 @@ import Select from '@material-ui/core/Select'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined'
+import DeleteIcon from '@material-ui/icons/Delete'
 import SettingsIcon from '@material-ui/icons/Settings'
 import TimelineIcon from '@material-ui/icons/Timeline'
 import DocumentCard from '../DocumentCard'
@@ -33,6 +34,8 @@ import UserService from '../../services/UserService'
 interface IState {
 	classroom:Promise<object> | IClassroom
 	classroomDocuments:any[]
+	del:boolean
+	destroyed:boolean
 	documentSelected:IDocument
 	edit: boolean
 	error: string
@@ -112,6 +115,8 @@ class Classroom extends React.Component<IProps, IState> {
 			userId: ""
 		},
 		classroomDocuments: [""],
+		del: false,
+		destroyed: false,
 		documentSelected: {
 			category:"",
 			folder:"",
@@ -262,6 +267,10 @@ class Classroom extends React.Component<IProps, IState> {
 		this.setState({ filter: event.target.value })
 	}
 
+	public toggleConfirmationModal = event => {
+		this.setState({ del: !this.state.del })
+	}
+
 	public update = event => {
 		(async () => {
 			event.preventDefault()
@@ -319,6 +328,22 @@ class Classroom extends React.Component<IProps, IState> {
 		})()
 	}
 
+	public remove = event => {
+		(async () => {
+			const {session} = this.props
+			const {classroom} = this.state
+
+			if(session.uid === classroom.userId) {
+				const response = await ClassroomService.remove(classroom.id)
+				if(response.ok) {
+					this.setState({
+						destroyed: true
+					})
+				}
+			}
+		})()
+	}
+
 	public selectDocumentToAssign = (documentSelected:IDocument) => {
 		this.setState({
 			documentSelected,
@@ -348,13 +373,18 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public render() {
 		const {classroom, documentSelected, filter, forbidden, materials, open, openAssignMaterial, repository, user} = this.state
-		const {edit, error, images, select, classroomDocuments} = this.state
+		const {del, destroyed, edit, error, images, select, classroomDocuments} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 
 		return (
 			<>
 			<Grid container={true}>
+			{
+			destroyed
+			? <Redirect to="/my-students" />
+			: null
+			}
 			{
 			forbidden
 			? <Grid item={true}><Typography>You don't have permissions to be here.</Typography></Grid>
@@ -374,6 +404,7 @@ class Classroom extends React.Component<IProps, IState> {
 									: (
 										<>
 										<SettingsIcon onClick={this.edit} style={{ marginRight: '1rem', cursor: 'pointer' }} />
+										<DeleteIcon onClick={this.toggleConfirmationModal} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<TimelineIcon style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<CustomLink to="/material-generator"><Button variant="raised" color="primary">Request Material</Button></CustomLink>
 										</>
@@ -635,6 +666,18 @@ class Classroom extends React.Component<IProps, IState> {
 					<Button type="submit" color="primary">Update</Button>
 				</DialogActions>
 				</form>
+			</Dialog>
+			<Dialog open={del} onClose={this.toggleConfirmationModal} arial-labelledby="form-dialog-title">
+				<DialogTitle id="form-dialog-title">Delete Classroom</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Are you sure about you want to remove this classroom for ever? ⛔
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button type="button" onClick={this.toggleConfirmationModal} color="default">No, cancel</Button>
+					<Button type="button" color="primary" onClick={this.remove}>Yes, I'm sure</Button>
+				</DialogActions>
 			</Dialog>
 			</>
 		)
