@@ -60,8 +60,6 @@ const UnsplashRepository = styled(Grid)`
 `
 const UnsplashImage = styled('img')`
 	position: absolute;
-	top: 0:
-	left: 0;
 	width: calc(100% - .4rem);
 	height: 100px;
 	max-height: 100px;
@@ -252,8 +250,8 @@ class Classrooms extends React.Component<IProps, IState> {
 						<Grid container={true} item={true} xs={8} md={10}>
 						{
 							session.isAdmin && history.location.pathname.includes('/my-students/user/')
-							? <Typography variant="title">Classroom's {user.displayName} ({classrooms.length}/10)</Typography>
-							: <Typography variant="title">Your classrooms ({classrooms.length}/10)</Typography>
+							? <Typography variant="title">Classroom's {user.displayName}</Typography>
+							: <Typography variant="title">Your classrooms</Typography>
 						}
 						</Grid>
 						{
@@ -315,96 +313,113 @@ class Classrooms extends React.Component<IProps, IState> {
 			<Dialog open={open} onClose={this.handleClose} arial-labelledby="form-dialog-title" fullWidth={true} fullScreen={!mediaQuery.matches}>
 				<form onSubmit={this.createClassroom}>
 				<DialogTitle id="form-dialog-title">Add a new Classroom</DialogTitle>
-				<DialogContent>
-					<DialogContentText style={{ marginBottom: '1rem' }}>
-						The classrooms are groups by students to make a study plan with our digital materials. Set them a name and how many students it has.
-					</DialogContentText>
-					{
-						imageError
-						? (
-							<Grid item={true} xs={12}>
-								<Typography color="error">{imageError}</Typography>
-							</Grid>
-						)
-						: null
-					}
-					<Grid container={true} spacing={16}>
-						<Grid item={true} container={true} xs={12} md={5} alignContent="flex-start" id="fields">
-							<Grid item={true} xs={12}>
-								<TextField variant="outlined" autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
-							</Grid>
-							<Grid item={true} xs={12}>
-								<TextField variant="outlined" margin="normal" id="students" name="students" label="Students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
-							</Grid>
-							<Grid item={true} xs={12}>
-								<TextField variant="outlined" margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
-							</Grid>
-							<Grid item={true} xs={12} style={{marginTop: '1rem'}}>
-								<FormControl fullWidth={true}>
-									<InputLabel htmlFor="level" style={{marginLeft: '1rem'}}>Classroom Level</InputLabel>
-									<Select
-										required={true}
-										fullWidth={true}
-										value={this.state.form.level}
-										onChange={this.handleChange('level')}
-										input={
-											<OutlinedInput
-												labelWidth={250}
-												id="level"
-												name="level" />
-										}>
-										<MenuItem value="Elementary">Elementary ( learning the alphabet, numbers etc...)</MenuItem>
-										<MenuItem value="Beginner">Beginner</MenuItem>
-										<MenuItem value="Pre-intermediate">Pre-intermediate</MenuItem>
-										<MenuItem value="Intermediate">Intermediate</MenuItem>
-										<MenuItem value="Upper-Intermediate">Upper-Intermediate</MenuItem>
-										<MenuItem value="Advanced">Advanced</MenuItem>
-									</Select>
-								</FormControl>
-							</Grid>
-							<Grid item={true} xs={12} style={{marginTop: '1rem'}}>
-								<FormControl fullWidth={true}>
-									<InputLabel htmlFor="time" style={{marginLeft: '1rem'}}>Average class duration</InputLabel>
-									<Select
-										required={true}
-										fullWidth={true}
-										value={this.state.form.time}
-										onChange={this.handleChange('time')}
-										input={
-											<OutlinedInput
-												labelWidth={250}
-												id="time"
-												name="time" />
-										}>
-										<MenuItem value="1 hour or less">1 hour or less</MenuItem>
-										<MenuItem value="1.5 hours">1.5 hours</MenuItem>
-										<MenuItem value="2 hours">2 hours</MenuItem>
-										<MenuItem value="3 hours">3 hours</MenuItem>
-									</Select>
-								</FormControl>
-							</Grid>
-							<Grid item={true} xs={12}>
-								<TextField variant="outlined" margin="normal" id="days" name="days" label="Times a week" type="number" inputProps={{min:1}} fullWidth={true} required={true} />
-							</Grid>
-						</Grid>
-						<UnsplashRepository item={true} container={true} spacing={8} xs={12} md={7} id="images">
-						{
-							images.map((image, index) => (
-								<Grid key={index} item={true} md={6}>
-									<UnsplashImage src={image.url} onClick={this.setThumbnail(index)} />
-									{
-										image.selected ? <UnsplashImageChecked><CheckOutlinedIcon /></UnsplashImageChecked> : null
-									}
+				{
+					classrooms.length >= 10
+					? (
+						<>
+						<DialogContent>
+							Class limit is 10. Please delete a class before creating a new one
+						</DialogContent>
+						<DialogActions>
+						<Button type="button" onClick={this.handleClose} color="default">Ok</Button>
+						</DialogActions>
+						</>
+					)
+					: (
+						<>
+						<DialogContent>
+							<DialogContentText style={{ marginBottom: '1rem' }}>
+							Please give us some basic information about your students in this class and select a picture of your choice. You will be able to edit this info later.
+							</DialogContentText>
+							{
+								imageError
+								? (
+									<Grid item={true} xs={12}>
+										<Typography color="error">{imageError}</Typography>
+									</Grid>
+								)
+								: null
+							}
+							<Grid container={true} spacing={16}>
+								<Grid item={true} container={true} xs={12} md={5} alignContent="flex-start" id="fields">
+									<Grid item={true} xs={12}>
+										<TextField variant="outlined" autoFocus={true} margin="normal" id="name" name="name" label="Classroom name" type="text" fullWidth={true} required={true} />
+									</Grid>
+									<Grid item={true} xs={12}>
+										<TextField variant="outlined" margin="normal" id="students" name="students" label="Number of students" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+									</Grid>
+									<Grid item={true} xs={12}>
+										<TextField variant="outlined" margin="normal" id="age" name="age" label="Average age" type="number" fullWidth={true} inputProps={{min:1}} required={true} />
+									</Grid>
+									<Grid item={true} xs={12} style={{marginTop: '1rem'}}>
+										<FormControl fullWidth={true}>
+											<InputLabel htmlFor="level" style={{marginLeft: '1rem'}}>Classroom Level</InputLabel>
+											<Select
+												required={true}
+												fullWidth={true}
+												value={this.state.form.level}
+												onChange={this.handleChange('level')}
+												input={
+													<OutlinedInput
+														labelWidth={250}
+														id="level"
+														name="level" />
+												}>
+												<MenuItem value="Elementary">Elementary ( learning the alphabet, numbers etc...)</MenuItem>
+												<MenuItem value="Beginner">Beginner</MenuItem>
+												<MenuItem value="Pre-intermediate">Pre-intermediate</MenuItem>
+												<MenuItem value="Intermediate">Intermediate</MenuItem>
+												<MenuItem value="Upper-Intermediate">Upper-Intermediate</MenuItem>
+												<MenuItem value="Advanced">Advanced</MenuItem>
+											</Select>
+										</FormControl>
+									</Grid>
+									<Grid item={true} xs={12} style={{marginTop: '1rem'}}>
+										<FormControl fullWidth={true}>
+											<InputLabel htmlFor="time" style={{marginLeft: '1rem'}}>Class duration</InputLabel>
+											<Select
+												required={true}
+												fullWidth={true}
+												value={this.state.form.time}
+												onChange={this.handleChange('time')}
+												input={
+													<OutlinedInput
+														labelWidth={250}
+														id="time"
+														name="time" />
+												}>
+												<MenuItem value="1 hour or less">1 hour or less</MenuItem>
+												<MenuItem value="1.5 hours">1.5 hours</MenuItem>
+												<MenuItem value="2 hours">2 hours</MenuItem>
+												<MenuItem value="3 hours">3 hours</MenuItem>
+											</Select>
+										</FormControl>
+									</Grid>
+									<Grid item={true} xs={12}>
+										<TextField variant="outlined" margin="normal" id="days" name="days" label="Times per week" type="number" inputProps={{min:1}} fullWidth={true} required={true} />
+									</Grid>
 								</Grid>
-							))
-						}
-						</UnsplashRepository>
-					</Grid>
-				</DialogContent>
-				<DialogActions>
-					<Button type="button" onClick={this.handleClose} color="default">Cancel</Button>
-					<Button type="submit" color="primary">Add</Button>
-				</DialogActions>
+								<UnsplashRepository item={true} container={true} spacing={8} xs={12} md={7} id="images">
+								{
+									images.map((image, index) => (
+										<Grid key={index} item={true} xs={6}>
+											<UnsplashImage src={image.url} onClick={this.setThumbnail(index)} />
+											{
+												image.selected ? <UnsplashImageChecked><CheckOutlinedIcon /></UnsplashImageChecked> : null
+											}
+										</Grid>
+									))
+								}
+								</UnsplashRepository>
+							</Grid>
+						</DialogContent>
+						<DialogActions>
+							<Button type="button" onClick={this.handleClose} color="default">Cancel</Button>
+							<Button type="submit" color="primary">Add</Button>
+						</DialogActions>
+						</>
+					)
+				}
 				</form>
 			</Dialog>
 			</>
