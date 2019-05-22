@@ -1,7 +1,7 @@
-import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import * as React from 'react'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const Wrapper = styled('div')`
@@ -13,60 +13,50 @@ const Wrapper = styled('div')`
     padding-bottom: 5px;
   }
 `
-const LandingOption = styled(Link)`
-	display: flex;
-	width: 100%;
-	height: 180px;
-	border: 1px solid #ccc;
-	border-radius: 8px;
-	justify-content: center;
-	align-items: center;
-	cursor: pointer;
-	text-decoration: none;
-	&:hover {
-		transition-duration: .5s;
-		background-color: var(--primary-color);
-		* {
-			color: var(--secondary-color);
-		}
-	}
-`
 
-const Landing = () => (
-	<Wrapper>
-		<Grid container={true} spacing={32} justify="center">
-			<Grid container={true} item={true} xs={12} md={4} justify="center" alignContent="center" spacing={16}>
-				<LandingOption to="/home">
-					<Typography variant="display2" align="center">Home</Typography>
-				</LandingOption>
-			</Grid>
-			<Grid container={true} item={true} xs={12} md={4} justify="center" alignContent="center" spacing={16}>
-				<LandingOption to="/my-students">
-					<Typography variant="display2" align="center">My Students</Typography>
-				</LandingOption>
-			</Grid>
-			<Grid container={true} item={true} xs={12} md={4} justify="center" alignContent="center" spacing={16}>
-				<LandingOption to="/material-generator">
-					<Typography variant="display2" align="center">Material Generator</Typography>
-				</LandingOption>
-			</Grid>
-			<Grid container={true} item={true} xs={12} md={4} justify="center" alignContent="center" spacing={16}>
-				<LandingOption to="/lesson-plans">
-					<Typography variant="display2" align="center">Lesson Plans</Typography>
-				</LandingOption>
-			</Grid>
-			<Grid container={true} item={true} xs={12} md={4} justify="center" alignContent="center" spacing={16}>
-				<LandingOption to="/about-us">
-					<Typography variant="display2" align="center">About</Typography>
-				</LandingOption>
-			</Grid>
-			<Grid container={true} item={true} xs={12} md={4} justify="center" alignContent="center" spacing={16}>
-				<LandingOption to="/contact">
-					<Typography variant="display2" align="center">Contact us</Typography>
-				</LandingOption>
-			</Grid>
-		</Grid>
-	</Wrapper>
-)
+class Landing extends React.PureComponent {
+  public render() {
+    return <Wrapper>
+      <Typography variant="headline" component="h1">
+        Get Free Personalized English Teaching Printables, Resources and Lesson Plans For ESL Students That Are Personalized For Your Students In Record Time!
+      </Typography>
+      <Typography variant="subheading" component="h2">
+        Us teachers have so many things to do every day and we sadly spend such loooong hours in preparing all our classes...if only there was... Instanteach!
+      </Typography>
+      <Typography variant="subheading" component="h3">
+        We have built the first version of an "English Material Generator", in order to save us all hours of work and to give you material of the highest quality for your students in just a few seconds.
+      </Typography>
+      <Typography variant="title" component="p">
+        How does it work?
+      </Typography>
+      <ol>
+        <li>
+          <Typography component="p">
+            Open the Material Generator
+          </Typography>
+        </li>
+        <li>
+          <Typography component="p">
+            Give us some basic info about your class
+          </Typography>
+        </li>
+        <li>
+          <Typography component="p">
+            Submit! You'll receive an email within 24h with ready-to-use material personalized to your students' neccesities
+          </Typography>
+        </li>
+        <li>
+          <Typography component="p">
+            And Repeat! You can resubmit the form as many times as you need for as many groups as you have 😉
+          </Typography>
+        </li>
+      </ol>
+      <Link to="/material-generator">
+        <Button color="primary" variant="contained">Go</Button>
+      </Link>
+      
+    </Wrapper>
+  }
+}
 
 export default Landing

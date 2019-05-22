@@ -33,8 +33,9 @@ const Routes = (props: any) => (
     <CssBaseline />
     <Router onUpdate={fireTracking} {...props}>
     <Switch>
-      <DefaultLayout exact={true} path="/" component={<Landing />} />
+      <DefaultLayout exact={true} path="/" component={<Home />} />
       <DefaultLayout exact={true} path="/home" component={<Home />} />
+      <DefaultLayout exact={true} path="/land" component={<Landing />} />
       <DefaultLayout path="/document/:id" component={<Document match={{}} />} />
       <DefaultLayout exact={true} path="/lesson-plans" component={<Documents />} />
       <DefaultLayout exact={true} path="/contact" component={<Contact />} />
