@@ -268,7 +268,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										value={request.speaking}
 										onChange={this.handleChange}
 										required={true}
-										label="In the last class, How well did your student(s) do [Speaking]" />
+										label="In the last class, How well did your student(s) do in Speaking?" />
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 4} prev={this.prev}>
 									<MaterialLevelSelector
@@ -276,7 +276,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										value={request.writing}
 										onChange={this.handleChange}
 										required={true}
-										label="In the last class, How well did your student(s) do [Writing]" />
+										label="In the last class, How well did your student(s) do in Writing?" />
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 5} prev={this.prev}>
 									<MaterialLevelSelector
@@ -284,7 +284,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										value={request.listening}
 										onChange={this.handleChange}
 										required={true}
-										label="In the last class, How well did your student(s) do [Listening]" />
+										label="In the last class, How well did your student(s) do in Listening?" />
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 6} prev={this.prev}>
 									<MaterialLevelSelector
@@ -292,7 +292,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										value={request.reading}
 										onChange={this.handleChange}
 										required={true}
-										label="In the last class, How well did your student(s) do [Reading]" />
+										label="In the last class, How well did your student(s) do in Reading?" />
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 7} prev={this.prev}>
 									<MaterialLevelSelector
@@ -300,7 +300,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										value={request.grammar}
 										onChange={this.handleChange}
 										required={true}
-										label="In the last class, How well did your student(s) do [Grammar]" />
+										label="In the last class, How well did your student(s) do in Grammar?" />
 									</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 8} prev={this.prev}>
 									<MaterialLevelSelector
@@ -308,7 +308,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										value={request.vocabulary}
 										onChange={this.handleChange}
 										required={true}
-										label="In the last class, How well did your student(s) do [Vocabulary]" />
+										label="In the last class, How well did your student(s) do in Vocabulary?" />
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 8}>
 									<FormGroup>
