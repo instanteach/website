@@ -28,7 +28,7 @@ const MaterialGeneratorStep = ({children, hidden=false, skippable=false, prev=nu
 		<CustomGrid container={true} justify="space-between">
 			{
 			prev !== null
-			? <CustomButton variant="text" onClick={prev}>Prev</CustomButton>
+			? <CustomButton variant="text" onClick={prev}>Back</CustomButton>
 			: null
 			}
 			{
