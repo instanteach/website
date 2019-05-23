@@ -4,7 +4,6 @@ import styled from "styled-components"
 
 import {Button, FormControl, FormGroup, Grid, InputLabel, MenuItem, OutlinedInput,
 				Select, TextField, Typography} from "@material-ui/core"
-import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined'
 
 import MaterialGeneratorStep from "../MaterialGeneratorStep"
 import MaterialLevelSelector from "../MaterialLevelSelector"
@@ -192,7 +191,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 			? (
 				<SuccessContainer container={true} spacing={16} justify="center" alignItems="center">
 					<Grid container={true} item={true} xs={12} md={6} justify="flex-end">
-						<Success>We have received your request successfully. You will receive the material for your class in less than 24 hours. Stay aware. 😁</Success>
+						<Success>We have successfully received your material request . Within the next 24 hours, we will assign material to your classroom and notify you by email. Stay tuned! 😁</Success>
 						<Button variant="text" onClick={this.reset}>Request Another</Button>
 					</Grid>
 				</SuccessContainer>
@@ -229,7 +228,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										</Select>
 									</FormControl>
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 1}>
+								<MaterialGeneratorStep hidden={step !== 1} prev={this.prev}>
 									<FormControl fullWidth={true}>
 										<InputLabel htmlFor="type" style={{marginLeft: '1rem'}}>What type of material to you need?</InputLabel>
 										<Select
@@ -250,7 +249,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										</Select>
 									</FormControl>
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep skippable={true} onClick={this.next} hidden={step !== 2}>
+								<MaterialGeneratorStep skippable={true} onClick={this.next} hidden={step !== 2} prev={this.prev}>
 									<FormGroup>
 										<InputLabel>Do you know what topic you want to teach? If you don´t, just leave this field empty 😄</InputLabel>
 										<TextField
@@ -263,7 +262,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 											onChange={this.handleChangeTextField('topic')} />
 									</FormGroup>
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 3}>
+								<MaterialGeneratorStep hidden={step !== 3} prev={this.prev}>
 									<MaterialLevelSelector
 										name="speaking"
 										value={request.speaking}
@@ -271,7 +270,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										required={true}
 										label="In the last class, How well did your student(s) do [Speaking]" />
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 4}>
+								<MaterialGeneratorStep hidden={step !== 4} prev={this.prev}>
 									<MaterialLevelSelector
 										name="writing"
 										value={request.writing}
@@ -279,7 +278,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										required={true}
 										label="In the last class, How well did your student(s) do [Writing]" />
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 5}>
+								<MaterialGeneratorStep hidden={step !== 5} prev={this.prev}>
 									<MaterialLevelSelector
 										name="listening"
 										value={request.listening}
@@ -287,7 +286,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										required={true}
 										label="In the last class, How well did your student(s) do [Listening]" />
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 6}>
+								<MaterialGeneratorStep hidden={step !== 6} prev={this.prev}>
 									<MaterialLevelSelector
 										name="reading"
 										value={request.reading}
@@ -295,7 +294,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										required={true}
 										label="In the last class, How well did your student(s) do [Reading]" />
 								</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 7}>
+								<MaterialGeneratorStep hidden={step !== 7} prev={this.prev}>
 									<MaterialLevelSelector
 										name="grammar"
 										value={request.grammar}
@@ -303,7 +302,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 										required={true}
 										label="In the last class, How well did your student(s) do [Grammar]" />
 									</MaterialGeneratorStep>
-								<MaterialGeneratorStep hidden={step !== 8}>
+								<MaterialGeneratorStep hidden={step !== 8} prev={this.prev}>
 									<MaterialLevelSelector
 										name="vocabulary"
 										value={request.vocabulary}
@@ -314,8 +313,8 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 								<MaterialGeneratorStep hidden={step !== 8}>
 									<FormGroup>
 										<Button variant="raised" size="large" color="primary" type="submit" fullWidth={true}>
-											<Typography variant="display1" style={{color:'white'}}>
-												<CheckOutlinedIcon style={{ marginRight: '.5rem' }} /> Request Material
+											<Typography variant="display1" style={{color:'var(--secondary-color)'}}>
+												Generate Material
 											</Typography>
 										</Button>
 									</FormGroup>
