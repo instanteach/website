@@ -280,7 +280,7 @@ class Documents extends React.Component<{}, IState> {
 		return (
 			<Grid container={true} spacing={16}>
 				<Grid item={true} xs={12}>
-					<Search value={filter} placeholder="Search something" onChange={this.search} />
+					<Search value={filter} placeholder="Search for a topic" onChange={this.search} />
 				</Grid>
 				<Grid item={true} xs={12}>
 					{
