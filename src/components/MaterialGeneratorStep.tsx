@@ -8,6 +8,7 @@ interface IProps {
 	hidden: boolean
 	skippable?: boolean
 	onClick?: any
+	prev?:any
 }
 
 const CustomGrid = styled(Grid)`
@@ -20,18 +21,22 @@ const CustomButton = styled(Button)`
 	margin-top: 1rem !important;
 `
 
-const MaterialGeneratorStep = ({children, hidden=false, skippable=false, onClick={}}: IProps) => (
+const MaterialGeneratorStep = ({children, hidden=false, skippable=false, prev=null, onClick={}}: IProps) => (
 	<>
 	<CustomGrid item={true} xs={12} className={`${hidden ? 'hidden' : ''} animated slideInUp`}>
 		{children}
-		{
-		skippable === true
-		? (
-			<CustomGrid container={true} justify="flex-end">
-				<CustomButton variant="text" onClick={onClick}>Skip</CustomButton>
-			</CustomGrid>
-		) : null 
-		}
+		<CustomGrid container={true} justify="space-between">
+			{
+			prev !== null
+			? <CustomButton variant="text" onClick={prev}>Prev</CustomButton>
+			: null
+			}
+			{
+			skippable === true
+			? <CustomButton variant="text" onClick={onClick}>Skip</CustomButton>
+			: null
+			}
+		</CustomGrid>
 	</CustomGrid>
 	</>
 )
