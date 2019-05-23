@@ -250,8 +250,8 @@ class Classrooms extends React.Component<IProps, IState> {
 						<Grid container={true} item={true} xs={8} md={10}>
 						{
 							session.isAdmin && history.location.pathname.includes('/my-students/user/')
-							? <Typography variant="title">Classroom's {user.displayName}</Typography>
-							: <Typography variant="title">Your classrooms</Typography>
+							? <Typography variant="title">Classes' {user.displayName}</Typography>
+							: <Typography variant="title">Your Classes</Typography>
 						}
 						</Grid>
 						{
