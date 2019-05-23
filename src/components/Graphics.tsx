@@ -1,8 +1,8 @@
 import * as React from 'react'
 import {Line} from 'react-chartjs-2'
 
-import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
 import MaterialService from '../services/MaterialService'
 
 interface IProps {
@@ -165,9 +165,12 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		return (
 			isOpen
 			? (
-				<Grid container={true} item={true} xs={12} className="animated fadeIn" style={{ marginBottom: '2rem', marginTop: '1rem' }}>
-					<Divider />
-					<Line data={data} legend={{ position:"right", labels: { padding: 40 } }}  />
+				<Grid container={true} item={true} xs={12} justify="center" className="animated fadeIn" style={{ marginBottom: '2rem', marginTop: '1rem' }}>
+					{
+					data.datasets.length >= 3
+					? <Line data={data} legend={{ position:"right", labels: { padding: 40 } }}  />
+					: <Typography>We will start showing you student´s progress afer you´ve have entered their ability levels more than 2 times</Typography>
+					}
 				</Grid>
 			) : null
 		)
