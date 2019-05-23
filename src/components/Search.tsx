@@ -8,9 +8,9 @@ interface IProps {
 }
 
 const SearchField = styled('input')`
-	padding: .5rem;
+	padding: .7rem;
 	border-radius: 4px;
-	border: 1px solid #ddd;
+	border: 2px solid var(--primary-color);
 	width: 100%;
 	outline: none;
 `
