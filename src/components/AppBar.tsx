@@ -278,7 +278,8 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
           <a href="/">
             <Avatar
               alt='Instanteach Logo'
-              src={`${process.env.PUBLIC_URL}/images/logo.png`}
+							src={`${process.env.PUBLIC_URL}/images/logo.png`}
+							style={{ marginTop: '.5rem', marginBottom: '.5rem', width: '100px', height: '100px' }}
             />
           </a>
         </div>
