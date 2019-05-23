@@ -452,8 +452,8 @@ class Classroom extends React.Component<IProps, IState> {
 				}
 				</Grid>
 				{
-					classroom.id.length
-					? <Graphics classroomId={classroom.id} isOpen={showGraphic} />
+					classroom.id.length > 0
+					? <Graphics classroom={classroom} isOpen={showGraphic} />
 					: null
 				}
 				</>

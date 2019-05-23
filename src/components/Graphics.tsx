@@ -1,12 +1,14 @@
 import * as React from 'react'
 import {Line} from 'react-chartjs-2'
+import styled from 'styled-components'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
+import IClassroom from '../interfaces/IClassroom';
 import MaterialService from '../services/MaterialService'
 
 interface IProps {
-	classroomId: string
+	classroom:IClassroom
 	isOpen: boolean
 }
 
@@ -14,6 +16,14 @@ interface IState {
 	skills:object[]
 	labels:string[]
 }
+
+const LineWrapper = styled('div')`
+	min-height: 60vh;
+	@media screen and (min-width:700px) {
+		min-width: 100%;
+		min-height: auto;
+	}
+`
 
 const commonProperties = {
 	borderCapStyle: 'butt',
@@ -70,7 +80,7 @@ class Graphics extends React.PureComponent<IProps, IState> {
 	}
 
 	public async componentDidMount() {
-		const {classroomId} = this.props
+		const {classroom} = this.props
 		const labels:string[] = []
 		const general:number[] = []
 		const grammar:number[] = []
@@ -79,7 +89,7 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		const speaking:number[] = []
 		const vocabulary:number[] = []
 		const writing:number[] = []
-		const response = await MaterialService.analytics(classroomId)
+		const response = await MaterialService.analytics(classroom.id)
 		
 		if(response.ok) {
 			const d = response.data
@@ -143,8 +153,9 @@ class Graphics extends React.PureComponent<IProps, IState> {
 
 	public render() {
 		const {skills, labels} = this.state
-		const {isOpen} = this.props
+		const {isOpen, classroom} = this.props
 		const datasets:any = []
+		const mediaQuery = window.matchMedia("(min-width:700px)")
 
 		skills.map((skill:any) => {
 			datasets.push({
@@ -152,6 +163,7 @@ class Graphics extends React.PureComponent<IProps, IState> {
 					backgroundColor: skill.colors.secondary,
 					borderColor: skill.colors.primary,
 					data: skill.values,
+					hidden: skill.label === "General" ? false: true,
 					label: skill.label,
 					pointBorderColor: skill.colors.primary,
 					pointHoverBackgroundColor: skill.colors.secondary
@@ -162,13 +174,37 @@ class Graphics extends React.PureComponent<IProps, IState> {
 			datasets,
 			labels,
 		};
+
+		const legend = {
+			labels: {
+				padding: mediaQuery.matches ? 40 : 20
+			},
+			position: mediaQuery.matches ? "right" : "bottom"
+		}
+
+		const options={
+			maintainAspectRatio: mediaQuery.matches ? true : false
+		}
+
 		return (
 			isOpen
 			? (
 				<Grid container={true} item={true} xs={12} justify="center" className="animated fadeIn" style={{ marginBottom: '2rem', marginTop: '1rem' }}>
 					{
 					data.datasets.length >= 3
-					? <Line data={data} legend={{ position:"right", labels: { padding: 40 } }}  />
+					? (
+						<>
+						<Grid item={true} xs={12} md={11}>
+							<Typography variant="title">This graph monitors the progress of students in {classroom.name}</Typography>
+						</Grid>
+						<Grid item={true} xs={12} md={1}>
+							<Typography><small>Select which abilities you wish to graph</small></Typography>
+						</Grid>
+						<LineWrapper>
+							<Line data={data} options={options} legend={legend} />
+						</LineWrapper>
+						</>
+					)
 					: <Typography>We will start showing you student´s progress afer you´ve have entered their ability levels more than 2 times</Typography>
 					}
 				</Grid>
