@@ -85,7 +85,7 @@ class RecoveryPassword extends React.PureComponent<{}, IState> {
 						? (
 							<>
 							<Grid item={true} container={true} xs={12} md={8}  justify="center">
-								<Typography variant="headline">We have sent you an email to recovery your password. 😉</Typography>
+								<Typography variant="headline">We have sent you an email to recover your password 😉</Typography>
 							</Grid>
 							<Grid item={true} container={true} xs={12} md={8} justify="center">
 								<CustomLink to="/login"><Button size="medium" variant="raised" color="primary">Login</Button></CustomLink>
