@@ -33,7 +33,7 @@ const MaterialGeneratorStep = ({children, hidden=false, skippable=false, prev=nu
 			}
 			{
 			skippable === true
-			? <CustomButton variant="text" onClick={onClick}>Skip</CustomButton>
+			? <CustomButton variant="text" onClick={onClick}>Next</CustomButton>
 			: null
 			}
 		</CustomGrid>
