@@ -16,7 +16,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import MenuIcon from '@material-ui/icons/Menu';
 import PeopleIcon from '@material-ui/icons/People'
 import * as React from 'react';
-// import AdSense from 'react-adsense';
+import AdSense from 'react-adsense';
 import { RouteProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -289,15 +289,16 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 				{
 					mediaQuery.matches
 					? <>
+						{/*
 						<AdSenseLab src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4Or1h2Tt0Dt9eCf5q4Vq6Ei5bQL9mg-sTcym2BuDywMIZpMSq2w" />
-						{
-						/*<AdSense.Google
+						*/}
+						
+						<AdSense.Google
 							client='ca-pub-2740710281751996'
 							slot='1941182538'
 							style={{ display: 'block' }}
 							format='auto'
 							responsive='true' />
-						*/}
 					</>
 					: null
 				}
