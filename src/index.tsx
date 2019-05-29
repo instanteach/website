@@ -1,13 +1,17 @@
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import {Provider} from 'react-redux'
 
 import Firebase from './config/firebase'
 import RouteMap from './config/routes'
 import { RawTheme } from './config/theme'
 
+import 'animate.css'
 import './index.css';
-import registerServiceWorker from './registerServiceWorker';
+import registerServiceWorker from './registerServiceWorker'
+
+import store from './state/store'
 
 const theme = createMuiTheme(RawTheme);
 
@@ -16,9 +20,11 @@ Firebase.init()
 
 // Render web application
 ReactDOM.render(
-  <MuiThemeProvider theme={theme}>
-    <RouteMap />
-  </MuiThemeProvider>,
+	<Provider store={store}>
+		<MuiThemeProvider theme={theme}>
+			<RouteMap />
+		</MuiThemeProvider>
+	</Provider>,
   document.getElementById('root') as HTMLElement
 );
 registerServiceWorker();

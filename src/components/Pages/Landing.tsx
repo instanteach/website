@@ -14,7 +14,7 @@ const Wrapper = styled('div')`
   }
 `
 
-class Home extends React.PureComponent {
+class Landing extends React.PureComponent {
   public render() {
     return <Wrapper>
       <Typography variant="headline" component="h1">
@@ -59,4 +59,4 @@ class Home extends React.PureComponent {
   }
 }
 
-export default Home
+export default Landing

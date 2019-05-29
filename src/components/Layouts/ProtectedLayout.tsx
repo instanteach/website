@@ -2,23 +2,25 @@
 import * as React from 'react'
 import { Redirect, Route, RouteProps,} from 'react-router'
 
-import AuthenticationService from '../services/AuthenticationService';
-import AppBar from './AppBar'
+import AuthenticationService from '../../services/AuthenticationService';
+import AppBar from '../AppBar'
+
+import store from '../../state/store'
 
 interface IContentProps {
     normal?: boolean
     padding?: boolean
 }
-interface IPrivateLayout extends RouteProps, IContentProps {
+interface IProtectedLayout extends RouteProps, IContentProps {
     triangle?: boolean;
     component: any;
 }
 
-const PrivateLayout: React.SFC<IPrivateLayout>  = ({ component, ...rest }) => {
+const ProtectedLayout: React.SFC<IProtectedLayout>  = ({ component, ...rest }) => {
     // Verify if exists an user session
     AuthenticationService.listener()
     return (
-        (AuthenticationService.session)
+        (store.getState().session && store.getState().session.isAdmin || AuthenticationService.session && AuthenticationService.session.isAdmin)
         ? <Route {...rest} render={({ staticContext, ...matchProps }) => (
             <AppBar {...matchProps}>
             {React.cloneElement(component, {...matchProps})}
@@ -28,4 +30,4 @@ const PrivateLayout: React.SFC<IPrivateLayout>  = ({ component, ...rest }) => {
     )
 }
 
-export default PrivateLayout
+export default ProtectedLayout

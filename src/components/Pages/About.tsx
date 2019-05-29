@@ -102,8 +102,27 @@ class About extends React.PureComponent {
         </Typography>
       </Conrado>
       <Typography variant="subheading" component="p" paragraph={true}>
-          I'm Conrad, I studied Economics and International Development. I have always been fascinated by business, technology and education. I moved to Mexico in 2015 and started to work as a coordinator in a language school. Then I decided to work independently and ever since I have been teaching to private students as well as business classes in companies. My preferred way of teaching would comprehensible input and material personalization. Feel free to contact me for a question or just a general chat 😃
+        I'm Conrad, I studied Economics and International Development. I have always been fascinated by business, technology and education. I moved to Mexico in 2015 and started to work as a coordinator in a language school. Then I decided to work independently and ever since I have been teaching to private students as well as business classes in companies. My preferred way of teaching would comprehensible input and material personalization. Feel free to contact me for a question or just a general chat 😃
+      </Typography>
+			<br/>
+			<Divider />
+      <Conrado>
+        <Avatar
+          className="conradoAvatar"
+          style={{
+            height: 'auto',
+            width: '15%',
+          }}
+          alt="John Mulders"
+          src={`${process.env.PUBLIC_URL}/images/john.png`}
+        />
+        <Typography variant="display1" component="p">
+					John Mulders
         </Typography>
+      </Conrado>
+      <Typography variant="subheading" component="p" paragraph={true}>
+			My name’s John Mulders and I have been a teacher for more than fifteen years. I have worked in primary education, secondary education and at a language institute. During all these years I have worked hard – as most teachers do – on finding the best lessons for my students. The daily business, the amount of students and the demanding administration have challenged me throughout time. I am thrilled to be a part of Instanteach. I am convinced that the material generator will help us teachers win time!
+      </Typography>
     </Card>
   }
 }

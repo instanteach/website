@@ -1,7 +1,9 @@
 import * as React from 'react'
-import {Redirect,} from 'react-router'
+import {Link, Redirect} from 'react-router-dom'
+import styled from 'styled-components'
+import store from '../../state/store'
 
-import AuthenticationService from '../services/AuthenticationService'
+import AuthenticationService from '../../services/AuthenticationService'
 
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
@@ -10,12 +12,21 @@ import Snackbar from '@material-ui/core/Snackbar'
 import TextField from '@material-ui/core/TextField'
 import CloseIcon from '@material-ui/icons/Close'
 
+import SocialButton from '../SocialButton'
+
 interface IState {
   auth: boolean
   email: string
   error: boolean
-  password: string
+	password: string
+	session: any
 }
+
+const CustomLink = styled(Link)`
+	text-decoration: none;
+	font-size: .9rem;
+	color: #888;
+`
 
 const gridStyles = {
   minHeight: '90%'
@@ -31,13 +42,26 @@ class Login extends React.PureComponent<{}, IState> {
     auth: false,
     email: "",
     error: false,
-    password: ""
-  }
+		password: "",
+		session: null
+	}
+	
+	public unsubscribe: any;
 
-  public componentWillMount() {
-    // Verify if exists an user session
-    AuthenticationService.listener()
-  }
+	public componentWillMount() {
+		// Verify if exists an user session
+		AuthenticationService.listener()
+	}
+
+  public componentDidMount() {
+		const {session} = this.state
+		this.unsubscribe = store.subscribe(() => {
+			const s = store.getState().session
+			if(s && s !== session) {
+				this.setState({ session: s })
+			}
+		})
+	}
 
   public handleChange = name => event => {
     this.setState({
@@ -55,7 +79,29 @@ class Login extends React.PureComponent<{}, IState> {
       auth,
       error: !auth
     })
-  }
+	}
+	
+	public loginWithFacebook = () => {
+		(async () => {
+			const auth = await AuthenticationService.loginWithFacebook()
+		
+			this.setState({
+				auth,
+				error: !auth
+			})
+		})()
+	}
+
+	public loginWithGoogle = () => {
+		(async () => {
+			const auth = await AuthenticationService.loginWithGoogle()
+		
+			this.setState({
+				auth,
+				error: !auth
+			})
+		})()
+	}
 
   public submit = e => {
     e.preventDefault()
@@ -66,18 +112,22 @@ class Login extends React.PureComponent<{}, IState> {
     this.setState({
       error: false
     })
-  }
+	}
+
+	public componentWillUnmount() {
+		this.unsubscribe()
+	}
 
   public render() {
-    const {auth, email, error, password} = this.state
-    const {session} = AuthenticationService
+		const {email, auth, error, password, session} = this.state
+
     return (
       (session || auth)
-      ? <Redirect to="/upload" />
+      ? <Redirect to="/my-students" />
       : (
         <>
         <Grid container={true} spacing={16} style={gridStyles} direction="row" justify="center" alignItems="center">
-          <Grid item={true} xs={4}>
+          <Grid item={true} xs={12} md={4}>
             <form onSubmit={this.submit}>
               <Grid item={true} xs={12}>
                 <TextField
@@ -98,10 +148,30 @@ class Login extends React.PureComponent<{}, IState> {
                   onChange={this.handleChange('password')}
                   variant="outlined"
                   style={inputStyles} />
-                </Grid>
-                <Grid item={true} container={true} xs={12} justify="flex-end">
-                  <Button size="medium" variant="contained" color="primary" type="submit">Log In</Button>
-                </Grid>
+							</Grid>
+							<Grid item={true} container={true} xs={12} justify="flex-end" className="justify-xs-center" style={{ marginBottom: '1rem' }}>
+								<CustomLink to="/recovery-password">I forgot my password</CustomLink>
+							</Grid>
+							<Grid item={true} container={true} xs={12}>
+								<Button
+									fullWidth={true}
+									size="large"
+									variant="contained"
+									color="primary"
+									type="submit"
+									style={{ marginBottom: '1rem' }}>Log In</Button>
+							</Grid>
+							<Grid item={true} container={true} xs={12}>
+								<SocialButton
+									as="facebook"
+									onClick={this.loginWithFacebook}
+									style={{ marginBottom: '1rem' }}>Login with Facebook</SocialButton>
+							</Grid>
+							<Grid item={true} container={true} xs={12}>
+								<SocialButton
+									onClick={this.loginWithGoogle}
+									style={{ marginBottom: '1rem' }}>Login with Google</SocialButton>
+							</Grid>
             </form>
           </Grid>
           <Snackbar
