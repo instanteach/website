@@ -1,4 +1,5 @@
 import * as firebase from 'firebase'
+import moment from 'moment-timezone'
 
 import IDocument from '../interfaces/IDocument'
 import ClassroomService from './ClassroomService';
@@ -135,7 +136,8 @@ class MaterialService {
 		const currentUser: any = firebase.auth().currentUser
 		if(currentUser) {
 			const classroom: any = await ClassroomService.get(data.classroom)
-			const googleSpreadsheetURI = 'https://script.google.com/macros/s/AKfycbykSlpEasveRRzvEzQBUuwmaUT2ScwBqaPW9ktw2RXOwzXY1x0v/exec'
+			const googleSpreadsheetURI = 'https://script.google.com/macros/s/AKfycbzQpy0JVvPBPPlqQ8uni2EeobEBGtH6z2XLY-MGdcLkN82i-gs/exec'
+			const dateFromMexicoCity = moment.tz('America/Mexico_City').format('YYYY-MM-DD H:m');
 			const formContent = new FormData()
 			formContent.append('classroom', classroom.name)
 			formContent.append('user', currentUser.displayName)
@@ -153,6 +155,7 @@ class MaterialService {
 			formContent.append('reading', data.reading)
 			formContent.append('grammar', data.grammar)
 			formContent.append('vocabulary', data.vocabulary)
+			formContent.append('timestamp', dateFromMexicoCity)
 			formContent.append('url', `https://instanteach-dev.web.app/classroom/${classroom.id}`)
 
 			const response = await fetch(googleSpreadsheetURI, {body: formContent, method: 'POST'})
