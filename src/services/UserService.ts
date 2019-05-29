@@ -142,7 +142,6 @@ class UserService {
 		}
 		catch(e) {
 			response.error = e
-			console.log(e)
 		}
 
 		return response

@@ -158,9 +158,6 @@ class DocumentCard extends React.Component<IProps, IState> {
 				if(userId === store.getState().user.uid) {
 					await MaterialService.read(materialId)
 				}
-				else {
-					console.log("Unauthorized")
-				}
 			}
 		})()
 	}

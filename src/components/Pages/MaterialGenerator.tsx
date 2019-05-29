@@ -170,7 +170,6 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 			(async () => {
 				const {request} = this.state
 				const response  = await MaterialService.request(request)
-				console.log(response)
 				if(response.ok) {
 					await MaterialService.submitOnGoogleSpreadsheet(request)
 					this.setState({

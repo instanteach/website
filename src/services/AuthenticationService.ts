@@ -50,7 +50,6 @@ class AuthenticationService {
 			return false
 		}
 		catch (e) {
-			console.log(e)
 			return false
 		}
 	}
@@ -78,7 +77,6 @@ class AuthenticationService {
 			return false
 		}
 		catch (e) {
-			console.log(e)
 			return false
 		}
 	}

@@ -62,7 +62,6 @@ class ClassroomService {
 			}
 		}
 		catch(e) {
-			console.log(e)
 			response.error = e.message
 		}
 		

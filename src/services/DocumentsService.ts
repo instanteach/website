@@ -88,11 +88,9 @@ class DocumentsService {
 		public static remove(documentId: string)
 		{
 			if(AuthenticationService.session.isAdmin) {
-				console.log('Eliminado')
-				// firebase.database().ref(`documents/${documentId}`).remove()
+				firebase.database().ref(`documents/${documentId}`).remove()
 				return true
 			}
-			console.log("Unauthorized")
 			return false
 		}
 

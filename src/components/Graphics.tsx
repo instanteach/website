@@ -93,7 +93,6 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		
 		if(response.ok) {
 			const d = response.data
-			console.log(d)
 			d.map((doc:any) => {
 				labels.push(doc.createdAt)
 				general.push(doc.general)
@@ -145,9 +144,6 @@ class Graphics extends React.PureComponent<IProps, IState> {
 					}
 				]
 			})
-		}
-		else {
-			console.log(response.error)
 		}
 	}
 
