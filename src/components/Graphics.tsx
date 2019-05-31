@@ -93,6 +93,17 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		
 		if(response.ok) {
 			const d = response.data
+			// Initialize Chart
+			labels.push('')
+			general.push(1)
+			grammar.push(1)
+			listening.push(1)
+			reading.push(1)
+			speaking.push(1)
+			vocabulary.push(1)
+			writing.push(1)
+
+			// Load data
 			d.map((doc:any) => {
 				labels.push(doc.createdAt)
 				general.push(doc.general)
