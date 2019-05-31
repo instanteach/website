@@ -6,6 +6,8 @@ interface IUpdateUser {
 	displayName: string
 	email: string
 	password?: string
+	provider?: string
+	createnWith?: string
 }
 
 class UserService {
@@ -32,7 +34,7 @@ class UserService {
 	{
 		const users:object[] = []
 		const database = firebase.firestore()
-		const query = await database.collection('users').where('email', '==', email).get()
+		const query = await database.collection('users').where('publicEmail', '==', email).get()
 		await query.docs.map((doc:any) => users.push(doc.data()))
 		
 		return users.length>0 ? users[0] : null
@@ -73,6 +75,7 @@ class UserService {
 			emailVerified: data.emailVerified ? data.emailVerified : false,
 			isAdmin: false,
 			photoURL: createnWith === "none" ? 'http://www.redfarmoquimicos.mx/wp-content/uploads/2016/10/USER.png' : data.photoURL,
+			publicEmail: data.email,
 			uid: data.uid,
 		}
 
@@ -87,19 +90,32 @@ class UserService {
 
 	public static async syncAccountWithProvider(data:any, provider:string="none"): Promise<any>
 	{
+		let response = {};
 		const database = firebase.firestore()
 		const users = await database.collection('users').where('email', '==', data.email).get()
-		const user = await users.docs[0].data()
+		
 		const userUpdated = {
 			displayName: data.displayName,
 			emailVerified: data.emailVerified,
 			photoURL: data.photoURL,
 			provider
 		}
+		if(users.docs.length > 0) {
+			const user = await users.docs[0].data()
+			if(provider !== "none") {
+				await database.collection('users').doc(user.uid).update({...userUpdated, updatedAt: firebase.firestore.FieldValue.serverTimestamp()})
+				response = {...user, ...userUpdated}
+			}
+			else {
+				response = user
+			}
+		}
+		else {
+			const newUser = UserService.createAccount(data, provider);
+			response = {...newUser, ...userUpdated}
+		}
 
-		await database.collection('users').doc(user.uid).update({...userUpdated, updatedAt: firebase.firestore.FieldValue.serverTimestamp()})
-
-		return {...user, ...userUpdated}
+		return response
 	}
 
 	public static async update(data:IUpdateUser)
@@ -112,7 +128,7 @@ class UserService {
 			const user = firebase.auth().currentUser
 
 			if(user) {
-				const userDB = firebase.firestore().collection('users').doc(user.uid)
+				const userDB: any = firebase.firestore().collection('users').doc(user.uid)
 
 				if(data.displayName && data.displayName.length > 0) {
 					user.updateProfile({
@@ -126,10 +142,18 @@ class UserService {
 				}
 
 				if(data.email && data.email.length > 4) {
-					user.updateEmail(data.email)
-					userDB.update({
-						email: data.email
-					})
+					if(storedUser.createnWith === "none") {
+						user.updateEmail(data.email)
+						userDB.update({
+							email: data.email,
+							publicEmail: data.email
+						})
+					}
+					else {
+						userDB.update({
+							publicEmail: data.email
+						})
+					}
 					response.user.email = data.email
 				}
 

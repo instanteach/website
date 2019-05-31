@@ -46,7 +46,7 @@ class UserList extends React.PureComponent<{}, IState> {
 						<Typography variant="title">{user.displayName}</Typography>
 					</Grid>
 					<Grid item={true} xs={12}>
-						<Typography variant="caption">{user.email}</Typography>
+						<Typography variant="caption">{user.publicEmail}</Typography>
 					</Grid>
 					<Grid container={true} item={true} xs={12} sm={11} justify="flex-end">
 						<Button variant="text" color="primary"><LinkButton to={`/my-students/user/${user.uid}`}>View</LinkButton></Button>

@@ -2,7 +2,9 @@ import * as firebase from 'firebase'
 import moment from 'moment-timezone'
 
 import IDocument from '../interfaces/IDocument'
-import ClassroomService from './ClassroomService';
+import IUser from '../interfaces/IUser'
+import ClassroomService from './ClassroomService'
+import UserService from './UserService'
 
 const orderByCreatedAtDesc = (a, b) => (
 	b.data().createdAt.seconds - a.data().createdAt.seconds
@@ -135,13 +137,14 @@ class MaterialService {
 	{
 		const currentUser: any = firebase.auth().currentUser
 		if(currentUser) {
+			const user:IUser = await UserService.get(currentUser.uid)
 			const classroom: any = await ClassroomService.get(data.classroom)
 			const googleSpreadsheetURI = 'https://script.google.com/macros/s/AKfycbzQpy0JVvPBPPlqQ8uni2EeobEBGtH6z2XLY-MGdcLkN82i-gs/exec'
 			const dateFromMexicoCity = moment.tz('America/Mexico_City').format('YYYY-MM-DD H:m');
 			const formContent = new FormData()
 			formContent.append('classroom', classroom.name)
 			formContent.append('user', currentUser.displayName)
-			formContent.append('email', currentUser.email)
+			formContent.append('email', user.publicEmail)
 			formContent.append('students', classroom.students)
 			formContent.append('age', classroom.age)
 			formContent.append('level', classroom.level)
@@ -156,7 +159,7 @@ class MaterialService {
 			formContent.append('grammar', data.grammar)
 			formContent.append('vocabulary', data.vocabulary)
 			formContent.append('timestamp', dateFromMexicoCity)
-			formContent.append('url', `https://instanteach-dev.web.app/classroom/${classroom.id}`)
+			formContent.append('url', `https://instanteach.com/classroom/${classroom.id}`)
 
 			const response = await fetch(googleSpreadsheetURI, {body: formContent, method: 'POST'})
 

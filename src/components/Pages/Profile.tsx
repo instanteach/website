@@ -35,7 +35,7 @@ class Profile extends React.PureComponent<{}, IState> {
 	public componentDidMount() {
 		this.setState({
 			displayName: store.getState().user.displayName,
-			email: store.getState().user.email,
+			email: store.getState().user.publicEmail,
 			user: store.getState().user
 		})
 	}
