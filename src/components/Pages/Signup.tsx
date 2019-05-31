@@ -87,7 +87,10 @@ class Signup extends React.PureComponent<{}, IState> {
 				this.setState({ error: response.error })
 			}
 			if(response.userId) {
-				this.setState({ signed: true })
+				const auth = await AuthenticationService.login(data.email, data.password);
+				if(auth) {
+					this.setState({ signed: auth })
+				}
 			}
 		})()
 	}
