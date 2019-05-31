@@ -28,6 +28,7 @@ interface IState {
 }
 
 interface IProps {
+	assignable?: boolean
 	clicked: boolean
 	id: string
 	linked?:boolean
@@ -174,7 +175,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 	}
 
 	public render(): JSX.Element {
-		const { clicked, type, name, id, size=6, linked=true, menu=false, isNew=false } = this.props
+		const { clicked, type, name, id, size=6, linked=true, menu=false, isNew=false, assignable=false } = this.props
 		const { url, isOpen, isRemoved } = this.state
 		const user = store.getState().user
 		return (
@@ -182,9 +183,41 @@ class DocumentCard extends React.Component<IProps, IState> {
 				<Grid item={true} xs={12} md={size} onClick={this.props.onClick ? this.onClick : (() => false)}>
 					{
 						(type === 'pdf')
-						? linked 
+						? assignable
 							? (
-								<LinkButton to={`/document/${id}`} onClick={this.read} style={{display: isRemoved ? 'none' : 'auto'}}>
+								<Card>
+									<CardTypeFile style={{ backgroundColor: '#E53935', color: 'white' }}>PDF</CardTypeFile>
+									<CardContent>
+										<Typography variant="subheading" component="h3">{name}</Typography>
+									</CardContent>
+								</Card>
+							)
+							: linked 
+								? (
+									<LinkButton to={`/document/${id}`} onClick={this.read} style={{display: isRemoved ? 'none' : 'auto'}}>
+										<Card className={`${isNew ? 'is_new' : ''}`}>
+											<CardTypeFile style={{color: 'white', fontSize: 0}}>
+												<PDFcontainer item={true} xs={12}>
+													<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
+														<Page pageNumber={1} scale={0.2185} />
+														</PDF>
+												</PDFcontainer>
+											</CardTypeFile>
+											<CardContent>
+												<Typography variant="subheading" component="h3">{name}</Typography>
+											</CardContent>
+											{
+												menu && user.isAdmin
+												? (
+													<MenuButton onClick={this.toggleConfirmationModal}>
+															<DeleteIcon />
+														</MenuButton>
+												) : null
+											}
+										</Card>
+									</LinkButton>
+								)
+								: (
 									<Card className={`${isNew ? 'is_new' : ''}`}>
 										<CardTypeFile style={{color: 'white', fontSize: 0}}>
 											<PDFcontainer item={true} xs={12}>
@@ -196,31 +229,8 @@ class DocumentCard extends React.Component<IProps, IState> {
 										<CardContent>
 											<Typography variant="subheading" component="h3">{name}</Typography>
 										</CardContent>
-										{
-											menu && user.isAdmin
-											? (
-												<MenuButton onClick={this.toggleConfirmationModal}>
-														<DeleteIcon />
-													</MenuButton>
-											) : null
-										}
 									</Card>
-								</LinkButton>
-							)
-							: (
-								<Card className={`${isNew ? 'is_new' : ''}`}>
-									<CardTypeFile style={{color: 'white', fontSize: 0}}>
-										<PDFcontainer item={true} xs={12}>
-											<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
-												<Page pageNumber={1} scale={0.2185} />
-												</PDF>
-										</PDFcontainer>
-									</CardTypeFile>
-									<CardContent>
-										<Typography variant="subheading" component="h3">{name}</Typography>
-									</CardContent>
-								</Card>
-							)
+								)
 						: linked
 							? (
 								<DownloadButton href={url} onClick={this.read} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>

@@ -513,6 +513,7 @@ class Classroom extends React.Component<IProps, IState> {
 											size={12}
 											linked={false}
 											clicked={true}
+											assignable={true}
 											onClick={this.selectDocumentToAssign} />
 									</Grid>
 								) : null
@@ -530,6 +531,7 @@ class Classroom extends React.Component<IProps, IState> {
 												size={12}
 												linked={false}
 												clicked={true}
+												assignable={true}
 												onClick={this.selectDocumentToAssign} />
 										</Grid>
 									)
