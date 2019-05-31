@@ -238,7 +238,7 @@ class DocumentCard extends React.Component<IProps, IState> {
 										{
 										<CardTypeFile style={
 										(type === 'doc' || type === 'docx')
-											? { backgroundColor: '#1565C0' }
+											? { backgroundColor: '#1565C0', color: 'white' }
 											: (type === 'jpg' || type === 'jpeg' || type === 'png')
 												? { backgroundColor: '#E0E0E0', color: '#888' }
 												: (type === 'pptx')
