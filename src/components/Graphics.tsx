@@ -94,14 +94,7 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		if(response.ok) {
 			const d = response.data
 			// Initialize Chart
-			labels.push('')
-			general.push(1)
-			grammar.push(1)
-			listening.push(1)
-			reading.push(1)
-			speaking.push(1)
-			vocabulary.push(1)
-			writing.push(1)
+
 
 			// Load data
 			d.map((doc:any) => {
@@ -172,6 +165,7 @@ class Graphics extends React.PureComponent<IProps, IState> {
 					data: skill.values,
 					hidden: skill.label === "General" ? false: true,
 					label: skill.label,
+					lineTension: 0.3,
 					pointBorderColor: skill.colors.primary,
 					pointHoverBackgroundColor: skill.colors.secondary
 			})
@@ -190,7 +184,15 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		}
 
 		const options={
-			maintainAspectRatio: mediaQuery.matches ? true : false
+			maintainAspectRatio: mediaQuery.matches ? true : false,
+			scales: {
+        yAxes: [{
+            ticks: {
+								beginAtZero: true,
+								stepSize: 1,
+            }
+				}]
+			}
 		}
 
 		return (
