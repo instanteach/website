@@ -58,7 +58,11 @@ const Success = styled('div')`
 `
 const CustomLink = styled(Link)`
 	text-decoration: none;
-	color: inhertir;
+	color: inherit;
+`
+
+const LinkButton = styled(Link)`
+  text-decoration: none
 `
 
 /*
@@ -191,6 +195,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 				<SuccessContainer container={true} spacing={16} justify="center" alignItems="center">
 					<Grid container={true} item={true} xs={12} md={6} justify="flex-end">
 						<Success>We have successfully received your material request . Within the next 24 hours, we will assign material to your classroom and notify you by email. Stay tuned! 😁</Success>
+						<LinkButton to="/my-students"><Button variant="text" onClick={this.reset}>Go back to My Students</Button></LinkButton>
 						<Button variant="text" onClick={this.reset}>Request Another</Button>
 					</Grid>
 				</SuccessContainer>
