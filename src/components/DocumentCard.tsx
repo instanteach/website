@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Page } from 'react-pdf'
-import { Document as PDF } from 'react-pdf/dist/entry.webpack'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -106,22 +104,6 @@ const DownloadButton = styled('a')`
   text-decoration: none
 `
 
-const PDFcontainer = styled(Grid)`
-	.react-pdf__Page {
-		position: relative;
-		overflow: hidden;
-		height: 120px;
-		max-height: 120px;
-		color: white;
-		font-size: 0;
-		.react-pdf__Page__canvas {
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-	}
-`
-
 const MenuButton = styled(IconButton)`
 	position: absolute !important;
 	top: auto !important;
@@ -175,76 +157,20 @@ class DocumentCard extends React.Component<IProps, IState> {
 	}
 
 	public render(): JSX.Element {
-		const { clicked, type, name, id, size=6, linked=true, menu=false, isNew=false, assignable=false } = this.props
+		const { clicked, type, name, id, size=6, linked=true, menu=false, isNew=false } = this.props
 		const { url, isOpen, isRemoved } = this.state
 		const user = store.getState().user
 		return (
 			<Grow in={clicked} style={{ marginBottom: '2rem' }}>
 				<Grid item={true} xs={12} md={size} onClick={this.props.onClick ? this.onClick : (() => false)}>
 					{
-						(type === 'pdf')
-						? assignable
+						linked
+						? type === "pdf"
 							? (
-								<Card>
-									<CardTypeFile style={{ backgroundColor: '#E53935', color: 'white' }}>PDF</CardTypeFile>
-									<CardContent>
-										<Typography variant="subheading" component="h3">{name}</Typography>
-									</CardContent>
-								</Card>
-							)
-							: linked 
-								? (
-									<LinkButton to={`/document/${id}`} onClick={this.read} style={{display: isRemoved ? 'none' : 'auto'}}>
-										<Card className={`${isNew ? 'is_new' : ''}`}>
-											<CardTypeFile style={{color: 'white', fontSize: 0}}>
-												<PDFcontainer item={true} xs={12}>
-													<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
-														<Page pageNumber={1} scale={0.2185} />
-														</PDF>
-												</PDFcontainer>
-											</CardTypeFile>
-											<CardContent>
-												<Typography variant="subheading" component="h3">{name}</Typography>
-											</CardContent>
-											{
-												menu && user.isAdmin
-												? (
-													<MenuButton onClick={this.toggleConfirmationModal}>
-															<DeleteIcon />
-														</MenuButton>
-												) : null
-											}
-										</Card>
-									</LinkButton>
-								)
-								: (
-									<Card className={`${isNew ? 'is_new' : ''}`}>
-										<CardTypeFile style={{color: 'white', fontSize: 0}}>
-											<PDFcontainer item={true} xs={12}>
-												<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
-													<Page pageNumber={1} scale={0.2185} />
-													</PDF>
-											</PDFcontainer>
-										</CardTypeFile>
-										<CardContent>
-											<Typography variant="subheading" component="h3">{name}</Typography>
-										</CardContent>
-									</Card>
-								)
-						: linked
-							? (
-								<DownloadButton href={url} onClick={this.read} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
+								<LinkButton to={`/document/${id}`} onClick={this.read} style={{display: isRemoved ? 'none' : 'auto'}}>
 									<Card className={`${isNew ? 'is_new' : ''}`}>
 										{
-										<CardTypeFile style={
-										(type === 'doc' || type === 'docx')
-											? { backgroundColor: '#1565C0', color: 'white' }
-											: (type === 'jpg' || type === 'jpeg' || type === 'png')
-												? { backgroundColor: '#E0E0E0', color: '#888' }
-												: (type === 'pptx')
-													? { backgroundColor: '#FFC107' }
-													: {}
-										}>{type.toUpperCase()}</CardTypeFile>
+										<CardTypeFile style={{ backgroundColor: '#E53935', color: 'white' }}>{type.toUpperCase()}</CardTypeFile>
 										}
 										<CardContent>
 											<Typography variant="subheading" component="h3">{name}</Typography>
@@ -258,26 +184,54 @@ class DocumentCard extends React.Component<IProps, IState> {
 											) : null
 										}
 									</Card>
-								</DownloadButton>
+								</LinkButton>
 							)
 							: (
+							<DownloadButton href={url} onClick={this.read} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
 								<Card className={`${isNew ? 'is_new' : ''}`}>
 									{
 									<CardTypeFile style={
 									(type === 'doc' || type === 'docx')
-										? { backgroundColor: '#1565C0' }
+										? { backgroundColor: '#1565C0', color: 'white' }
 										: (type === 'jpg' || type === 'jpeg' || type === 'png')
 											? { backgroundColor: '#E0E0E0', color: '#888' }
 											: (type === 'pptx')
 												? { backgroundColor: '#FFC107' }
-												: {}
+												: { backgroundColor: '#E53935', color: 'white' }
 									}>{type.toUpperCase()}</CardTypeFile>
 									}
 									<CardContent>
 										<Typography variant="subheading" component="h3">{name}</Typography>
 									</CardContent>
+									{
+										menu && user.isAdmin
+										? (
+											<MenuButton onClick={this.toggleConfirmationModal}>
+													<DeleteIcon />
+												</MenuButton>
+										) : null
+									}
 								</Card>
-							)
+							</DownloadButton>
+						)
+						: (
+							<Card className={`${isNew ? 'is_new' : ''}`}>
+								{
+								<CardTypeFile style={
+								(type === 'doc' || type === 'docx')
+									? { backgroundColor: '#1565C0' }
+									: (type === 'jpg' || type === 'jpeg' || type === 'png')
+										? { backgroundColor: '#E0E0E0', color: '#888' }
+										: (type === 'pptx')
+											? { backgroundColor: '#FFC107' }
+											: { backgroundColor: '#E53935', color: 'white' }
+								}>{type.toUpperCase()}</CardTypeFile>
+								}
+								<CardContent>
+									<Typography variant="subheading" component="h3">{name}</Typography>
+								</CardContent>
+							</Card>
+						)
 					}
 					<Dialog open={isOpen} onClose={this.toggleConfirmationModal} arial-labelledby="form-dialog-title">
 						<DialogTitle id="form-dialog-title">Delete Document</DialogTitle>
