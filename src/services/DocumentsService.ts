@@ -7,6 +7,26 @@ import AuthenticationService from './AuthenticationService';
 
 const capitalize = str => str.replace(/\b\w/g, letter => letter.toUpperCase())
 
+const orderByLevel = (a:any, b:any):number => {
+	if(a.order > b.order) {
+		return 1;
+	}
+	else if(a.order < b.order) {
+		return -1;
+	}
+	return 0;
+}
+
+const orderByCategory = (a:any, b:any):number => {
+	if(a.suborder > b.suborder) {
+		return 1;
+	}
+	else if(a.suborder < b.suborder) {
+		return -1;
+	}
+	return 0;
+}
+
 class DocumentsService {
     public static async getlAllDocuments() {
         const documents: IDocument[] = await this.getDocuments()
@@ -20,8 +40,14 @@ class DocumentsService {
     }
 
     public static async getDocumentsByGroup(key: string) {
-        const documents: IDocument[] = await this.getDocuments()
-        
+				const documents: IDocument[] = await this.getDocuments()
+				
+				if(key === "level") {
+					return this.group(this.formatted(documents).sort(orderByLevel), key)	
+				}
+				else if(key === "category") {
+					return this.group(this.formatted(documents).sort(orderByCategory), key)
+				}
         return this.group(this.formatted(documents), key)
     }
 
@@ -52,7 +78,9 @@ class DocumentsService {
     public static store(level: string, category: string, folder:string, file: any) {
         const type: string = file.type.split('/')[1]
         const name: string = file.name.split('.')[0]
-        const uuid = uid(10)
+				const uuid = uid(10)
+				const orders = ['beginner', 'intermediate', 'advanced', 'worksheets']
+				const suborders = ['speaking', 'writing', 'listening', 'reading', 'vocabulary', 'grammar', 'kids']
         let url: string = ""
 
         switch(capitalize(level)) {
@@ -78,16 +106,23 @@ class DocumentsService {
                 folder: folder.toLowerCase(),
                 id: uuid,
                 level: level.toLowerCase(),
-                name,
+								name,
+								order: orders.indexOf(level.toLowerCase()),
+								suborder: suborders.indexOf(category.toLowerCase()),
                 type: type.toLowerCase(),
                 url
             })
         })
 		}
 		
-		public static remove(documentId: string)
+		public static async remove(documentId: string)
 		{
 			if(AuthenticationService.session.isAdmin) {
+				const storage = firebase.storage()
+				const ref = storage.ref()
+				const document = await this.getDocumentById(documentId)
+				
+				ref.child(document.url).delete();
 				firebase.database().ref(`documents/${documentId}`).remove()
 				return true
 			}

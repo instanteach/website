@@ -48,6 +48,26 @@ const Chips = styled('div')`
 	}
 `
 
+const orderByLevel = (a:any, b:any): number => {
+	if(a.order > b.order) {
+		return 1;
+	}
+	else if(a.order < b.order) {
+		return -1;
+	}
+	return 0;
+}
+
+const orderByCategory = (a:any, b:any): number => {
+	if(a.suborder > b.suborder) {
+		return 1;
+	}
+	else if(a.suborder < b.suborder) {
+		return -1;
+	}
+	return 0;
+}
+
 class Documents extends React.Component<{}, IState> {
 	public state = {
 		categories: [],
@@ -74,7 +94,7 @@ class Documents extends React.Component<{}, IState> {
 		const collections: ICollection[] = await DocumentsService.getDocumentsByGroup('level')
 		const documentsFromDB: IDocument[] = await DocumentsService.getlAllDocuments()
 
-		this.setState({ collections, documentsFromDB })
+		this.setState({ collections, documentsFromDB: documentsFromDB.sort(orderByLevel) })
 	}
 
 	public async componentDidMount() {
@@ -88,14 +108,13 @@ class Documents extends React.Component<{}, IState> {
 			setTimeout(() => this.setState({ clicked: true }), 150)
 		}
 	}
-
 	public handleLevel = (level: string) => {
 
 		const { chips, collections, path } = this.state
 		const selected: ICollection = collections.filter((collection: ICollection) => collection.group === level)[0]
 		let categories: string[] = []
 
-		selected.documents.map((item: IDocument) => (
+		selected.documents.sort(orderByCategory).map((item: IDocument) => (
 			categories = categories.filter((c: string) => c !== item.category).concat(item.category)
 		))
 
@@ -103,7 +122,7 @@ class Documents extends React.Component<{}, IState> {
 			categories,
 			chips: chips.concat({ key: 1, label: level }),
 			clicked: false,
-			documents: selected.documents,
+			documents: selected.documents.sort(orderByCategory),
 			folders: [],
 			path: {
 				...path,

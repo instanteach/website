@@ -146,9 +146,11 @@ class DocumentCard extends React.Component<IProps, IState> {
 	}
 
 	public removeDocumentFromDatabase = (e:any) => {
-		e.preventDefault()
-		const {id} = this.props
-		this.setState({ isOpen: false, isRemoved: DocumentsService.remove(id) })
+		(async() => {
+			e.preventDefault()
+			const {id} = this.props
+			this.setState({ isOpen: false, isRemoved: await DocumentsService.remove(id) })
+		})()
 	}
 
 	public toggleConfirmationModal = (e:any) => {
