@@ -64,5 +64,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# Lock files
+*.lock
+
 # sensible data
 ads.txt
