@@ -80,6 +80,11 @@ class Signup extends React.PureComponent<{}, IState> {
 			this.setState({ error: "Password must have 6 characters as min" })
 			return
 		}
+
+		if(data.displayName.length <= 1) {
+			this.setState({ error: "Your full name is required" })
+			return
+		}
 		
 		(async () =>{
 			const response = await UserService.register(data)
