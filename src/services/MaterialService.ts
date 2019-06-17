@@ -159,6 +159,7 @@ class MaterialService {
 			formContent.append('grammar', data.grammar)
 			formContent.append('vocabulary', data.vocabulary)
 			formContent.append('timestamp', dateFromMexicoCity)
+			formContent.append('done', 'Not Done')
 			formContent.append('url', `https://instanteach.com/classroom/${classroom.id}`)
 
 			const response = await fetch(googleSpreadsheetURI, {body: formContent, method: 'POST'})
