@@ -99,6 +99,8 @@ class AuthenticationService {
 	public static listener()
 	{
 		let session
+		// const firebaseSession = firebase.auth().currentUser
+		// console.log(firebaseSession)
 		firebase.auth().onAuthStateChanged(user => {	
 			(async () => {
 				if (user) {
@@ -114,8 +116,7 @@ class AuthenticationService {
 					AuthenticationService.session = session
 				}
 				else {
-					session = null
-					AuthenticationService.session = session
+					this.logout()
 				}
 			})();
 		})
