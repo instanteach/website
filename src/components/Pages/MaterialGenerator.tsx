@@ -15,6 +15,8 @@ import MaterialService from "../../services/MaterialService"
 interface IState {
 	classrooms: IClassroom[]
 	error: string
+	is_disabled: boolean
+	is_submitted: boolean
 	ready: boolean
 	request: any
 	step: number
@@ -75,6 +77,8 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 	public state = {
 		classrooms: [],
 		error: "",
+		is_disabled: false,
+		is_submitted: false,
 		ready: false,
 		request: {
 			classroom: "",
@@ -151,6 +155,8 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 	public reset =() => {
 		this.setState({
 			error: "",
+			is_disabled: false,
+			is_submitted: false,
 			request: {
 				classroom: "",
 				grammar: "",
@@ -169,14 +175,18 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 	
 	public submit = event => {
 		event.preventDefault()
-		const {step, steps} = this.state
-		if(step >= steps) {
+		this.disableSubmit()
+
+		const {is_submitted, step, steps} = this.state
+		
+		if(step >= steps && !is_submitted) {
 			(async () => {
 				const {request} = this.state
 				const response  = await MaterialService.request(request)
 				if(response.ok) {
 					await MaterialService.submitOnGoogleSpreadsheet(request)
 					this.setState({
+						is_submitted: true,
 						success: true
 					})
 				} else {
@@ -187,8 +197,12 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 		}
 	}
 
+	public disableSubmit = () => {
+		this.setState({is_disabled: true})
+	}
+
   public render() {
-		const {classrooms, error, ready, request, step, success} = this.state
+		const {classrooms, error, is_disabled, ready, request, step, success} = this.state
     return (
 			success
 			? (
@@ -316,7 +330,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 8}>
 									<FormGroup>
-										<Button variant="raised" size="large" color="primary" type="submit" fullWidth={true}>
+										<Button disabled={request.vocabulary === "" || is_disabled} variant="raised" size="large" color="primary" type="submit" fullWidth={true}>
 											<Typography variant="display1" style={{color:'var(--secondary-color)'}}>
 												Generate Material
 											</Typography>

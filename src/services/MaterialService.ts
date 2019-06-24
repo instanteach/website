@@ -3,6 +3,7 @@ import moment from 'moment-timezone'
 
 import IDocument from '../interfaces/IDocument'
 import IUser from '../interfaces/IUser'
+import store from '../state/store'
 import ClassroomService from './ClassroomService'
 import UserService from './UserService'
 
@@ -97,7 +98,8 @@ class MaterialService {
 	{
 		const response = {requestId:"", error:"", ok: false}
 		try {
-			const currentUser: any = firebase.auth().currentUser
+			// const currentUser: any = firebase.auth().currentUser
+			const currentUser: any = store.getState().session
 			if(currentUser) {
 				const classroom: any = await ClassroomService.get(data.classroom)
 				const database = firebase.firestore()
