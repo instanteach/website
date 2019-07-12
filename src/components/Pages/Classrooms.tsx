@@ -34,8 +34,8 @@ interface IState {
 	imageError: string;
 	images: object[];
 	user: {};
+	showDefault: boolean;
 	form: {};
-	defaultOpen: boolean;
 	thumbnail: string;
 }
 
@@ -84,12 +84,12 @@ class Classrooms extends React.Component<IProps, IState> {
 		classrooms: [],
 		forbidden: false,
 		cannotInsert: false,
+		showDefault: false,
 		form: {
 			level: "",
 			time: ""
 		},
 		imageError: "",
-		defaultOpen: false,
 		images: [
 			{
 				selected: false,
@@ -152,15 +152,6 @@ class Classrooms extends React.Component<IProps, IState> {
 		}
 	};
 
-	public async componentWillMount() {
-		const classrooms: IClassroom[] = await ClassroomService.getByCurrentUser();
-		if (classrooms.length === 0) {
-			this.setState({
-				defaultOpen: true
-			});
-		}
-	}
-
 	public componentDidMount() {
 		const { history, session } = this.props;
 
@@ -182,7 +173,7 @@ class Classrooms extends React.Component<IProps, IState> {
 		} else {
 			(async () => {
 				const classrooms: IClassroom[] = await ClassroomService.getByCurrentUser();
-				this.setState({ classrooms });
+				this.setState({ classrooms, showDefault: true });
 			})();
 		}
 	}
@@ -205,12 +196,6 @@ class Classrooms extends React.Component<IProps, IState> {
 				...this.state.form,
 				[field]: event.target.value
 			}
-		});
-	};
-
-	public removeDefault = () => {
-		this.setState({
-			defaultOpen: false
 		});
 	};
 
@@ -279,7 +264,7 @@ class Classrooms extends React.Component<IProps, IState> {
 	public render() {
 		const {
 			classrooms,
-			defaultOpen,
+			showDefault,
 			forbidden,
 			imageError,
 			images,
@@ -340,6 +325,48 @@ class Classrooms extends React.Component<IProps, IState> {
 										</Button>
 									</Grid>
 								) : null}
+								{classrooms.length === 0 && showDefault ? (
+									<div>
+										<p>Hello {session.displayName},</p>
+										<p>
+											Us teachers are working hard. Everyday we are looking for
+											the best material to teach our students. Wouldn’t it be
+											great - and save a lot of time - if there was a helpful
+											tool to give us the right material?
+										</p>
+										<p>Welcome to Instanteach! 🤗</p>
+										<p>But wait, what is Instanteach?? 🤔</p>
+										<p>
+											Instanteach is your new material assistant for your
+											classes. We will give you personalized material for your
+											students based on their characteristics and abilities...
+										</p>
+										<p>
+											<strong>
+												<ul>
+													<li>
+														No more searching for a worksheet for hours and
+														hours!
+													</li>
+													<li>
+														No more having to improvise a class because you
+														didn't have time to find a good lesson plan!
+													</li>
+												</ul>
+											</strong>
+										</p>
+										<p>And of course it's all 100% free :) 🤩</p>
+										<p>
+											So get started! Create your first class, give us some
+											basic information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll
+											need to fill this out only once but you can edit it later)
+											and then…… Request some material! We´ll send you the ideal
+											classroom material for you and and your students so that
+											you only need to worry on the thing that matters most:
+											Teaching an engaging class :) 👨‍🏫👩‍🏫
+										</p>
+									</div>
+								) : null}
 							</Grid>
 							<Grid container={true} spacing={16}>
 								{user.email.length > 0 && classrooms.length === 0 ? (
@@ -396,6 +423,7 @@ class Classrooms extends React.Component<IProps, IState> {
 						</>
 					)}
 				</Grid>
+
 				<Dialog
 					open={open}
 					onClose={this.handleClose}
@@ -617,64 +645,13 @@ class Classrooms extends React.Component<IProps, IState> {
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText>
-							{"A classrom with similiar specifications already exists" +
-								"Please try again"}
+							{
+								"You have already created this class! Please create a different class."
+							}
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
 						<Button type="button" color="primary" onClick={this.removeMsg}>
-							OK
-						</Button>
-					</DialogActions>
-				</Dialog>
-				<Dialog
-					open={defaultOpen}
-					onClose={this.removeDefault}
-					arial-labelledby="form-dialog-title"
-				>
-					<DialogTitle id="form-dialog-title">Create Classroom</DialogTitle>
-					<DialogContent>
-						<DialogContentText>
-							<p>Hello {session.displayName},</p>
-							<p>
-								Us teachers are working hard. Everyday we are looking for the
-								best material to teach our students. Wouldn’t it be great - and
-								save a lot of time - if there was a helpful tool to give us the
-								right material?
-							</p>
-							<p>Welcome to Instanteach! 🤗</p>
-							<p>But wait, what is Instanteach?? 🤔</p>
-							<p>
-								Instanteach is your new material assistant for your classes. We
-								will give you personalized material for your students based on
-								their characteristics and abilities...
-							</p>
-							<p>
-								<strong>
-									<ul>
-										<li>
-											No more searching for a worksheet for hours and hours!
-										</li>
-										<li>
-											No more having to improvise a class because you didn't
-											have time to find a good lesson plan!
-										</li>
-									</ul>
-								</strong>
-							</p>
-							<p>And of course it's all 100% free :) 🤩</p>
-							<p>
-								So get started! Create your first class, give us some basic
-								information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll need to fill
-								this out only once but you can edit it later) and then…… Request
-								some material! We´ll send you the ideal classroom material for
-								you and and your students so that you only need to worry on the
-								thing that matters most: Teaching an engaging class :) 👨‍🏫👩‍🏫
-							</p>
-						</DialogContentText>
-					</DialogContent>
-					<DialogActions>
-						<Button type="button" color="primary" onClick={this.removeDefault}>
 							OK
 						</Button>
 					</DialogActions>

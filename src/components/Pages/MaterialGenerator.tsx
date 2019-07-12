@@ -18,12 +18,6 @@ import {
 import MaterialGeneratorStep from "../MaterialGeneratorStep";
 import MaterialLevelSelector from "../MaterialLevelSelector";
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-
 import IClassroom from "../../interfaces/IClassroom";
 import ClassroomService from "../../services/ClassroomService";
 import MaterialService from "../../services/MaterialService";
@@ -34,7 +28,6 @@ interface IState {
 	ready: boolean;
 	request: any;
 	step: number;
-	defaultOpen: boolean;
 	steps: number;
 	success: boolean;
 }
@@ -94,7 +87,6 @@ class MaterialGenerator extends React.PureComponent<IProps, IState> {
 		classrooms: [],
 		error: "",
 		ready: false,
-		defaultOpen: false,
 		request: {
 			classroom: "",
 			grammar: "",
@@ -115,15 +107,6 @@ class MaterialGenerator extends React.PureComponent<IProps, IState> {
 		const classrooms: IClassroom[] = await ClassroomService.getByCurrentUser();
 
 		this.setState({ classrooms, ready: true });
-	}
-
-	public async componentWillMount() {
-		const classrooms: IClassroom[] = await ClassroomService.getByCurrentUser();
-		if (classrooms.length === 0) {
-			this.setState({
-				defaultOpen: true
-			});
-		}
 	}
 
 	public handleChange = (field) => (event) => {
@@ -158,12 +141,6 @@ class MaterialGenerator extends React.PureComponent<IProps, IState> {
 		if (event.charCode === 13) {
 			this.next();
 		}
-	};
-
-	public removeDefault = () => {
-		this.setState({
-			defaultOpen: false
-		});
 	};
 
 	public next = () => {
@@ -223,16 +200,7 @@ class MaterialGenerator extends React.PureComponent<IProps, IState> {
 	};
 
 	public render() {
-		const {
-			classrooms,
-			defaultOpen,
-			error,
-			ready,
-			request,
-			step,
-			success
-		} = this.state;
-		const { session } = this.props;
+		const { classrooms, error, ready, request, step, success } = this.state;
 		return success ? (
 			<SuccessContainer
 				container={true}
@@ -458,58 +426,6 @@ class MaterialGenerator extends React.PureComponent<IProps, IState> {
 						</>
 					) : null}
 				</Generator>
-				<Dialog
-					open={defaultOpen}
-					onClose={this.removeDefault}
-					arial-labelledby="form-dialog-title"
-				>
-					<DialogTitle id="form-dialog-title">Create Classroom</DialogTitle>
-					<DialogContent>
-						<DialogContentText>
-							<p>Hello {session.displayName},</p>
-							<p>
-								Us teachers are working hard. Everyday we are looking for the
-								best material to teach our students. Wouldn’t it be great - and
-								save a lot of time - if there was a helpful tool to give us the
-								right material?
-							</p>
-							<p>Welcome to Instanteach! 🤗</p>
-							<p>But wait, what is Instanteach?? 🤔</p>
-							<p>
-								Instanteach is your new material assistant for your classes. We
-								will give you personalized material for your students based on
-								their characteristics and abilities...
-							</p>
-							<p>
-								<strong>
-									<ul>
-										<li>
-											No more searching for a worksheet for hours and hours!
-										</li>
-										<li>
-											No more having to improvise a class because you didn't
-											have time to find a good lesson plan!
-										</li>
-									</ul>
-								</strong>
-							</p>
-							<p>And of course it's all 100% free :) 🤩</p>
-							<p>
-								So get started! Create your first class, give us some basic
-								information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll need to fill
-								this out only once but you can edit it later) and then…… Request
-								some material! We´ll send you the ideal classroom material for
-								you and and your students so that you only need to worry on the
-								thing that matters most: Teaching an engaging class :) 👨‍🏫👩‍🏫
-							</p>
-						</DialogContentText>
-					</DialogContent>
-					<DialogActions>
-						<Button type="button" color="primary" onClick={this.removeDefault}>
-							OK
-						</Button>
-					</DialogActions>
-				</Dialog>
 			</Grid>
 		);
 	}

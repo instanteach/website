@@ -75,7 +75,8 @@ class ClassroomService {
 					item.days === seed.days &&
 					item.level === seed.level &&
 					item.thumbnail === seed.thumbnail &&
-					item.students === seed.students
+					item.students === seed.students &&
+					item.userId === seed.userId
 				) {
 					flag = true;
 					return;
