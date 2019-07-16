@@ -369,7 +369,9 @@ class Classrooms extends React.Component<IProps, IState> {
 								) : null}
 							</Grid>
 							<Grid container={true} spacing={16}>
-								{user.email.length > 0 && classrooms.length === 0 ? (
+								{user !== null &&
+								user.email.length > 0 &&
+								classrooms.length === 0 ? (
 									<>
 										<Grid item={true}>
 											<br />

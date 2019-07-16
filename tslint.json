@@ -1,10 +1,18 @@
 {
-  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
-  "linterOptions": {
-    "exclude": [
-      "config/**/*.js",
-      "node_modules/**/*.ts",
-      "coverage/lcov-report/*.js"
-    ]
-  }
+	"extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+	"rules": {
+		// Added From Here 4-7-2019
+		"object-literal-sort-keys": false, //Disable for typescript
+		"no-console": false
+	},
+	"jsRules": {
+		"object-literal-sort-keys": false //Disable for javascript
+	}, // Till Here 4-7-2019
+	"linterOptions": {
+		"exclude": [
+			"config/**/*.js",
+			"node_modules/**/*.ts",
+			"coverage/lcov-report/*.js"
+		]
+	}
 }
