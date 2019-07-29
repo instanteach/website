@@ -6,4 +6,6 @@ export default interface IDocument {
     folder: string
     type: string
 		url: string
+		order?: number
+		suborder?: number
 }

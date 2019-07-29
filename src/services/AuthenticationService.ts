@@ -54,10 +54,10 @@ class AuthenticationService {
 				}
 				return true;
 			}
-			return false;
-		} catch (e) {
-			console.log(e);
-			return false;
+			return false
+		}
+		catch (e) {
+			return false
 		}
 	}
 
@@ -85,10 +85,10 @@ class AuthenticationService {
 				}
 				return true;
 			}
-			return false;
-		} catch (e) {
-			console.log(e);
-			return false;
+			return false
+		}
+		catch (e) {
+			return false
 		}
 	}
 
@@ -105,14 +105,17 @@ class AuthenticationService {
 		return response;
 	}
 
-	public static listener() {
-		let session;
-		firebase.auth().onAuthStateChanged((user) => {
+	public static listener()
+	{
+		let session: any
+		firebase.auth().onAuthStateChanged(user => {
 			(async () => {
+				console.log(user)
 				if (user) {
 					const u: IUser = await UserService.get(user.uid);
 					session = {
 						emailVerified: user.emailVerified,
+						isAdmin: u.isAdmin,
 						photoURL: user.photoURL,
 						refreshToken: user.refreshToken,
 						...u,

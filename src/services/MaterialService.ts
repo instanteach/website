@@ -1,8 +1,11 @@
 import * as firebase from "firebase";
 import moment from "moment-timezone";
 
-import IDocument from "../interfaces/IDocument";
-import ClassroomService from "./ClassroomService";
+import IDocument from '../interfaces/IDocument'
+import IUser from '../interfaces/IUser'
+import store from '../state/store'
+import ClassroomService from './ClassroomService'
+import UserService from './UserService'
 
 const orderByCreatedAtDesc = (a, b) =>
 	b.data().createdAt.seconds - a.data().createdAt.seconds;
@@ -109,11 +112,12 @@ class MaterialService {
 	public static async request(data: any) {
 		const response = { requestId: "", error: "", ok: false };
 		try {
-			const currentUser: any = firebase.auth().currentUser;
-			if (currentUser) {
-				const classroom: any = await ClassroomService.get(data.classroom);
-				const database = firebase.firestore();
-				const req = await database.collection("requests").add({
+			// const currentUser: any = firebase.auth().currentUser
+			const currentUser: any = store.getState().session
+			if(currentUser) {
+				const classroom: any = await ClassroomService.get(data.classroom)
+				const database = firebase.firestore()
+				const req = await database.collection('requests').add({
 					age: classroom.age,
 					classroomId: classroom.id,
 					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -143,45 +147,39 @@ class MaterialService {
 		return response;
 	}
 
-	public static async submitOnGoogleSpreadsheet(data: any) {
-		const currentUser: any = firebase.auth().currentUser;
-		if (currentUser && currentUser != null) {
-			const classroom: any = await ClassroomService.get(data.classroom);
-			const googleSpreadsheetURI =
-				"https://script.google.com/macros/s/AKfycbzQpy0JVvPBPPlqQ8uni2EeobEBGtH6z2XLY-MGdcLkN82i-gs/exec";
-			const dateFromMexicoCity = moment
-				.tz("America/Mexico_City")
-				.format("YYYY-MM-DD H:m");
-			const formContent = new FormData();
-			formContent.append("classroom", classroom.name);
-			formContent.append("user", currentUser.displayName);
-			formContent.append("email", currentUser.email);
-			formContent.append("students", classroom.students);
-			formContent.append("age", classroom.age);
-			formContent.append("level", classroom.level);
-			formContent.append("time", classroom.time);
-			formContent.append("days", classroom.days);
-			formContent.append("type", data.type);
-			formContent.append("topic", data.topic);
-			formContent.append("speaking", data.speaking);
-			formContent.append("writing", data.writing);
-			formContent.append("listening", data.listening);
-			formContent.append("reading", data.reading);
-			formContent.append("grammar", data.grammar);
-			formContent.append("vocabulary", data.vocabulary);
-			formContent.append("timestamp", dateFromMexicoCity);
-			formContent.append(
-				"url",
-				`https://instanteach-dev.web.app/classroom/${classroom.id}`
-			);
+	public static async submitOnGoogleSpreadsheet(data:any)
+	{
+		const currentUser: any = firebase.auth().currentUser
+		if(currentUser) {
+			const user:IUser = await UserService.get(currentUser.uid)
+			const classroom: any = await ClassroomService.get(data.classroom)
+			const googleSpreadsheetURI = 'https://script.google.com/macros/s/AKfycbzQpy0JVvPBPPlqQ8uni2EeobEBGtH6z2XLY-MGdcLkN82i-gs/exec'
+			const dateFromMexicoCity = moment.tz('America/Mexico_City').format('YYYY-MM-DD H:m');
+			const formContent = new FormData()
+			formContent.append('classroom', classroom.name)
+			formContent.append('user', user.displayName)
+			formContent.append('email', user.publicEmail)
+			formContent.append('students', classroom.students)
+			formContent.append('age', classroom.age)
+			formContent.append('level', classroom.level)
+			formContent.append('time', classroom.time)
+			formContent.append('days', classroom.days)
+			formContent.append('type', data.type)
+			formContent.append('topic', data.topic)
+			formContent.append('speaking', data.speaking)
+			formContent.append('writing', data.writing)
+			formContent.append('listening', data.listening)
+			formContent.append('reading', data.reading)
+			formContent.append('grammar', data.grammar)
+			formContent.append('vocabulary', data.vocabulary)
+			formContent.append('timestamp', dateFromMexicoCity)
+			formContent.append('done', 'Not Done')
+			formContent.append('url', `https://instanteach.com/classroom/${classroom.id}`)
 
-			const response = await fetch(googleSpreadsheetURI, {
-				body: formContent,
-				method: "POST"
-			});
+			const response = await fetch(googleSpreadsheetURI, {body: formContent, method: 'POST'})
 
-			if (response.ok) {
-				return true;
+			if(response.ok) {
+				return true
 			}
 
 			return false;

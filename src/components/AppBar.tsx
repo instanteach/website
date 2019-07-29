@@ -80,7 +80,7 @@ const ToolbarButton = styled(Button)`
 		opacity: 1;
 	}
 `
-
+/*
 const AdSenseLab = styled('img')`
 	width: 100%;
 	&.horizontal {
@@ -92,6 +92,16 @@ const AdSenseLab = styled('img')`
 		height: 60px;
 		overflow: hidden;
 	}
+`
+*/
+
+const AdSenseMobileContainer = styled('div')`
+	position: fixed;
+	bottom: .5rem;
+	left: .5rem;
+	right: .5rem;
+	width: 95%;
+	height: 60px;
 `
 
 const MenuUser = styled('ul')`
@@ -391,7 +401,15 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
 					</Content>
 					{
 					!mediaQuery.matches
-					? <AdSenseLab className="horizontal" src="https://previews.123rf.com/images/messer16/messer161705/messer16170500026/78201541-potato-chips-ads-vector-realistic-illustration-of-potato-chips-with-garlic-horizontal-banner-with-pr.jpg" />
+					? (
+						<AdSenseMobileContainer>
+							<AdSense.Google
+							client='ca-pub-2740710281751996'
+							slot='9728379381'
+							style={{ display: 'block' }}
+							responsive='true' />
+						</AdSenseMobileContainer>
+					)
 					: null
 					}
         </main>

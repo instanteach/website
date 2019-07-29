@@ -97,8 +97,8 @@ class ClassroomService {
 			console.log(e);
 			response.error = e.message;
 		}
-
-		return response;
+		
+		return response
 	}
 
 	public static async update(uid: string, data: any) {

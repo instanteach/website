@@ -45,6 +45,7 @@ interface IState {
 	form: object
 	images: object[]
 	materials:IDocument[]
+	me: object
 	open:boolean
 	openAssignMaterial:boolean
 	repository:IDocument[]
@@ -181,6 +182,9 @@ class Classroom extends React.Component<IProps, IState> {
 			},
 		],
 		materials: Array(),
+		me: {
+			isAdmin: false
+		},
 		open: false,
 		openAssignMaterial: false,
 		repository: Array(),
@@ -198,11 +202,12 @@ class Classroom extends React.Component<IProps, IState> {
 			const {session, match} = this.props
 			const classroomId = match.params.id
 			const classroom:any = await ClassroomService.get(classroomId)
+			const me = await UserService.get(session.uid)
 			const user = await UserService.get(classroom.userId)
 			const materialsOfTheClassroom = await MaterialService.getByClassroomId(classroomId)
 			const repository:IDocument[] = await DocumentsService.getlAllDocuments()
 
-			if(classroom.userId !== session.uid && !session.isAdmin) {
+			if(classroom.userId !== session.uid && !me.isAdmin) {
 				this.setState({ forbidden: true })
 				return
 			}
@@ -224,6 +229,7 @@ class Classroom extends React.Component<IProps, IState> {
 					time: classroom.time
 				},
 				materials,
+				me,
 				repository,
 				user: user ? user : {name:""}
 			})
@@ -384,7 +390,7 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public render() {
 		const {classroom, documentSelected, filter, forbidden, materials, open, openAssignMaterial, repository, user} = this.state
-		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic, deleting} = this.state
+		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic, deleting, me} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 
@@ -406,18 +412,18 @@ class Classroom extends React.Component<IProps, IState> {
 						<Typography variant="title">{classroom.name}</Typography>
 					</Grid>
 					{
-						!history.location.pathname.includes('/classrooms/user/')
+						!history.location.pathname.includes('/my-students/user/') && classroom.name.length > 0
 						? (
 							<Grid container={true} item={true} xs={6} justify="flex-end" alignItems="center">
 								{
-									session.isAdmin && classroom.userId !== session.uid
+									me.isAdmin && classroom.userId !== session.uid
 									? <Button variant="raised" color="primary" onClick={this.handleAssignMaterial}>Assign Material</Button>
 									: (
 										<>
 										<SettingsIcon onClick={this.edit} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<DeleteIcon onClick={this.toggleConfirmationModal} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<TimelineIcon onClick={this.toggleShowGraphic} style={{ marginRight: '1rem', cursor: 'pointer' }} />
-										<CustomLink to="/material-generator"><Button variant="raised" color="primary">Request Material</Button></CustomLink>
+										<CustomLink to="/material-generator"><Button variant="raised" color="primary" className="animated swing">Request Material</Button></CustomLink>
 										</>
 									)
 								}
@@ -428,8 +434,17 @@ class Classroom extends React.Component<IProps, IState> {
 				{
 					classroom.name.length > 0 && materials.length === 0
 					? (
-						<Grid container={true} item={true} xs={12}>
-							<Typography>This classrooms doesn't have assigned materials yet.</Typography>
+						<Grid item={true} xs={12}>
+							<br/>
+							<Typography>Fantastic job, you´ve created your classroom´s profile! 🕺</Typography>
+							<br/>
+							<Typography>In this space you will be able to see the material we assign for you students, as well as being able to track their progress over time (click the graph icon at top right ;) ) 📚📈</Typography>
+							<br/>
+							<Typography>Now, I´m sure you have class with these students soon, so go ahead and ask for some material.  You will be asked what type of material you want, and to grade their abilities… It will take less than 30 secs! Click the request material button! ⏲️</Typography>
+							<br/>
+							<Typography>After requesting material, that's it, our system will take your classroom´s info (age, number of students etc.) and their different skill levels and we´ll find the perfect material for them 😌</Typography>
+							<br/>
+							<Typography>You will then be able to relax, we´ll prepare everything for that class for you! 😁👍</Typography>
 						</Grid>
 					) : null
 				}
@@ -513,6 +528,7 @@ class Classroom extends React.Component<IProps, IState> {
 											size={12}
 											linked={false}
 											clicked={true}
+											assignable={true}
 											onClick={this.selectDocumentToAssign} />
 									</Grid>
 								) : null
@@ -530,6 +546,7 @@ class Classroom extends React.Component<IProps, IState> {
 												size={12}
 												linked={false}
 												clicked={true}
+												assignable={true}
 												onClick={this.selectDocumentToAssign} />
 										</Grid>
 									)

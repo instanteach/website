@@ -64,35 +64,41 @@ class Signup extends React.PureComponent<{}, IState> {
 			...this.state,
 			[name]: event.target.value,
 			error: " "
-		});
-	};
-
-	public signup = (event) => {
-		event.preventDefault();
-		const form = event.target;
-		if (form !== null) {
-			const data = {
-				displayName: form.displayName.value,
-				email: form.email.value,
-				password: form.password.value
-			};
-
-			if (data.password.length < 6) {
-				this.setState({ error: "Password must have 6 characters as min" });
-				return;
-			}
-
-			(async () => {
-				const response = await UserService.register(data);
-				if (response.error) {
-					this.setState({ error: response.error });
-				}
-				if (response.userId) {
-					this.setState({ signed: true });
-				}
-			})();
+    })
+	}
+	
+	public signup = event => {
+		event.preventDefault()
+		const form = event.target
+		const data = {
+			displayName: form.displayName.value,
+			email: form.email.value,
+			password: form.password.value
 		}
-	};
+		
+		if(data.password.length < 6) {
+			this.setState({ error: "Password must have 6 characters as min" })
+			return
+		}
+
+		if(data.displayName.length <= 1) {
+			this.setState({ error: "Your full name is required" })
+			return
+		}
+		
+		(async () =>{
+			const response = await UserService.register(data)
+			if(response.error) {
+				this.setState({ error: response.error })
+			}
+			if(response.userId) {
+				const auth = await AuthenticationService.login(data.email, data.password);
+				if(auth) {
+					this.setState({ signed: auth })
+				}
+			}
+		})();
+	}
 
 	public componentWillUnmount() {
 		this.unsubscribe();

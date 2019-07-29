@@ -93,7 +93,10 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		
 		if(response.ok) {
 			const d = response.data
-			console.log(d)
+			// Initialize Chart
+
+
+			// Load data
 			d.map((doc:any) => {
 				labels.push(doc.createdAt)
 				general.push(doc.general)
@@ -146,9 +149,6 @@ class Graphics extends React.PureComponent<IProps, IState> {
 				]
 			})
 		}
-		else {
-			console.log(response.error)
-		}
 	}
 
 	public render() {
@@ -165,6 +165,7 @@ class Graphics extends React.PureComponent<IProps, IState> {
 					data: skill.values,
 					hidden: skill.label === "General" ? false: true,
 					label: skill.label,
+					lineTension: 0.3,
 					pointBorderColor: skill.colors.primary,
 					pointHoverBackgroundColor: skill.colors.secondary
 			})
@@ -183,7 +184,15 @@ class Graphics extends React.PureComponent<IProps, IState> {
 		}
 
 		const options={
-			maintainAspectRatio: mediaQuery.matches ? true : false
+			maintainAspectRatio: mediaQuery.matches ? true : false,
+			scales: {
+        yAxes: [{
+            ticks: {
+								beginAtZero: true,
+								stepSize: 1,
+            }
+				}]
+			}
 		}
 
 		return (

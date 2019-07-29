@@ -1,6 +1,4 @@
 import * as React from 'react'
-import { Page } from 'react-pdf'
-import { Document as PDF } from 'react-pdf/dist/entry.webpack'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -28,6 +26,7 @@ interface IState {
 }
 
 interface IProps {
+	assignable?: boolean
 	clicked: boolean
 	id: string
 	linked?:boolean
@@ -105,22 +104,6 @@ const DownloadButton = styled('a')`
   text-decoration: none
 `
 
-const PDFcontainer = styled(Grid)`
-	.react-pdf__Page {
-		position: relative;
-		overflow: hidden;
-		height: 120px;
-		max-height: 120px;
-		color: white;
-		font-size: 0;
-		.react-pdf__Page__canvas {
-			position: absolute;
-			top: 0;
-			left: 0;
-		}
-	}
-`
-
 const MenuButton = styled(IconButton)`
 	position: absolute !important;
 	top: auto !important;
@@ -158,17 +141,16 @@ class DocumentCard extends React.Component<IProps, IState> {
 				if(userId === store.getState().user.uid) {
 					await MaterialService.read(materialId)
 				}
-				else {
-					console.log("Unauthorized")
-				}
 			}
 		})()
 	}
 
 	public removeDocumentFromDatabase = (e:any) => {
-		e.preventDefault()
-		const {id} = this.props
-		this.setState({ isOpen: false, isRemoved: DocumentsService.remove(id) })
+		(async() => {
+			e.preventDefault()
+			const {id} = this.props
+			this.setState({ isOpen: false, isRemoved: await DocumentsService.remove(id) })
+		})()
 	}
 
 	public toggleConfirmationModal = (e:any) => {
@@ -184,18 +166,14 @@ class DocumentCard extends React.Component<IProps, IState> {
 			<Grow in={clicked} style={{ marginBottom: '2rem' }}>
 				<Grid item={true} xs={12} md={size} onClick={this.props.onClick ? this.onClick : (() => false)}>
 					{
-						(type === 'pdf')
-						? linked 
+						linked
+						? type === "pdf"
 							? (
 								<LinkButton to={`/document/${id}`} onClick={this.read} style={{display: isRemoved ? 'none' : 'auto'}}>
 									<Card className={`${isNew ? 'is_new' : ''}`}>
-										<CardTypeFile style={{color: 'white', fontSize: 0}}>
-											<PDFcontainer item={true} xs={12}>
-												<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
-													<Page pageNumber={1} scale={0.2185} />
-													</PDF>
-											</PDFcontainer>
-										</CardTypeFile>
+										{
+										<CardTypeFile style={{ backgroundColor: '#E53935', color: 'white' }}>{type.toUpperCase()}</CardTypeFile>
+										}
 										<CardContent>
 											<Typography variant="subheading" component="h3">{name}</Typography>
 										</CardContent>
@@ -211,66 +189,51 @@ class DocumentCard extends React.Component<IProps, IState> {
 								</LinkButton>
 							)
 							: (
-								<Card className={`${isNew ? 'is_new' : ''}`}>
-									<CardTypeFile style={{color: 'white', fontSize: 0}}>
-										<PDFcontainer item={true} xs={12}>
-											<PDF file={`https://cors-anywhere.herokuapp.com/${url}`}>
-												<Page pageNumber={1} scale={0.2185} />
-												</PDF>
-										</PDFcontainer>
-									</CardTypeFile>
-									<CardContent>
-										<Typography variant="subheading" component="h3">{name}</Typography>
-									</CardContent>
-								</Card>
-							)
-						: linked
-							? (
-								<DownloadButton href={url} onClick={this.read} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
-									<Card className={`${isNew ? 'is_new' : ''}`}>
-										{
-										<CardTypeFile style={
-										(type === 'doc' || type === 'docx')
-											? { backgroundColor: '#1565C0' }
-											: (type === 'jpg' || type === 'jpeg' || type === 'png')
-												? { backgroundColor: '#E0E0E0', color: '#888' }
-												: (type === 'pptx')
-													? { backgroundColor: '#FFC107' }
-													: {}
-										}>{type.toUpperCase()}</CardTypeFile>
-										}
-										<CardContent>
-											<Typography variant="subheading" component="h3">{name}</Typography>
-										</CardContent>
-										{
-											menu && user.isAdmin
-											? (
-												<MenuButton onClick={this.toggleConfirmationModal}>
-														<DeleteIcon />
-													</MenuButton>
-											) : null
-										}
-									</Card>
-								</DownloadButton>
-							)
-							: (
+							<DownloadButton href={url} onClick={this.read} download={name} style={{display: isRemoved ? 'none' : 'auto'}}>
 								<Card className={`${isNew ? 'is_new' : ''}`}>
 									{
 									<CardTypeFile style={
 									(type === 'doc' || type === 'docx')
-										? { backgroundColor: '#1565C0' }
+										? { backgroundColor: '#1565C0', color: 'white' }
 										: (type === 'jpg' || type === 'jpeg' || type === 'png')
 											? { backgroundColor: '#E0E0E0', color: '#888' }
 											: (type === 'pptx')
 												? { backgroundColor: '#FFC107' }
-												: {}
+												: { backgroundColor: '#E53935', color: 'white' }
 									}>{type.toUpperCase()}</CardTypeFile>
 									}
 									<CardContent>
 										<Typography variant="subheading" component="h3">{name}</Typography>
 									</CardContent>
+									{
+										menu && user.isAdmin
+										? (
+											<MenuButton onClick={this.toggleConfirmationModal}>
+													<DeleteIcon />
+												</MenuButton>
+										) : null
+									}
 								</Card>
-							)
+							</DownloadButton>
+						)
+						: (
+							<Card className={`${isNew ? 'is_new' : ''}`}>
+								{
+								<CardTypeFile style={
+								(type === 'doc' || type === 'docx')
+									? { backgroundColor: '#1565C0' }
+									: (type === 'jpg' || type === 'jpeg' || type === 'png')
+										? { backgroundColor: '#E0E0E0', color: '#888' }
+										: (type === 'pptx')
+											? { backgroundColor: '#FFC107' }
+											: { backgroundColor: '#E53935', color: 'white' }
+								}>{type.toUpperCase()}</CardTypeFile>
+								}
+								<CardContent>
+									<Typography variant="subheading" component="h3">{name}</Typography>
+								</CardContent>
+							</Card>
+						)
 					}
 					<Dialog open={isOpen} onClose={this.toggleConfirmationModal} arial-labelledby="form-dialog-title">
 						<DialogTitle id="form-dialog-title">Delete Document</DialogTitle>

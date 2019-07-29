@@ -33,13 +33,11 @@ class Profile extends React.PureComponent<{}, IState> {
 	};
 
 	public componentDidMount() {
-		if (store.getState().user != null) {
-			this.setState({
-				displayName: store.getState().user.displayName,
-				email: store.getState().user.email,
-				user: store.getState().user
-			});
-		}
+		this.setState({
+			displayName: store.getState().user.displayName,
+			email: store.getState().user.publicEmail,
+			user: store.getState().user
+		})
 	}
 
 	public handleForm = (arg) => (event) => {
