@@ -237,8 +237,7 @@ class Classrooms extends React.Component<IProps, IState> {
 		const {classrooms, forbidden, imageError, images, open, user} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
-		console.log(user)
-		console.log(session)
+		
 		return (
 			<>
 			<Grid container={true} style={{minHeight: '75vh', flexDirection: 'column', alignItems: 'flex-start'}}>
@@ -272,40 +271,30 @@ class Classrooms extends React.Component<IProps, IState> {
 					</Grid>
 					<Grid container={true} spacing={16}>
 					{
-					  session.email.length > 0 && classrooms.length === 0
-						? !history.location.pathname.includes('/my-students/user/')
-							? (
-								<Grid item={true}>
-									<br />
-									<Typography>Hello {session.displayName},</Typography>
-									<br />
-									<Typography>Us teachers are working hard. Everyday we are looking for the best material to teach our students. Wouldn’t it be great - and save a lot of time - if there was a helpful tool to give us the right material?</Typography>
-									<br />
-									<Typography>Welcome to Instanteach! 🤗</Typography>
-									<br />
-									<Typography>But wait, what is Instanteach?? 🤔</Typography>
-									<br />
-									<Typography>Instanteach is your new material assistant for your classes. We will give you personalized material for your students based on their characteristics and abilities...</Typography>
-									
-									<ul>
-										<li>No more searching for a worksheet for hours and hours!</li>
-										<li>No more having to improvise a class because you didn't have time to find a good lesson plan!</li>
-									</ul>
+					  user.email.length > 0 && classrooms.length === 0
+						? (
+							<Grid item={true}>
+								<br />
+								<Typography>Hello {session.displayName},</Typography>
+								<br />
+								<Typography>Us teachers are working hard. Everyday we are looking for the best material to teach our students. Wouldn’t it be great - and save a lot of time - if there was a helpful tool to give us the right material?</Typography>
+								<br />
+								<Typography>Welcome to Instanteach! 🤗</Typography>
+								<br />
+								<Typography>But wait, what is Instanteach?? 🤔</Typography>
+								<br />
+								<Typography>Instanteach is your new material assistant for your classes. We will give you personalized material for your students based on their characteristics and abilities...</Typography>
+								
+								<ul>
+									<li>No more searching for a worksheet for hours and hours!</li>
+									<li>No more having to improvise a class because you didn't have time to find a good lesson plan!</li>
+								</ul>
 
-									<Typography>And of course it's all 100% free :) 🤩</Typography>
-									<br />
-									<Typography>So get started! Create your first class, give us some basic information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll need to fill this out only once but you can edit it later) and then…… Request some material! We´ll send you the ideal classroom material for you and and your students so that you only need to worry on the thing that matters most: Teaching an engaging class :) 👨‍🏫👩‍🏫</Typography>
-								</Grid>
-							)
-						: user.email.length > 0
-							? (
-								<Grid item={true}>
-									<Typography>Hello {session.displayName},</Typography>
-									<br/>
-									<Typography>{user.displayName} doesn't has a classroom yet</Typography>
-								</Grid>
-							)
-							: null
+								<Typography>And of course it's all 100% free :) 🤩</Typography>
+								<br />
+								<Typography>So get started! Create your first class, give us some basic information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll need to fill this out only once but you can edit it later) and then…… Request some material! We´ll send you the ideal classroom material for you and and your students so that you only need to worry on the thing that matters most: Teaching an engaging class :) 👨‍🏫👩‍🏫</Typography>
+							</Grid>
+						)
 						: classrooms.map((classroom:any) => (
 							<Grid container={true} item={true} sm={4} key={classroom.id} style={{marginBottom:'1rem', marginTop:'1rem'}}>
 								<Grid item={true} xs={12}>
