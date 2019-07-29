@@ -45,6 +45,7 @@ interface IState {
 	form: object
 	images: object[]
 	materials:IDocument[]
+	me: object
 	open:boolean
 	openAssignMaterial:boolean
 	repository:IDocument[]
@@ -181,6 +182,9 @@ class Classroom extends React.Component<IProps, IState> {
 			},
 		],
 		materials: Array(),
+		me: {
+			isAdmin: false
+		},
 		open: false,
 		openAssignMaterial: false,
 		repository: Array(),
@@ -198,11 +202,12 @@ class Classroom extends React.Component<IProps, IState> {
 			const {session, match} = this.props
 			const classroomId = match.params.id
 			const classroom:any = await ClassroomService.get(classroomId)
+			const me = await UserService.get(session.uid)
 			const user = await UserService.get(classroom.userId)
 			const materialsOfTheClassroom = await MaterialService.getByClassroomId(classroomId)
 			const repository:IDocument[] = await DocumentsService.getlAllDocuments()
 
-			if(classroom.userId !== session.uid && !session.isAdmin) {
+			if(classroom.userId !== session.uid && !me.isAdmin) {
 				this.setState({ forbidden: true })
 				return
 			}
@@ -224,6 +229,7 @@ class Classroom extends React.Component<IProps, IState> {
 					time: classroom.time
 				},
 				materials,
+				me,
 				repository,
 				user: user ? user : {name:""}
 			})
@@ -384,7 +390,7 @@ class Classroom extends React.Component<IProps, IState> {
 
 	public render() {
 		const {classroom, documentSelected, filter, forbidden, materials, open, openAssignMaterial, repository, user} = this.state
-		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic, deleting} = this.state
+		const {del, destroyed, edit, error, images, select, classroomDocuments, showGraphic, deleting, me} = this.state
 		const {history, session} = this.props
 		const mediaQuery = window.matchMedia("(min-width:700px)")
 
@@ -406,11 +412,11 @@ class Classroom extends React.Component<IProps, IState> {
 						<Typography variant="title">{classroom.name}</Typography>
 					</Grid>
 					{
-						!history.location.pathname.includes('/classrooms/user/')
+						!history.location.pathname.includes('/my-students/user/') && classroom.name.length > 0
 						? (
 							<Grid container={true} item={true} xs={6} justify="flex-end" alignItems="center">
 								{
-									session.isAdmin && classroom.userId !== session.uid
+									me.isAdmin && classroom.userId !== session.uid
 									? <Button variant="raised" color="primary" onClick={this.handleAssignMaterial}>Assign Material</Button>
 									: (
 										<>

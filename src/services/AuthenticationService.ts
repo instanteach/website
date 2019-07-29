@@ -99,14 +99,14 @@ class AuthenticationService {
 	public static listener()
 	{
 		let session
-		// const firebaseSession = firebase.auth().currentUser
-		// console.log(firebaseSession)
-		firebase.auth().onAuthStateChanged(user => {	
+		firebase.auth().onAuthStateChanged(user => {
 			(async () => {
+				console.log(user)
 				if (user) {
 					const u:IUser = await UserService.get(user.uid)
 					session = {
 						emailVerified: user.emailVerified,
+						isAdmin: u.isAdmin,
 						photoURL: user.photoURL,
 						refreshToken: user.refreshToken,
 						...u,
@@ -116,7 +116,8 @@ class AuthenticationService {
 					AuthenticationService.session = session
 				}
 				else {
-					this.logout()
+					session = null
+					AuthenticationService.session = session
 				}
 			})();
 		})

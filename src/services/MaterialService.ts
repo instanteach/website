@@ -145,7 +145,7 @@ class MaterialService {
 			const dateFromMexicoCity = moment.tz('America/Mexico_City').format('YYYY-MM-DD H:m');
 			const formContent = new FormData()
 			formContent.append('classroom', classroom.name)
-			formContent.append('user', currentUser.displayName)
+			formContent.append('user', user.displayName)
 			formContent.append('email', user.publicEmail)
 			formContent.append('students', classroom.students)
 			formContent.append('age', classroom.age)
