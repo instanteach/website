@@ -33,12 +33,15 @@ class AuthenticationService {
 	public static async loginWithFacebook() {
 		const platform = "facebook";
 		firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+		
 		try {
 			const provider = new firebase.auth.FacebookAuthProvider();
 			const signIn: any = await firebase.auth().signInWithPopup(provider);
+			
 			if (signIn.user && signIn.user != null) {
 				AuthenticationService.session = signIn.user;
 				const user: any = await UserService.getByEmail(signIn.user.email);
+				
 				if (user) {
 					const userSynchronized: IUser = await UserService.syncAccountWithProvider(
 						signIn.user,
@@ -70,6 +73,7 @@ class AuthenticationService {
 			if (signIn.user && signIn.user != null) {
 				AuthenticationService.session = signIn.user;
 				const user: any = await UserService.getByEmail(signIn.user.email);
+				
 				if (user) {
 					const userSynchronized: IUser = await UserService.syncAccountWithProvider(
 						signIn.user,
@@ -110,7 +114,6 @@ class AuthenticationService {
 		let session: any
 		firebase.auth().onAuthStateChanged(user => {
 			(async () => {
-				console.log(user)
 				if (user) {
 					const u: IUser = await UserService.get(user.uid);
 					session = {
