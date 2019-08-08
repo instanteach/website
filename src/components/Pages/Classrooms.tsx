@@ -276,7 +276,6 @@ class Classrooms extends React.Component<IProps, IState> {
 			open = true;
 			cannotInsert = true;
 		}
-		console.log("session", session);
 		const mediaQuery = window.matchMedia("(min-width:700px)");
 
 		return (
