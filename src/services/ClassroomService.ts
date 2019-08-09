@@ -2,6 +2,9 @@ import * as firebase from "firebase";
 import IClassroom from "src/interfaces/IClassroom";
 
 class ClassroomService {
+
+	public static response: any;
+
 	public static async getAll() {
 		const classrooms: object[] = [];
 		const database = firebase.firestore();
@@ -42,10 +45,18 @@ class ClassroomService {
 	}
 
 	public static async getByCurrentUser() {
-		const currentUser = firebase.auth().currentUser;
-		return currentUser
-			? await ClassroomService.getByUserId(currentUser.uid)
-			: [];
+		const response: any = {data: [], error: "", ok: false}
+		const currentUser = firebase.auth().currentUser
+
+		if(currentUser) {
+			response.ok = true
+			response.data = await ClassroomService.getByUserId(currentUser.uid)
+			this.writeResponse(response)
+		}
+		else {
+			response.message = "You must be logged"
+		}
+		return await ClassroomService.response
 	}
 
 	public static async create(data: any) {
@@ -178,6 +189,14 @@ class ClassroomService {
 		}
 
 		return response;
+	}
+
+	private static writeResponse(w) {
+		return ClassroomService.response = {
+			data: w.data,
+			error: w.error,
+			ok: w.ok
+		}
 	}
 }
 

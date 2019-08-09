@@ -1,30 +1,31 @@
-import * as React from "react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import * as firebase from 'firebase'
+import * as React from 'react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
-import Button from "@material-ui/core/Button";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import FormControl from "@material-ui/core/FormControl";
-import Grid from "@material-ui/core/Grid";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
-import Select from "@material-ui/core/Select";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import CheckOutlinedIcon from "@material-ui/icons/CheckOutlined";
+import Button from '@material-ui/core/Button'
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import CardMedia from '@material-ui/core/CardMedia'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import FormControl from '@material-ui/core/FormControl'
+import Grid from '@material-ui/core/Grid'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import OutlinedInput from '@material-ui/core/OutlinedInput'
+import Select from '@material-ui/core/Select'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined'
 
-import IClassroom from "../../interfaces/IClassroom";
-import ClassroomService from "../../services/ClassroomService";
-import UserService from "../../services/UserService";
+import IClassroom from '../../interfaces/IClassroom'
+import ClassroomService from '../../services/ClassroomService'
+import UserService from '../../services/UserService'
 
 interface IState {
 	classrooms: IClassroom[];
@@ -33,6 +34,7 @@ interface IState {
 	cannotInsert: boolean;
 	imageError: string;
 	images: object[];
+	loading: boolean;
 	user: {};
 	showDefault: boolean;
 	form: {};
@@ -142,6 +144,7 @@ class Classrooms extends React.Component<IProps, IState> {
 					"https://images.unsplash.com/photo-1484820540004-14229fe36ca4?ixlib=rb-1.2.1&q=85&fm=jpg&crop=entropy&cs=srgb&dl=markus-spiske-193031-unsplash.jpg"
 			}
 		],
+		loading: true,
 		open: false,
 		thumbnail: "",
 		user: {
@@ -152,7 +155,7 @@ class Classrooms extends React.Component<IProps, IState> {
 		}
 	};
 
-	public componentDidMount() {
+	public componentWillMount() {
 		const { history, session } = this.props;
 
 		if (history.location.pathname.includes("/my-students/user/")) {
@@ -160,21 +163,32 @@ class Classrooms extends React.Component<IProps, IState> {
 				this.setState({ forbidden: true });
 				return;
 			} else {
-				(async () => {
-					const pathname = history.location.pathname.split("/");
-					const userId = pathname[3];
-					const classrooms: IClassroom[] = await ClassroomService.getByUserId(
-						userId
-					);
-					const user = await UserService.get(userId);
-					this.setState({ classrooms, user: user ? user : {} });
-				})();
+				firebase.auth().onAuthStateChanged(u => {
+					if(u) {
+						(async () => {
+							const pathname = history.location.pathname.split("/");
+							const userId = pathname[3];
+							const classrooms: IClassroom[] = await ClassroomService.getByUserId(
+								userId
+							);
+							const user = await UserService.get(userId);
+							this.setState({ classrooms, user: user ? user : {}, loading: false });
+						})();
+					}
+				})
 			}
 		} else {
-			(async () => {
-				const classrooms: IClassroom[] = await ClassroomService.getByCurrentUser();
-				this.setState({ classrooms, showDefault: true });
-			})();
+			firebase.auth().onAuthStateChanged(u => {
+				if(u) {
+					(async () => {
+						const response: any = await ClassroomService.getByCurrentUser();
+						if(response.ok) {
+							const classrooms: IClassroom[] = response.data
+							this.setState({ classrooms, showDefault: true, loading: false });
+						}
+					})();
+				}
+			})
 		}
 	}
 
@@ -268,6 +282,7 @@ class Classrooms extends React.Component<IProps, IState> {
 			forbidden,
 			imageError,
 			images,
+			loading,
 			user
 		} = this.state;
 		let { cannotInsert, open } = this.state;
@@ -288,139 +303,146 @@ class Classrooms extends React.Component<IProps, IState> {
 						alignItems: "flex-start"
 					}}
 				>
-					{forbidden ? (
+					{
+					loading === true
+					? (
 						<Grid item={true}>
-							<Typography>You don't have permissions to be here.</Typography>
+							<Typography>Loading...</Typography>
 						</Grid>
-					) : (
-						<>
-							<Grid container={true} item={true} alignItems="center">
-								<Grid container={true} item={true} xs={8} md={10}>
-									{session.isAdmin &&
-									history.location.pathname.includes("/my-students/user/") ? (
-										<Typography variant="title">
-											Classes' {user.displayName}
-										</Typography>
-									) : (
-										<Typography variant="title">Your Classes</Typography>
-									)}
-								</Grid>
-
-								{!history.location.pathname.includes("/my-students/user/") ? (
-									<Grid
-										container={true}
-										item={true}
-										xs={4}
-										md={2}
-										justify="flex-end"
-									>
-										<Button
-											variant="raised"
-											color="primary"
-											fullWidth={true}
-											onClick={this.handleClose}
-										>
-											{mediaQuery.matches ? "New Classroom" : "Add"}
-										</Button>
-									</Grid>
-								) : null}
-								{classrooms.length === 0 && showDefault ? (
-									<div>
-										<p>Hello {session.displayName},</p>
-										<p>
-											Us teachers are working hard. Everyday we are looking for
-											the best material to teach our students. Wouldn’t it be
-											great - and save a lot of time - if there was a helpful
-											tool to give us the right material?
-										</p>
-										<p>Welcome to Instanteach! 🤗</p>
-										<p>But wait, what is Instanteach?? 🤔</p>
-										<p>
-											Instanteach is your new material assistant for your
-											classes. We will give you personalized material for your
-											students based on their characteristics and abilities...
-										</p>
-										<p>
-											<strong>
-												<ul>
-													<li>
-														No more searching for a worksheet for hours and
-														hours!
-													</li>
-													<li>
-														No more having to improvise a class because you
-														didn't have time to find a good lesson plan!
-													</li>
-												</ul>
-											</strong>
-										</p>
-										<p>And of course it's all 100% free :) 🤩</p>
-										<p>
-											So get started! Create your first class, give us some
-											basic information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll
-											need to fill this out only once but you can edit it later)
-											and then…… Request some material! We´ll send you the ideal
-											classroom material for you and and your students so that
-											you only need to worry on the thing that matters most:
-											Teaching an engaging class :) 👨‍🏫👩‍🏫
-										</p>
-									</div>
-								) : null}
+					) : forbidden ? (
+							<Grid item={true}>
+								<Typography>You don't have permissions to be here.</Typography>
 							</Grid>
-							<Grid container={true} spacing={16}>
-								{user.email.length > 0 && classrooms.length === 0 ? (
-									<>
-										<Grid item={true}>
-											<br />
-											<Typography>There aren't classrooms yet</Typography>
-											<br />
-											<br />
-										</Grid>
-									</>
-								) : (
-									classrooms.map((classroom: any) => (
+						) : (
+							<>
+								<Grid container={true} item={true} alignItems="center">
+									<Grid container={true} item={true} xs={8} md={10}>
+										{session.isAdmin &&
+										history.location.pathname.includes("/my-students/user/") ? (
+											<Typography variant="title">
+												Classes' {user.displayName}
+											</Typography>
+										) : (
+											<Typography variant="title">Your Classes</Typography>
+										)}
+									</Grid>
+
+									{!history.location.pathname.includes("/my-students/user/") ? (
 										<Grid
 											container={true}
 											item={true}
-											sm={4}
-											key={classroom.id}
-											style={{ marginBottom: "1rem", marginTop: "1rem" }}
+											xs={4}
+											md={2}
+											justify="flex-end"
 										>
-											<Grid item={true} xs={12}>
-												<Card style={{ width: "100%" }}>
-													<CardMedia
-														style={{ height: "140px" }}
-														title="Image"
-														image={classroom.thumbnail}
-													/>
-													<CardContent>
-														<Typography variant="title">
-															{classroom.name}
-														</Typography>
-														<Typography variant="caption">
-															{classroom.students} students
-														</Typography>
-														<Typography variant="caption">
-															{classroom.age} years old average age
-														</Typography>
-													</CardContent>
-													<CardActions>
-														<Grid container={true} justify="flex-end">
-															<CardButton size="small" color="primary">
-																<Link to={`/classroom/${classroom.id}`}>
-																	View
-																</Link>
-															</CardButton>
-														</Grid>
-													</CardActions>
-												</Card>
-											</Grid>
+											<Button
+												variant="raised"
+												color="primary"
+												fullWidth={true}
+												onClick={this.handleClose}
+											>
+												{mediaQuery.matches ? "New Classroom" : "Add"}
+											</Button>
 										</Grid>
-									))
-								)}
-							</Grid>
-						</>
-					)}
+									) : null}
+									{classrooms.length === 0 && showDefault && !loading ? (
+										<div>
+											<p>Hello {session.displayName},</p>
+											<p>
+												Us teachers are working hard. Everyday we are looking for
+												the best material to teach our students. Wouldn’t it be
+												great - and save a lot of time - if there was a helpful
+												tool to give us the right material?
+											</p>
+											<p>Welcome to Instanteach! 🤗</p>
+											<p>But wait, what is Instanteach?? 🤔</p>
+											<p>
+												Instanteach is your new material assistant for your
+												classes. We will give you personalized material for your
+												students based on their characteristics and abilities...
+											</p>
+											<p>
+												<strong>
+													<ul>
+														<li>
+															No more searching for a worksheet for hours and
+															hours!
+														</li>
+														<li>
+															No more having to improvise a class because you
+															didn't have time to find a good lesson plan!
+														</li>
+													</ul>
+												</strong>
+											</p>
+											<p>And of course it's all 100% free :) 🤩</p>
+											<p>
+												So get started! Create your first class, give us some
+												basic information about those students 👨‍🎓👩‍🎓👨‍🎓👩‍🎓 (you´ll
+												need to fill this out only once but you can edit it later)
+												and then…… Request some material! We´ll send you the ideal
+												classroom material for you and and your students so that
+												you only need to worry on the thing that matters most:
+												Teaching an engaging class :) 👨‍🏫👩‍🏫
+											</p>
+										</div>
+									) : null}
+								</Grid>
+								<Grid container={true} spacing={16}>
+									{user.email.length > 0 && classrooms.length === 0 ? (
+										<>
+											<Grid item={true}>
+												<br />
+												<Typography>There aren't classrooms yet</Typography>
+												<br />
+												<br />
+											</Grid>
+										</>
+									) : (
+										classrooms.map((classroom: any) => (
+											<Grid
+												container={true}
+												item={true}
+												sm={4}
+												key={classroom.id}
+												style={{ marginBottom: "1rem", marginTop: "1rem" }}
+											>
+												<Grid item={true} xs={12}>
+													<Card style={{ width: "100%" }}>
+														<CardMedia
+															style={{ height: "140px" }}
+															title="Image"
+															image={classroom.thumbnail}
+														/>
+														<CardContent>
+															<Typography variant="title">
+																{classroom.name}
+															</Typography>
+															<Typography variant="caption">
+																{classroom.students} students
+															</Typography>
+															<Typography variant="caption">
+																{classroom.age} years old average age
+															</Typography>
+														</CardContent>
+														<CardActions>
+															<Grid container={true} justify="flex-end">
+																<CardButton size="small" color="primary">
+																	<Link to={`/classroom/${classroom.id}`}>
+																		View
+																	</Link>
+																</CardButton>
+															</Grid>
+														</CardActions>
+													</Card>
+												</Grid>
+											</Grid>
+										))
+									)}
+								</Grid>
+							</>
+						)
+					}
 				</Grid>
 
 				<Dialog
