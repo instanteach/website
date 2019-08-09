@@ -58,6 +58,8 @@ export default {
 		switch(action.type) {
 			case ACTIONS.SET_SESSION:
 				return action.payload
+			case ACTIONS.SESSION_DESTROY:
+				return null
 			default:
 				return state
 		}

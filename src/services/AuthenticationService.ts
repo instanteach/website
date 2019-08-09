@@ -10,7 +10,7 @@ class AuthenticationService {
 
 	public static async login(email: string, password: string) {
 		try {
-			firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+			firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 			const auth = await firebase.auth();
 			const signIn: any = await auth.signInWithEmailAndPassword(
 				email,
@@ -20,7 +20,7 @@ class AuthenticationService {
 				const userSynchronized: IUser = await UserService.syncAccountWithProvider(
 					signIn.user
 				);
-				AuthenticationService.session = signIn.user;
+				this.setState(signIn.user)
 				await this.ss(userSynchronized, signIn.user);
 				return true;
 			}
@@ -32,13 +32,16 @@ class AuthenticationService {
 
 	public static async loginWithFacebook() {
 		const platform = "facebook";
-		firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+		firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+		
 		try {
 			const provider = new firebase.auth.FacebookAuthProvider();
 			const signIn: any = await firebase.auth().signInWithPopup(provider);
+			
 			if (signIn.user && signIn.user != null) {
-				AuthenticationService.session = signIn.user;
+				this.setState(signIn.user);
 				const user: any = await UserService.getByEmail(signIn.user.email);
+				
 				if (user) {
 					const userSynchronized: IUser = await UserService.syncAccountWithProvider(
 						signIn.user,
@@ -63,13 +66,14 @@ class AuthenticationService {
 
 	public static async loginWithGoogle() {
 		const platform = "google";
-		firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
+		firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 		try {
 			const provider = new firebase.auth.GoogleAuthProvider();
 			const signIn: any = await firebase.auth().signInWithPopup(provider);
 			if (signIn.user && signIn.user != null) {
-				AuthenticationService.session = signIn.user;
+				this.setState(signIn.user);
 				const user: any = await UserService.getByEmail(signIn.user.email);
+				
 				if (user) {
 					const userSynchronized: IUser = await UserService.syncAccountWithProvider(
 						signIn.user,
@@ -109,28 +113,27 @@ class AuthenticationService {
 	{
 		let session: any
 		firebase.auth().onAuthStateChanged(user => {
-			(async () => {
-				console.log(user)
 				if (user) {
-					const u: IUser = await UserService.get(user.uid);
-					session = {
-						emailVerified: user.emailVerified,
-						isAdmin: u.isAdmin,
-						photoURL: user.photoURL,
-						refreshToken: user.refreshToken,
-						...u,
-						uid: user.uid
-					};
-					await this.ss(u, session);
-					AuthenticationService.session = session;
+					(async () => {
+						const u: IUser = await UserService.get(user.uid);
+						session = {
+							emailVerified: user.emailVerified,
+							isAdmin: u.isAdmin,
+							photoURL: user.photoURL,
+							refreshToken: user.refreshToken,
+							...u,
+							uid: user.uid
+						};
+						await this.ss(u, session);
+						this.setState(session)
+					})();
 				} else {
 					session = null;
-					AuthenticationService.session = session;
+					this.setState(session)
 				}
-			})();
 		});
 
-		return session;
+		return AuthenticationService.session;
 	}
 
 	public static async logout() {
@@ -139,9 +142,14 @@ class AuthenticationService {
 		store.dispatch(destroySession());
 		localStorage.clear();
 		sessionStorage.clear();
-		AuthenticationService.session = null;
+		this.setState(null)
 
 		return true;
+	}
+
+	private static setState(state)
+	{
+		return AuthenticationService.session = state
 	}
 
 	private static ss(user: IUser, session = null): void {

@@ -1,6 +1,7 @@
-import * as React from "react";
+import * as firebase from 'firebase'
+import * as React from 'react'
 import {Link} from 'react-router-dom'
-import styled from "styled-components"
+import styled from 'styled-components'
 
 import {Button, FormControl, FormGroup, Grid, InputLabel, MenuItem, OutlinedInput,
 				Select, TextField, Typography} from "@material-ui/core"
@@ -97,9 +98,17 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 	}
 
 	public async componentDidMount() {
-		const classrooms:IClassroom[] = await ClassroomService.getByCurrentUser()
-
-		this.setState({classrooms, ready: true})
+		firebase.auth().onAuthStateChanged(u => {
+			if(u) {
+				(async () => {
+					const response: any = await ClassroomService.getByCurrentUser();
+					if(response.ok) {
+						const classrooms: IClassroom[] = response.data
+						this.setState({classrooms, ready: true})
+					}
+				})();
+			}
+		})
 	}
 
 	public handleChange = field => event => {

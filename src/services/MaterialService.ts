@@ -3,7 +3,9 @@ import moment from "moment-timezone";
 
 import IDocument from '../interfaces/IDocument'
 import IUser from '../interfaces/IUser'
-import store from '../state/store'
+// import store from '../state/store'
+
+import AssistanceService from "./AssistanceService";
 import ClassroomService from './ClassroomService'
 import UserService from './UserService'
 
@@ -112,8 +114,16 @@ class MaterialService {
 	public static async request(data: any) {
 		const response = { requestId: "", error: "", ok: false };
 		try {
-			// const currentUser: any = firebase.auth().currentUser
-			const currentUser: any = store.getState().session
+			const currentUser: any = firebase.auth().currentUser
+			// const currentUser: any = store.getState().session
+
+			if(!currentUser || currentUser === null || AssistanceService.isDisplayNameEmpty(currentUser.displayName)) {
+				alert("It was a issue with your session and it doesn`t was possible submit your Request. Please close session and try again.")
+				response.error = "Forbidden. You have to sign in."
+				return response
+			}
+
+
 			if(currentUser) {
 				const classroom: any = await ClassroomService.get(data.classroom)
 				const database = firebase.firestore()
@@ -150,6 +160,12 @@ class MaterialService {
 	public static async submitOnGoogleSpreadsheet(data:any)
 	{
 		const currentUser: any = firebase.auth().currentUser
+
+		if(!currentUser || currentUser === null || AssistanceService.isDisplayNameEmpty(currentUser.displayName)) {
+			alert("It was a issue with your session and it doesn`t was possible submit your Request. Please close session and try again.")
+			return false
+		}
+
 		if(currentUser) {
 			const user:IUser = await UserService.get(currentUser.uid)
 			const classroom: any = await ClassroomService.get(data.classroom)

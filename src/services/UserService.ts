@@ -2,6 +2,8 @@ import * as firebase from 'firebase'
 import IUser from '../interfaces/IUser';
 import store from '../state/store';
 
+import AssistanceService from './AssistanceService';
+
 interface IUpdateUser {
 	displayName: string
 	email: string
@@ -34,7 +36,12 @@ class UserService {
 	{
 		const users:object[] = []
 		const database = firebase.firestore()
-		const query = await database.collection('users').where('publicEmail', '==', email).get()
+		let query = await database.collection('users').where('email', '==', email).get()
+
+		if(query.docs.length === 0) {
+			query = await database.collection('users').where('publicEmail', '==', email).get()
+		}
+
 		await query.docs.map((doc:any) => users.push(doc.data()))
 		
 		return users.length>0 ? users[0] : null
@@ -44,6 +51,13 @@ class UserService {
 	{
 		const response = {userId:"", error:"", ok: false}
 		const auth = firebase.auth()
+
+		// If user doesn`t have displayName filled, cancel the proccess
+		if(AssistanceService.isDisplayNameEmpty(data.displayName)) {
+			response.error = "DisplayName must be filled"
+			return response			
+		}
+
 		try {
 			const sign = await auth.createUserWithEmailAndPassword(data.email, data.password)
 			if(sign.user) {
@@ -61,6 +75,11 @@ class UserService {
 
 	public static async createAccount(data:any, createnWith:string="none"): Promise<any>
 	{
+		// If user doesn`t have displayName filled, cancel the proccess
+		if(AssistanceService.isDisplayNameEmpty(data.displayName)) {
+			return null
+		}
+
 		const database = firebase.firestore()
 		const prevUser = await database.collection('users').where('email', '==', data.email).get()
 		
@@ -91,23 +110,37 @@ class UserService {
 	public static async syncAccountWithProvider(data:any, provider:string="none"): Promise<any>
 	{
 		let response = {};
-		const database = firebase.firestore()
+		let database = firebase.firestore()
 		const users = await database.collection('users').where('email', '==', data.email).get()
-		
 		const userUpdated = {
-			displayName: data.displayName,
 			emailVerified: data.emailVerified,
 			photoURL: data.photoURL,
 			provider
 		}
+
 		if(users.docs.length > 0) {
 			const user = await users.docs[0].data()
-			if(provider !== "none") {
-				await database.collection('users').doc(user.uid).update({...userUpdated, updatedAt: firebase.firestore.FieldValue.serverTimestamp()})
-				response = {...user, ...userUpdated}
+
+			if(userUpdated.provider !==  "none") {
+				database = firebase.firestore()
+
+				const n = {
+					...userUpdated,
+					updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+				}
+
+				await database.collection('users').doc(user.uid).update({...n})
+
+				if(!user.publicEmail) {
+					firebase.firestore().collection('users').doc(user.uid).update({
+						publicEmail: user.email
+					})
+				}
+				
+				response = {...user, ...n, publicEmail: !user.publicEmail ? user.email : user.publicEmail}
 			}
 			else {
-				response = user
+				response = {...user, provider}
 			}
 		}
 		else {

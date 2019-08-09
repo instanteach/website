@@ -13,10 +13,15 @@ import registerServiceWorker from './registerServiceWorker'
 
 import store from './state/store'
 
+import AssistanceService from './services/AssistanceService';
+
 const theme = createMuiTheme(RawTheme);
 
 // Init firebase application
 Firebase.init()
+
+// Check if exists session
+AssistanceService.checkFirebaseSessionWhenAppIsLoaded()
 
 // Render web application
 ReactDOM.render(
