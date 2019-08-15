@@ -339,7 +339,7 @@ class MaterialGenerator extends React.PureComponent<{}, IState> {
 								</MaterialGeneratorStep>
 								<MaterialGeneratorStep hidden={step !== 8}>
 									<FormGroup>
-										<Button disabled={request.vocabulary === "" || is_disabled} variant="raised" size="large" color="primary" type="submit" fullWidth={true}>
+										<Button id="generate_material_button" disabled={request.vocabulary === "" || is_disabled} variant="raised" size="large" color="primary" type="submit" fullWidth={true}>
 											<Typography variant="display1" style={{color:'var(--secondary-color)'}}>
 												Generate Material
 											</Typography>
