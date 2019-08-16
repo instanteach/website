@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="493.458" height="362.462" viewBox="0 0 493.458 362.462">
+  <g id="Robot" transform="translate(14.458 -25)">
+    <g id="Rectángulo_10" data-name="Rectángulo 10" transform="translate(56 151.566)" fill="#ebd049" stroke="#000" stroke-width="15">
+      <rect width="352.34" height="235.895" rx="20" stroke="none"/>
+      <rect x="7.5" y="7.5" width="337.34" height="220.895" rx="12.5" fill="none"/>
+    </g>
+    <g id="Rectángulo_14" data-name="Rectángulo 14" transform="translate(127.497 290.814)" fill="#dbb705" stroke="#000" stroke-width="15">
+      <rect width="212.708" height="74.688" rx="20" stroke="none"/>
+      <rect x="7.5" y="7.5" width="197.708" height="59.688" rx="12.5" fill="none"/>
+    </g>
+    <g id="Rectángulo_16" data-name="Rectángulo 16" transform="translate(276.333 208.083)" fill="#fff" stroke="#000" stroke-width="15">
+      <rect width="76.862" height="64.707" rx="15" stroke="none"/>
+      <rect x="7.5" y="7.5" width="61.862" height="49.707" rx="7.5" fill="none"/>
+    </g>
+    <g id="Rectángulo_20" data-name="Rectángulo 20" transform="translate(111.333 208.083)" fill="#fff" stroke="#000" stroke-width="15">
+      <rect width="76.862" height="64.707" rx="15" stroke="none"/>
+      <rect x="7.5" y="7.5" width="61.862" height="49.707" rx="7.5" fill="none"/>
+    </g>
+    <g id="Grupo_2" data-name="Grupo 2" transform="translate(-29.458 -42)">
+      <g id="Rectángulo_18" data-name="Rectángulo 18" transform="translate(54.458 261)" fill="#588ef9" stroke="#000" stroke-width="15">
+        <rect width="45" height="106" rx="20" stroke="none"/>
+        <rect x="7.5" y="7.5" width="30" height="91" rx="12.5" fill="none"/>
+      </g>
+      <g id="Rectángulo_19" data-name="Rectángulo 19" transform="translate(15 274)" fill="#588ef9" stroke="#000" stroke-width="15">
+        <rect width="54" height="80" rx="20" stroke="none"/>
+        <rect x="7.5" y="7.5" width="39" height="65" rx="12.5" fill="none"/>
+      </g>
+    </g>
+    <g id="Grupo_3" data-name="Grupo 3" transform="translate(394.542 217)">
+      <g id="Rectángulo_18-2" data-name="Rectángulo 18" transform="translate(0)" fill="#588ef9" stroke="#000" stroke-width="15">
+        <rect width="45" height="106" rx="20" stroke="none"/>
+        <rect x="7.5" y="7.5" width="30" height="91" rx="12.5" fill="none"/>
+      </g>
+      <g id="Rectángulo_19-2" data-name="Rectángulo 19" transform="translate(30.458 13)" fill="#588ef9" stroke="#000" stroke-width="15">
+        <rect width="54" height="80" rx="20" stroke="none"/>
+        <rect x="7.5" y="7.5" width="39" height="65" rx="12.5" fill="none"/>
+      </g>
+    </g>
+    <g id="Rectángulo_21" data-name="Rectángulo 21" transform="translate(215 83)" fill="#ebd049" stroke="#000" stroke-width="10">
+      <rect width="39" height="76" stroke="none"/>
+      <rect x="5" y="5" width="29" height="66" fill="none"/>
+    </g>
+    <line id="Línea_7" data-name="Línea 7" y2="49" transform="translate(191.5 305.5)" fill="none" stroke="#000" stroke-width="10"/>
+    <rect id="Rectángulo_22" data-name="Rectángulo 22" width="7" height="50" transform="translate(225 99)" fill="#dbb705"/>
+    <g id="Elipse_5" data-name="Elipse 5" transform="translate(197 25)" fill="#588ef9" stroke="#000" stroke-width="15">
+      <circle cx="38" cy="38" r="38" stroke="none"/>
+      <circle cx="38" cy="38" r="30.5" fill="none"/>
+    </g>
+    <rect id="Rectángulo_23" data-name="Rectángulo 23" width="14" height="23" transform="translate(159 235)" fill="#588ef9"/>
+    <rect id="Rectángulo_24" data-name="Rectángulo 24" width="14" height="23" transform="translate(324 235)" fill="#588ef9"/>
+    <line id="Línea_4" data-name="Línea 4" x2="187" transform="translate(141.5 329.5)" fill="none" stroke="#000" stroke-width="10"/>
+    <line id="Línea_5" data-name="Línea 5" y2="49" transform="translate(232.5 301.5)" fill="none" stroke="#000" stroke-width="10"/>
+    <line id="Línea_6" data-name="Línea 6" y2="49" transform="translate(273.5 301.5)" fill="none" stroke="#000" stroke-width="10"/>
+  </g>
+</svg>
