@@ -354,7 +354,7 @@ class ResponsiveDrawer extends React.PureComponent<IResponsiveDrawerProps, IResp
                     : (
 											<>
 											<ToolbarButton variant="text" color="primary"><Link to="/login">Log in</Link></ToolbarButton>
-											<ToolbarButton variant="text" color="primary"><Link to="/signup">Sign up</Link></ToolbarButton>
+											<ToolbarButton id="signup_button" variant="text" color="primary"><Link to="/signup">Sign up</Link></ToolbarButton>
 											</>
 										)
                 }

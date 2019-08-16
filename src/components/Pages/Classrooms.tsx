@@ -336,6 +336,7 @@ class Classrooms extends React.Component<IProps, IState> {
 											justify="flex-end"
 										>
 											<Button
+												id="new_classroom_button"
 												variant="raised"
 												color="primary"
 												fullWidth={true}
@@ -648,7 +649,7 @@ class Classrooms extends React.Component<IProps, IState> {
 									>
 										Cancel
 									</Button>
-									<Button type="submit" color="primary">
+									<Button type="submit" color="primary" id="add_new_classroom_button">
 										Add
 									</Button>
 								</DialogActions>

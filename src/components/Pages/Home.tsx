@@ -4,6 +4,11 @@ import * as React from 'react'
 import {Link} from 'react-router-dom'
 import styled from 'styled-components'
 
+import BackgroundSVG from '../../assets/images/landing/background.svg'
+import FolderSVG from '../../assets/images/landing/folders.svg'
+import LettersPNG from '../../assets/images/landing/letters.png'
+import RobotSVG from '../../assets/images/landing/robot.svg'
+
 const Wrapper = styled('div')`
   padding-bottom: 50px;
   h1, h2, h3 {
@@ -30,6 +35,26 @@ const HomeOption = styled(Link)`
 			color: var(--secondary-color);
 		}
 	}
+	img {
+		width: 100px;
+		margin-right: 2rem;
+		&.folder-svg {
+			width: 70px;
+		}
+		&.robot-svg {
+			position: relative;
+			bottom: .5rem;
+		}
+		&.background-svg {
+			margin-right: 1.7rem;
+		}
+ 	}
+	p {
+		text-transform: uppercase;
+		color: var(--primary-color);
+		font-weight: bold;
+		font-size: 1.6rem;
+	}
 `
 
 const Home = () => (
@@ -37,22 +62,26 @@ const Home = () => (
 		<Grid container={true} spacing={32} justify="center">
 			<Grid container={true} item={true} xs={12} md={6} justify="center" alignContent="center" spacing={16}>
 				<HomeOption to="/my-students">
-					<Typography variant="display2" align="center">My Students</Typography>
+					<img src={BackgroundSVG} className="background-svg" />
+					<Typography>My Students</Typography>
 				</HomeOption>
 			</Grid>
 			<Grid container={true} item={true} xs={12} md={6} justify="center" alignContent="center" spacing={16}>
 				<HomeOption to="/material-generator">
-					<Typography variant="display2" align="center">Material Generator</Typography>
+					<img src={RobotSVG} className="robot-svg" />
+					<Typography>Material Generator</Typography>
 				</HomeOption>
 			</Grid>
 			<Grid container={true} item={true} xs={12} md={6} justify="center" alignContent="center" spacing={16}>
 				<HomeOption to="/lesson-plans">
-					<Typography variant="display2" align="center">Lesson Plans</Typography>
+					<img src={FolderSVG} className="folder-svg" />
+					<Typography>Lesson Plans</Typography>
 				</HomeOption>
 			</Grid>
 			<Grid container={true} item={true} xs={12} md={6} justify="center" alignContent="center" spacing={16}>
 				<HomeOption to="/contact">
-					<Typography variant="display2" align="center">Contact us</Typography>
+					<img src={LettersPNG} />
+					<Typography>Contact us</Typography>
 				</HomeOption>
 			</Grid>
 		</Grid>

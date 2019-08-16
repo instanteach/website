@@ -423,7 +423,7 @@ class Classroom extends React.Component<IProps, IState> {
 										<SettingsIcon onClick={this.edit} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<DeleteIcon onClick={this.toggleConfirmationModal} style={{ marginRight: '1rem', cursor: 'pointer' }} />
 										<TimelineIcon onClick={this.toggleShowGraphic} style={{ marginRight: '1rem', cursor: 'pointer' }} />
-										<CustomLink to="/material-generator"><Button variant="raised" color="primary" className="animated swing">Request Material</Button></CustomLink>
+										<CustomLink to="/material-generator"><Button id="request_material_button" variant="raised" color="primary" className="animated swing">Request Material</Button></CustomLink>
 										</>
 									)
 								}
